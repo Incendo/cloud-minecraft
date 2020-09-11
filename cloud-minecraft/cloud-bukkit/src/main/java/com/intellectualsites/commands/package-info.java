@@ -21,21 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
+
+/**
+ * cloud implementation for Bukkit 1.8-1.16
+ */
 package com.intellectualsites.commands;
-
-import com.intellectualsites.commands.meta.SimpleCommandMeta;
-
-import javax.annotation.Nonnull;
-
-public class BukkitCommandMeta extends SimpleCommandMeta {
-
-    /**
-     * Bukkit command meta data
-     *
-     * @param simpleCommandMeta Simple command meta data instance that gets mirrored
-     */
-    public BukkitCommandMeta(@Nonnull final SimpleCommandMeta simpleCommandMeta) {
-        super(simpleCommandMeta.getAll());
-    }
-
-}
