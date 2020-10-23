@@ -38,7 +38,7 @@ public abstract class CustomUser {
      * @param user    Sending user
      * @param channel Channel that the message was sent in
      */
-    public CustomUser(final @NonNull User user, final @NonNull MessageChannel channel) {
+    protected CustomUser(final @NonNull User user, final @NonNull MessageChannel channel) {
         this.user = user;
         this.channel = channel;
     }
