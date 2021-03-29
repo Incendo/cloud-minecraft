@@ -51,6 +51,7 @@ include("cloud-bungee")
 include("cloud-cloudburst")
 include("cloud-minecraft-extras")
 include("cloud-paper")
+include("cloud-sponge")
 include("cloud-sponge7")
 include("cloud-velocity")
 
