@@ -1,4 +1,5 @@
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+setupExampleModule("example-sponge")
 
 pluginManagement {
     includeBuild("gradle/build-logic")
