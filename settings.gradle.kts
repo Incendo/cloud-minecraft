@@ -1,5 +1,4 @@
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-setupExampleModule("example-sponge")
 
 pluginManagement {
     includeBuild("gradle/build-logic")
@@ -58,6 +57,9 @@ include("cloud-velocity")
 
 include("examples/example-bukkit")
 findProject(":examples/example-bukkit")?.name = "example-bukkit"
+
+include("examples/example-sponge")
+findProject(":examples/example-sponge")?.name = "example-sponge"
 
 include("examples/example-bungee")
 findProject(":examples/example-bungee")?.name = "example-bungee"
