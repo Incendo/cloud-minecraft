@@ -21,28 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package cloud.commandframework.velocity;
+package cloud.commandframework.fabric;
 
-import com.mojang.brigadier.Command;
-import com.mojang.brigadier.context.CommandContext;
-import com.velocitypowered.api.command.CommandSource;
+import net.minecraft.commands.SharedSuggestionProvider;
+import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-final class VelocityExecutor<C> implements Command<CommandSource> {
+@API(status = API.Status.STABLE, since = "2.0.0")
+final class FabricExceptionHandlerFactory<C, S extends SharedSuggestionProvider> {
 
-    private final VelocityCommandManager<C> manager;
+    private final FabricCommandManager<C, S> fabricCommandManager;
 
-    VelocityExecutor(final @NonNull VelocityCommandManager<C> commandManager) {
-        this.manager = commandManager;
+    FabricExceptionHandlerFactory(final @NonNull FabricCommandManager<C, S> fabricCommandManager) {
+        this.fabricCommandManager = fabricCommandManager;
     }
 
-    @Override
-    public int run(final @NonNull CommandContext<CommandSource> commandContext) {
-        final CommandSource source = commandContext.getSource();
-        final String input = commandContext.getInput();
-        final C sender = this.manager.commandSenderMapper().apply(
-                source);
-        this.manager.executeCommand(sender, input);
-        return com.mojang.brigadier.Command.SINGLE_SUCCESS;
+    <T extends Throwable> @NonNull FabricExceptionHandler<C, S, T> createHandler(
+            final FabricExceptionHandler.@NonNull ExceptionConsumer<C, S, T> handler
+    ) {
+        return new FabricExceptionHandler<>(this.fabricCommandManager, handler);
     }
 }
