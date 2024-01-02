@@ -40,7 +40,7 @@ final class FabricExecutor<C, S extends SharedSuggestionProvider> implements Com
     public int run(final @NonNull CommandContext<S> ctx) {
         final S source = ctx.getSource();
         final String input = ctx.getInput().substring(ctx.getLastChild().getNodes().get(0).getRange().getStart());
-        final C sender = this.manager.commandSourceMapper().apply(source);
+        final C sender = this.manager.senderMapper().map(source);
 
         this.manager.commandExecutor().executeCommand(sender, input);
         return com.mojang.brigadier.Command.SINGLE_SUCCESS;
