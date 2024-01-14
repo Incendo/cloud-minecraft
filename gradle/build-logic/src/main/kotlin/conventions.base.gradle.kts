@@ -1,5 +1,3 @@
-import net.ltgt.gradle.errorprone.errorprone
-
 plugins {
     id("org.incendo.cloud-build-logic")
     id("org.incendo.cloud-build-logic.spotless")
