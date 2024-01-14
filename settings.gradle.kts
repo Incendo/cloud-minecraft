@@ -11,15 +11,6 @@ plugins {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        // TODO temporary
-        mavenLocal {
-            mavenContent {
-                includeGroup("cloud.commandframework")
-                includeGroup("org.incendo")
-                snapshotsOnly()
-            }
-        }
-
         mavenCentral()
         maven("https://oss.sonatype.org/content/repositories/snapshots/") {
             name = "sonatypeOssSnapshots"
