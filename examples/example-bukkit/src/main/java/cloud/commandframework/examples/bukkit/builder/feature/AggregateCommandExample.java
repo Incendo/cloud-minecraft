@@ -49,7 +49,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import static cloud.commandframework.arguments.standard.BooleanParser.booleanParser;
 import static cloud.commandframework.arguments.standard.IntegerParser.integerParser;
 import static cloud.commandframework.arguments.standard.StringParser.stringParser;
-import static cloud.commandframework.bukkit.parsers.WorldParser.worldParser;
+import static cloud.commandframework.bukkit.parser.WorldParser.worldParser;
 
 /**
  * Example showcasing the aggregate command parser system.

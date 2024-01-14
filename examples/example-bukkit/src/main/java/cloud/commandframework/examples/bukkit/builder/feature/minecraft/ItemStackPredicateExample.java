@@ -32,8 +32,8 @@ import cloud.commandframework.examples.bukkit.builder.BuilderFeature;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import static cloud.commandframework.bukkit.parsers.ItemStackParser.itemStackParser;
-import static cloud.commandframework.bukkit.parsers.ItemStackPredicateParser.itemStackPredicateParser;
+import static cloud.commandframework.bukkit.parser.ItemStackParser.itemStackParser;
+import static cloud.commandframework.bukkit.parser.ItemStackPredicateParser.itemStackPredicateParser;
 
 /**
  * Example showcasing the item stack predicate parser.

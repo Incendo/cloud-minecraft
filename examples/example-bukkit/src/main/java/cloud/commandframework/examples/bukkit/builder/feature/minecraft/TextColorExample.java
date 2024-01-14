@@ -36,7 +36,7 @@ import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import static cloud.commandframework.CommandDescription.commandDescription;
-import static cloud.commandframework.minecraft.extras.TextColorParser.textColorParser;
+import static cloud.commandframework.minecraft.extras.parser.TextColorParser.textColorParser;
 import static net.kyori.adventure.text.Component.text;
 
 /**

@@ -31,8 +31,8 @@ import org.apiguardian.api.API;
 
 /**
  * Annotation used to specify if an empty result is allowed for
- * {@link cloud.commandframework.bukkit.parsers.selector.MultiplePlayerSelectorParser} and
- * {@link cloud.commandframework.bukkit.parsers.selector.MultipleEntitySelectorParser}.
+ * {@link cloud.commandframework.bukkit.parser.selector.MultiplePlayerSelectorParser} and
+ * {@link cloud.commandframework.bukkit.parser.selector.MultipleEntitySelectorParser}.
  *
  * @since 1.8.0
  */

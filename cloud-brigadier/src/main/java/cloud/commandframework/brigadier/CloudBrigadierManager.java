@@ -43,7 +43,7 @@ import cloud.commandframework.brigadier.argument.ArgumentTypeFactory;
 import cloud.commandframework.brigadier.argument.BrigadierMapping;
 import cloud.commandframework.brigadier.argument.BrigadierMappingBuilder;
 import cloud.commandframework.brigadier.argument.BrigadierMappings;
-import cloud.commandframework.brigadier.argument.WrappedBrigadierParser;
+import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
 import cloud.commandframework.brigadier.node.LiteralBrigadierNodeFactory;
 import cloud.commandframework.brigadier.suggestion.TooltipSuggestion;
 import cloud.commandframework.context.CommandContext;

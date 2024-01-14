@@ -30,7 +30,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import static cloud.commandframework.bukkit.parsers.NamespacedKeyParser.namespacedKeyParser;
+import static cloud.commandframework.bukkit.parser.NamespacedKeyParser.namespacedKeyParser;
 
 /**
  * Example showcasing the namespaced key parser.

@@ -27,7 +27,7 @@ import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.annotations.Argument;
 import cloud.commandframework.annotations.Command;
 import cloud.commandframework.annotations.Default;
-import cloud.commandframework.bukkit.parsers.location.Location2D;
+import cloud.commandframework.bukkit.parser.location.Location2D;
 import cloud.commandframework.examples.bukkit.ExamplePlugin;
 import cloud.commandframework.examples.bukkit.annotations.AnnotationFeature;
 import org.bukkit.Chunk;

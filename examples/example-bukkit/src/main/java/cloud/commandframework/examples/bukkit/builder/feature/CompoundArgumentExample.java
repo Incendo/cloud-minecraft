@@ -37,7 +37,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import static cloud.commandframework.bukkit.parsers.WorldParser.worldParser;
+import static cloud.commandframework.bukkit.parser.WorldParser.worldParser;
 
 public final class CompoundArgumentExample implements BuilderFeature {
 

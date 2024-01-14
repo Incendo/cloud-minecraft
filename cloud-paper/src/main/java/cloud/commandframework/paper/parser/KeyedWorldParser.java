@@ -30,7 +30,7 @@ import cloud.commandframework.arguments.parser.ParserDescriptor;
 import cloud.commandframework.arguments.suggestion.Suggestion;
 import cloud.commandframework.arguments.suggestion.SuggestionProvider;
 import cloud.commandframework.bukkit.internal.CraftBukkitReflection;
-import cloud.commandframework.bukkit.parsers.WorldParser;
+import cloud.commandframework.bukkit.parser.WorldParser;
 import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.context.CommandInput;
 import java.util.ArrayList;

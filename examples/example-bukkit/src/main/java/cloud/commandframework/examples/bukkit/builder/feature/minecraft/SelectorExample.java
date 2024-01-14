@@ -33,7 +33,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import static cloud.commandframework.bukkit.parsers.selector.SingleEntitySelectorParser.singleEntitySelectorParser;
+import static cloud.commandframework.bukkit.parser.selector.SingleEntitySelectorParser.singleEntitySelectorParser;
 
 /**
  * Example showcasing how to work with entity selectors.

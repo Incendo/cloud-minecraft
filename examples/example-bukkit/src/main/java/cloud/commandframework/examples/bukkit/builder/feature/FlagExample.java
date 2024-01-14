@@ -39,8 +39,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import static cloud.commandframework.arguments.standard.EnumParser.enumParser;
 import static cloud.commandframework.arguments.standard.IntegerParser.integerParser;
-import static cloud.commandframework.bukkit.parsers.EnchantmentParser.enchantmentParser;
-import static cloud.commandframework.bukkit.parsers.MaterialParser.materialParser;
+import static cloud.commandframework.bukkit.parser.EnchantmentParser.enchantmentParser;
+import static cloud.commandframework.bukkit.parser.MaterialParser.materialParser;
 
 /**
  * Example that showcases command flags with values.

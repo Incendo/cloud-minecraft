@@ -37,8 +37,8 @@ import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import static cloud.commandframework.arguments.standard.IntegerParser.integerParser;
-import static cloud.commandframework.bukkit.parsers.BlockPredicateParser.blockPredicateParser;
-import static cloud.commandframework.bukkit.parsers.MaterialParser.materialParser;
+import static cloud.commandframework.bukkit.parser.BlockPredicateParser.blockPredicateParser;
+import static cloud.commandframework.bukkit.parser.MaterialParser.materialParser;
 
 /**
  * Example showcasing the block predicate parser.
