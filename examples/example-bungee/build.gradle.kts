@@ -1,6 +1,5 @@
 plugins {
-    id("cloud.base-conventions")
-    id("cloud.example-conventions")
+    id("conventions.base")
     alias(libs.plugins.shadow)
     alias(libs.plugins.run.waterfall)
 }
@@ -22,7 +21,7 @@ tasks {
 dependencies {
     /* Cloud */
     implementation(project(":cloud-bungee"))
-    implementation(project(":cloud-annotations"))
+    implementation(libs.cloud.annotations)
     implementation(project(":cloud-minecraft-extras"))
     /* Extras */
     implementation(libs.adventurePlatformBungeecord)

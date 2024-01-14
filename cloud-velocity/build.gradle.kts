@@ -1,6 +1,6 @@
 plugins {
-    id("cloud.base-conventions")
-    id("cloud.publishing-conventions")
+    id("conventions.base")
+    id("conventions.publishing")
 }
 
 java {
@@ -8,7 +8,7 @@ java {
 }
 
 dependencies {
-    api(projects.cloudCore)
+    api(libs.cloud.core)
     api(projects.cloudBrigadier)
     compileOnly(libs.velocityApi)
 }

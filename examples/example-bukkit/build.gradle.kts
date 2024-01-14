@@ -1,8 +1,7 @@
 import xyz.jpenilla.runpaper.task.RunServer
 
 plugins {
-    id("cloud.base-conventions")
-    id("cloud.example-conventions")
+    id("conventions.base")
     alias(libs.plugins.shadow)
     alias(libs.plugins.run.paper)
 }
@@ -10,14 +9,14 @@ plugins {
 dependencies {
     /* Cloud */
     implementation(project(":cloud-paper"))
-    implementation(project(":cloud-annotations"))
+    implementation(libs.cloud.annotations)
     implementation(project(":cloud-minecraft-extras"))
     /* Extras */
     implementation(libs.adventurePlatformBukkit)
     /* Bukkit */
     compileOnly(libs.bukkit)
     /* Annotation processing */
-    annotationProcessor(project(":cloud-annotations"))
+    annotationProcessor(libs.cloud.annotations)
 }
 
 tasks {

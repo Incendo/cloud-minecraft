@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.shadow)
-    id("cloud.base-conventions")
-    id("cloud.example-conventions")
+    id("conventions.base")
     alias(libs.plugins.run.velocity)
 }
 
@@ -26,7 +25,7 @@ tasks {
 dependencies {
     api(project(":cloud-velocity"))
     api(project(":cloud-minecraft-extras"))
-    api(project(":cloud-annotations"))
+    api(libs.cloud.annotations)
     annotationProcessor(libs.velocityApi)
     compileOnly(libs.velocityApi)
 }

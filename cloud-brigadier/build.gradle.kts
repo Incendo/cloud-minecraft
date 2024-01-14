@@ -1,10 +1,10 @@
 plugins {
-    id("cloud.base-conventions")
-    id("cloud.publishing-conventions")
+    id("conventions.base")
+    id("conventions.publishing")
 }
 
 dependencies {
-    implementation(projects.cloudCore)
+    implementation(libs.cloud.core)
     /* Needs to be provided by the platform */
     compileOnly(libs.brigadier)
     testImplementation(libs.brigadier)

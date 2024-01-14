@@ -1,6 +1,6 @@
 plugins {
-    id("cloud.base-conventions")
-    id("cloud.publishing-conventions")
+    id("conventions.base")
+    id("conventions.publishing")
 }
 
 java {
@@ -11,5 +11,4 @@ dependencies {
     api(projects.cloudBukkit)
     compileOnly(libs.paperApi)
     compileOnly(libs.paperMojangApi)
-    compileOnly(libs.jetbrainsAnnotations)
 }
