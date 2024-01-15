@@ -4,7 +4,7 @@ cloud-build-logic = "0.0.3"
 checkstyle = "10.12.5"
 stylecheck = "0.2.1"
 ktlint = "0.50.0"
-errorprone = "2.23.0"
+errorprone = "2.24.1"
 run-task = "2.2.2"
 
 cloud = "2.0.0-SNAPSHOT"
