@@ -24,6 +24,7 @@
 package cloud.commandframework.brigadier;
 
 import cloud.commandframework.CommandManager;
+import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import org.apiguardian.api.API;
@@ -61,7 +62,11 @@ public final class CloudBrigadierCommand<C, S> implements Command<S> {
         final String input = ctx.getInput().substring(ctx.getLastChild().getNodes().get(0).getRange().getStart());
         final C sender = this.brigadierManager.senderMapper().map(source);
 
-        this.commandManager.commandExecutor().executeCommand(sender, input);
+        this.commandManager.commandExecutor().executeCommand(
+            sender,
+            input,
+            cloudContext -> cloudContext.store(WrappedBrigadierParser.COMMAND_CONTEXT_BRIGADIER_NATIVE_SENDER, source)
+        );
         return com.mojang.brigadier.Command.SINGLE_SUCCESS;
     }
 }

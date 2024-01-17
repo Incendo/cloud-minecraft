@@ -107,10 +107,12 @@ public final class CloudBrigadierManager<C, S> implements SenderMapperHolder<S, 
         );
         this.registerInternalMappings();
         commandManager.registerCommandPreProcessor(ctx -> {
-            ctx.commandContext().store(
-                    WrappedBrigadierParser.COMMAND_CONTEXT_BRIGADIER_NATIVE_SENDER,
-                    this.brigadierSourceMapper.reverse(ctx.commandContext().sender())
-            );
+            if (!ctx.commandContext().contains(WrappedBrigadierParser.COMMAND_CONTEXT_BRIGADIER_NATIVE_SENDER)) {
+                ctx.commandContext().store(
+                        WrappedBrigadierParser.COMMAND_CONTEXT_BRIGADIER_NATIVE_SENDER,
+                        this.brigadierSourceMapper.reverse(ctx.commandContext().sender())
+                );
+            }
         });
     }
 

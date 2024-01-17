@@ -25,6 +25,7 @@ package cloud.commandframework.paper;
 
 import cloud.commandframework.CommandTree;
 import cloud.commandframework.SenderMapper;
+import cloud.commandframework.brigadier.CloudBrigadierCommand;
 import cloud.commandframework.brigadier.CloudBrigadierManager;
 import cloud.commandframework.brigadier.node.LiteralBrigadierNodeFactory;
 import cloud.commandframework.brigadier.permission.BrigadierPermissionChecker;
@@ -106,7 +107,7 @@ class PaperBrigadierListener<C> implements Listener {
         event.setLiteral(literalFactory.createNode(
                 event.getLiteral().getLiteral(),
                 node,
-                event.getBrigadierCommand(),
+                new CloudBrigadierCommand<>(this.paperCommandManager, this.brigadierManager),
                 permissionChecker
         ));
     }
