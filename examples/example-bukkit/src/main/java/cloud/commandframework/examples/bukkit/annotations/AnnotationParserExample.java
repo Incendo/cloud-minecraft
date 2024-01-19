@@ -28,6 +28,7 @@ import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.examples.bukkit.ExamplePlugin;
 import cloud.commandframework.examples.bukkit.annotations.feature.BuilderModifierExample;
 import cloud.commandframework.examples.bukkit.annotations.feature.CommandContainerExample;
+import cloud.commandframework.examples.bukkit.annotations.feature.EitherExample;
 import cloud.commandframework.examples.bukkit.annotations.feature.EnumExample;
 import cloud.commandframework.examples.bukkit.annotations.feature.FlagExample;
 import cloud.commandframework.examples.bukkit.annotations.feature.HelpExample;
@@ -53,6 +54,7 @@ public final class AnnotationParserExample {
     private static final List<AnnotationFeature> FEATURES = Arrays.asList(
             new BuilderModifierExample(),
             new CommandContainerExample(),
+            new EitherExample(),
             new EnumExample(),
             new FlagExample(),
             new HelpExample(),
