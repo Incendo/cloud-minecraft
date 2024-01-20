@@ -1,3 +1,5 @@
+import org.incendo.cloudbuildlogic.ciBuild
+
 plugins {
     id("org.incendo.cloud-build-logic")
     id("org.incendo.cloud-build-logic.spotless")
@@ -16,6 +18,14 @@ spotless {
 
 cloudSpotless {
     ktlintVersion.set(libs.versions.ktlint)
+}
+
+if (providers.ciBuild.get() && libs.versions.cloudCore.get().endsWith("-SNAPSHOT")) {
+    configurations.all {
+        resolutionStrategy {
+            cacheChangingModulesFor(1, TimeUnit.MINUTES)
+        }
+    }
 }
 
 dependencies {
