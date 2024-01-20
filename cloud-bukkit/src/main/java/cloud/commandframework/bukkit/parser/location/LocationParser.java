@@ -24,6 +24,7 @@
 package cloud.commandframework.bukkit.parser.location;
 
 import cloud.commandframework.CommandComponent;
+import cloud.commandframework.arguments.Range;
 import cloud.commandframework.arguments.parser.ArgumentParseResult;
 import cloud.commandframework.arguments.parser.ArgumentParser;
 import cloud.commandframework.arguments.parser.ParserDescriptor;
@@ -55,6 +56,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @since 1.1.0
  */
 public final class LocationParser<C> implements ArgumentParser<C, Location>, BlockingSuggestionProvider.Strings<C> {
+
+    private static final Range<Integer> SUGGESTION_RANGE = Range.of(Integer.MIN_VALUE, Integer.MAX_VALUE);
 
     /**
      * Creates a new location parser.
@@ -224,8 +227,7 @@ public final class LocationParser<C> implements ArgumentParser<C, Location>, Blo
         }
 
         return IntegerParser.getSuggestions(
-                Integer.MIN_VALUE,
-                Integer.MAX_VALUE,
+                SUGGESTION_RANGE,
                 input
         ).stream().map(string -> prefix + string).collect(Collectors.toList());
     }
