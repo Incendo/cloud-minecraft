@@ -11,7 +11,7 @@ cloud = "2.0.0-SNAPSHOT"
 
 immutables = "2.10.0"
 
-brigadier = "1.0.18"
+brigadier = "1.0.500"
 bukkit = "1.13.2-R0.1-SNAPSHOT"
 commodore = "2.2"
 bungeecord = "1.8-SNAPSHOT"
