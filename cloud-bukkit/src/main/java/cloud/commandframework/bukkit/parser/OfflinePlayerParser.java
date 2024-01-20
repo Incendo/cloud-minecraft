@@ -28,7 +28,6 @@ import cloud.commandframework.arguments.parser.ArgumentParseResult;
 import cloud.commandframework.arguments.parser.ArgumentParser;
 import cloud.commandframework.arguments.parser.ParserDescriptor;
 import cloud.commandframework.arguments.suggestion.BlockingSuggestionProvider;
-import cloud.commandframework.arguments.suggestion.Suggestion;
 import cloud.commandframework.bukkit.BukkitCaptionKeys;
 import cloud.commandframework.bukkit.BukkitCommandContextKeys;
 import cloud.commandframework.captions.CaptionVariable;
@@ -51,7 +50,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @param <C> Command sender type
  */
-public final class OfflinePlayerParser<C> implements ArgumentParser<C, OfflinePlayer>, BlockingSuggestionProvider<C> {
+public final class OfflinePlayerParser<C> implements ArgumentParser<C, OfflinePlayer>, BlockingSuggestionProvider.Strings<C> {
 
     /**
      * Creates a new offline player parser.
@@ -84,10 +83,14 @@ public final class OfflinePlayerParser<C> implements ArgumentParser<C, OfflinePl
             final @NonNull CommandInput commandInput
     ) {
         final String input = commandInput.readString();
+        if (input.length() > 16) {
+            return ArgumentParseResult.failure(new OfflinePlayerParseException(input, commandContext));
+        }
 
-        final OfflinePlayer player = Bukkit.getOfflinePlayer(input);
-
-        if (!player.hasPlayedBefore() && !player.isOnline()) {
+        final OfflinePlayer player;
+        try {
+            player = Bukkit.getOfflinePlayer(input);
+        } catch (final Exception e) {
             return ArgumentParseResult.failure(new OfflinePlayerParseException(input, commandContext));
         }
 
@@ -95,7 +98,7 @@ public final class OfflinePlayerParser<C> implements ArgumentParser<C, OfflinePl
     }
 
     @Override
-    public @NonNull Iterable<@NonNull Suggestion> suggestions(
+    public @NonNull Iterable<@NonNull String> stringSuggestions(
             final @NonNull CommandContext<C> commandContext,
             final @NonNull CommandInput input
     ) {
@@ -103,7 +106,6 @@ public final class OfflinePlayerParser<C> implements ArgumentParser<C, OfflinePl
         return Bukkit.getOnlinePlayers().stream()
                 .filter(player -> !(bukkit instanceof Player && !((Player) bukkit).canSee(player)))
                 .map(Player::getName)
-                .map(Suggestion::simple)
                 .collect(Collectors.toList());
     }
 
