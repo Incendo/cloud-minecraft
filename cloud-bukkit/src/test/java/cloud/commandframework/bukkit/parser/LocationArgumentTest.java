@@ -41,7 +41,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 
 import static com.google.common.truth.Truth.assertThat;
-import static com.google.common.truth.Truth8.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.when;
 
