@@ -36,6 +36,7 @@ import cloud.commandframework.captions.CaptionVariable;
 import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.context.CommandInput;
 import cloud.commandframework.exceptions.parsing.ParserException;
+import cloud.commandframework.types.range.Range;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apiguardian.api.API;
@@ -55,6 +56,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @since 1.1.0
  */
 public final class LocationParser<C> implements ArgumentParser<C, Location>, BlockingSuggestionProvider.Strings<C> {
+
+    private static final Range<Integer> SUGGESTION_RANGE = Range.intRange(Integer.MIN_VALUE, Integer.MAX_VALUE);
 
     /**
      * Creates a new location parser.
@@ -224,8 +227,7 @@ public final class LocationParser<C> implements ArgumentParser<C, Location>, Blo
         }
 
         return IntegerParser.getSuggestions(
-                Integer.MIN_VALUE,
-                Integer.MAX_VALUE,
+                SUGGESTION_RANGE,
                 input
         ).stream().map(string -> prefix + string).collect(Collectors.toList());
     }
