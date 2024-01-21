@@ -127,14 +127,14 @@ public final class SpongeParserMapper<C> {
             node.min((int) byteParser.range().minByte());
             node.max((int) byteParser.range().maxByte());
             return node;
-        }));
+        }).cloudSuggestions(true));
         this.registerMapping(new TypeToken<ShortParser<C>>() {
         }, builder -> builder.to(shortParser -> {
             final CommandTreeNode.Range<Integer> node = CommandTreeNodeTypes.INTEGER.get().createNode();
             node.min((int) shortParser.range().minShort());
             node.max((int) shortParser.range().maxShort());
             return node;
-        }));
+        }).cloudSuggestions(true));
         this.registerMapping(new TypeToken<IntegerParser<C>>() {
         }, builder -> builder.to(integerParser -> {
             final CommandTreeNode.Range<Integer> node = CommandTreeNodeTypes.INTEGER.get().createNode();
@@ -145,7 +145,7 @@ public final class SpongeParserMapper<C> {
                 node.max(integerParser.range().maxInt());
             }
             return node;
-        }));
+        }).cloudSuggestions(true));
         this.registerMapping(new TypeToken<FloatParser<C>>() {
         }, builder -> builder.to(floatParser -> {
             final CommandTreeNode.Range<Float> node = CommandTreeNodeTypes.FLOAT.get().createNode();
@@ -156,7 +156,7 @@ public final class SpongeParserMapper<C> {
                 node.max(floatParser.range().maxFloat());
             }
             return node;
-        }));
+        }).cloudSuggestions(true));
         this.registerMapping(new TypeToken<DoubleParser<C>>() {
         }, builder -> builder.to(doubleParser -> {
             final CommandTreeNode.Range<Double> node = CommandTreeNodeTypes.DOUBLE.get().createNode();
@@ -167,7 +167,7 @@ public final class SpongeParserMapper<C> {
                 node.max(doubleParser.range().maxDouble());
             }
             return node;
-        }));
+        }).cloudSuggestions(true));
         this.registerMapping(new TypeToken<LongParser<C>>() {
         }, builder -> builder.to(longParser -> {
             final CommandTreeNode.Range<Long> node = CommandTreeNodeTypes.LONG.get().createNode();
@@ -178,7 +178,7 @@ public final class SpongeParserMapper<C> {
                 node.max(longParser.range().maxLong());
             }
             return node;
-        }));
+        }).cloudSuggestions(true));
         this.registerMapping(new TypeToken<BooleanParser<C>>() {
         }, builder -> builder.to(booleanParser -> {
             return CommandTreeNodeTypes.BOOL.get().createNode();

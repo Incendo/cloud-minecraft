@@ -39,6 +39,7 @@ import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -250,17 +251,23 @@ final class CloudSpongeCommand<C> implements Command.Raw {
             || node.children().stream().noneMatch(c -> c.component().required());
     }
 
+    @SuppressWarnings("unchecked")
     private void addRequirement(
         final @NonNull CommandNode<C> cloud,
         final @NonNull CommandTreeNode<? extends CommandTreeNode<?>> node
     ) {
         final Permission permission = (Permission) cloud.nodeMeta()
             .getOrDefault(CommandNode.META_KEY_PERMISSION, Permission.empty());
-        if (permission == Permission.empty()) {
-            return;
-        }
-        node.requires(cause ->
-            this.commandManager.testPermission(this.commandManager.senderMapper().map(cause), permission).allowed());
+        final Set<Class<?>> senderTypes = (Set<Class<?>>) cloud.nodeMeta().get(CommandNode.META_KEY_SENDER_TYPES);
+        node.requires(cause -> {
+            final C c = this.commandManager.senderMapper().map(cause);
+            for (final Class<?> senderType : senderTypes) {
+                if (senderType.isInstance(c)) {
+                    return this.commandManager.testPermission(c, permission).allowed();
+                }
+            }
+            return false;
+        });
     }
 
     private String formatCommandForParsing(final @NonNull String arguments) {
