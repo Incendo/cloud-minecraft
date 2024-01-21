@@ -23,14 +23,14 @@
 //
 package cloud.commandframework.sponge;
 
-import cloud.commandframework.captions.SimpleCaptionRegistry;
+import cloud.commandframework.captions.StandardCaptionRegistry;
 
 /**
  * Caption registry that uses bi-functions to produce messages.
  *
  * @param <C> command sender type
  */
-public class SpongeCaptionRegistry<C> extends SimpleCaptionRegistry<C> {
+public class SpongeCaptionRegistry<C> extends StandardCaptionRegistry<C> {
 
     /**
      * Default caption for {@link SpongeCaptionKeys#ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY}

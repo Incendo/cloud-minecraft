@@ -23,14 +23,12 @@
 //
 package cloud.commandframework.sponge;
 
-import cloud.commandframework.CommandTree;
-import cloud.commandframework.execution.CommandExecutionCoordinator;
+import cloud.commandframework.SenderMapper;
+import cloud.commandframework.execution.ExecutionCoordinator;
 import com.google.inject.AbstractModule;
 import com.google.inject.Key;
 import com.google.inject.util.Types;
 import java.lang.reflect.Type;
-import java.util.function.Function;
-import java.util.function.UnaryOperator;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.spongepowered.api.command.CommandCause;
 
@@ -42,72 +40,56 @@ import org.spongepowered.api.command.CommandCause;
 public final class CloudInjectionModule<C> extends AbstractModule {
 
     private final Class<C> commandSenderType;
-    private final Function<@NonNull CommandTree<C>, @NonNull CommandExecutionCoordinator<C>> commandExecutionCoordinator;
-    private final Function<@NonNull C, @NonNull CommandCause> causeMapper;
-    private final Function<@NonNull CommandCause, @NonNull C> backwardsCauseMapper;
+    private final ExecutionCoordinator<C> executionCoordinator;
+    private final SenderMapper<@NonNull CommandCause, @NonNull C> senderMapper;
 
     /**
      * Create a new injection module.
      *
-     * @param commandSenderType           Your command sender type
-     * @param commandExecutionCoordinator Command execution coordinator
-     * @param causeMapper                 Function mapping the custom command sender type to a Sponge CommandCause
-     * @param backwardsCauseMapper        Function mapping Sponge CommandCause to the custom command sender type
+     * @param commandSenderType    Your command sender type
+     * @param executionCoordinator Command execution coordinator
+     * @param senderMapper         Function mapping the custom command sender type to a Sponge CommandCause
      */
     public CloudInjectionModule(
-            final @NonNull Class<C> commandSenderType,
-            final @NonNull Function<@NonNull CommandTree<C>, @NonNull CommandExecutionCoordinator<C>> commandExecutionCoordinator,
-            final @NonNull Function<@NonNull C, @NonNull CommandCause> causeMapper,
-            final @NonNull Function<@NonNull CommandCause, @NonNull C> backwardsCauseMapper
+        final @NonNull Class<C> commandSenderType,
+        final @NonNull ExecutionCoordinator<C> executionCoordinator,
+        final @NonNull SenderMapper<@NonNull CommandCause, @NonNull C> senderMapper
     ) {
         this.commandSenderType = commandSenderType;
-        this.commandExecutionCoordinator = commandExecutionCoordinator;
-        this.causeMapper = causeMapper;
-        this.backwardsCauseMapper = backwardsCauseMapper;
+        this.executionCoordinator = executionCoordinator;
+        this.senderMapper = senderMapper;
     }
 
     /**
      * Create a new injection module using Sponge's {@link CommandCause} as the sender type.
      *
-     * @param commandExecutionCoordinator Command execution coordinator
+     * @param executionCoordinator Command execution coordinator
      * @return new injection module
      */
     public static @NonNull CloudInjectionModule<@NonNull CommandCause> createNative(
-            final @NonNull Function<@NonNull CommandTree<@NonNull CommandCause>,
-                    @NonNull CommandExecutionCoordinator<@NonNull CommandCause>> commandExecutionCoordinator
+        final @NonNull ExecutionCoordinator<CommandCause> executionCoordinator
     ) {
         return new CloudInjectionModule<>(
-                CommandCause.class,
-                commandExecutionCoordinator,
-                UnaryOperator.identity(),
-                UnaryOperator.identity()
+            CommandCause.class,
+            executionCoordinator,
+            SenderMapper.identity()
         );
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     protected void configure() {
-        final Type commandTreeType = Types.newParameterizedType(CommandTree.class, this.commandSenderType);
         final Type commandExecutionCoordinatorType = Types.newParameterizedType(
-                CommandExecutionCoordinator.class, this.commandSenderType
+            ExecutionCoordinator.class, this.commandSenderType
         );
-        final Type executorFunction = Types.newParameterizedType(
-                Function.class, commandTreeType, commandExecutionCoordinatorType
-        );
-        final Key executorFunctionKey = Key.get(executorFunction);
-        this.bind(executorFunctionKey).toInstance(this.commandExecutionCoordinator);
+        final Key coordinatorKey = Key.get(commandExecutionCoordinatorType);
+        this.bind(coordinatorKey).toInstance(this.executionCoordinator);
 
         final Type commandSenderMapperFunction = Types.newParameterizedType(
-                Function.class, this.commandSenderType, CommandCause.class
+            SenderMapper.class, CommandCause.class, this.commandSenderType
         );
-        final Key commandSenderMapperFunctionKey = Key.get(commandSenderMapperFunction);
-        this.bind(commandSenderMapperFunctionKey).toInstance(this.causeMapper);
-
-        final Type backwardsCommandSenderMapperFunction = Types.newParameterizedType(
-                Function.class, CommandCause.class, this.commandSenderType
-        );
-        final Key backwardsCommandSenderMapperFunctionKey = Key.get(backwardsCommandSenderMapperFunction);
-        this.bind(backwardsCommandSenderMapperFunctionKey).toInstance(this.backwardsCauseMapper);
+        final Key senderMapperKey = Key.get(commandSenderMapperFunction);
+        this.bind(senderMapperKey).toInstance(this.senderMapper);
     }
 
 }

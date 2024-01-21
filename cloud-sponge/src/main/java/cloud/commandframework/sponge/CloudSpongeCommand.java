@@ -23,25 +23,22 @@
 //
 package cloud.commandframework.sponge;
 
-import cloud.commandframework.CommandTree;
-import cloud.commandframework.arguments.CommandArgument;
-import cloud.commandframework.arguments.StaticArgument;
-import cloud.commandframework.arguments.compound.CompoundArgument;
-import cloud.commandframework.arguments.parser.ArgumentParser;
+import cloud.commandframework.CommandComponent;
+import cloud.commandframework.arguments.LiteralParser;
+import cloud.commandframework.arguments.compound.CompoundParser;
 import cloud.commandframework.exceptions.ArgumentParseException;
 import cloud.commandframework.exceptions.CommandExecutionException;
 import cloud.commandframework.exceptions.InvalidCommandSenderException;
 import cloud.commandframework.exceptions.InvalidSyntaxException;
 import cloud.commandframework.exceptions.NoPermissionException;
 import cloud.commandframework.exceptions.NoSuchCommandException;
-import cloud.commandframework.permission.CommandPermission;
+import cloud.commandframework.internal.CommandNode;
 import cloud.commandframework.permission.Permission;
 import cloud.commandframework.types.tuples.Pair;
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletionException;
 import java.util.stream.Collectors;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -62,18 +59,18 @@ final class CloudSpongeCommand<C> implements Command.Raw {
 
     private static final Component NULL = text("null");
     private static final Component MESSAGE_INTERNAL_ERROR =
-            text("An internal error occurred while attempting to perform this command.", RED);
+        text("An internal error occurred while attempting to perform this command.", RED);
     private static final Component MESSAGE_NO_PERMS =
-            text("I'm sorry, but you do not have permission to perform this command. "
-                    + "Please contact the server administrators if you believe that this is in error.", RED);
+        text("I'm sorry, but you do not have permission to perform this command. "
+            + "Please contact the server administrators if you believe that this is in error.", RED);
     private static final Component MESSAGE_UNKNOWN_COMMAND = text("Unknown command. Type \"/help\" for help.");
 
     private final SpongeCommandManager<C> commandManager;
     private final String label;
 
     CloudSpongeCommand(
-            final @NonNull String label,
-            final @NonNull SpongeCommandManager<C> commandManager
+        final @NonNull String label,
+        final @NonNull SpongeCommandManager<C> commandManager
     ) {
         this.label = label;
         this.commandManager = commandManager;
@@ -81,79 +78,52 @@ final class CloudSpongeCommand<C> implements Command.Raw {
 
     @Override
     public CommandResult process(final @NonNull CommandCause cause, final ArgumentReader.@NonNull Mutable arguments) {
-        final C cloudSender = this.commandManager.backwardsCauseMapper().apply(cause);
-        final Audience audience = cause.audience();
+        final C cloudSender = this.commandManager.senderMapper().map(cause);
         final String input = this.formatCommandForParsing(arguments.input());
-        this.commandManager.executeCommand(cloudSender, input).whenComplete((result, throwable) -> {
-            if (throwable == null) {
-                return;
-            }
-            if (throwable instanceof CompletionException) {
-                throwable = throwable.getCause();
-            }
-            this.handleCommandException(cloudSender, audience, throwable);
-        });
+        this.commandManager.commandExecutor().executeCommand(cloudSender, input);
         return CommandResult.success();
     }
 
-    private void handleCommandException(final C cloudSender, final Audience audience, final Throwable throwable) {
-        if (throwable instanceof InvalidSyntaxException) {
-            this.commandManager.handleException(
-                    cloudSender,
-                    InvalidSyntaxException.class,
-                    (InvalidSyntaxException) throwable,
-                    (c, e) -> audience.sendMessage(text().append(
-                            text("Invalid Command Syntax. Correct command syntax is: ", RED),
-                            text("/" + e.getCorrectSyntax(), GRAY)
-                    ).build())
-            );
-        } else if (throwable instanceof InvalidCommandSenderException) {
-            this.commandManager.handleException(
-                    cloudSender,
-                    InvalidCommandSenderException.class,
-                    (InvalidCommandSenderException) throwable,
-                    (c, e) -> audience.sendMessage(text(throwable.getMessage(), RED))
-            );
-        } else if (throwable instanceof NoPermissionException) {
-            this.commandManager.handleException(
-                    cloudSender,
-                    NoPermissionException.class,
-                    (NoPermissionException) throwable,
-                    (c, e) -> audience.sendMessage(MESSAGE_NO_PERMS)
-            );
-        } else if (throwable instanceof NoSuchCommandException) {
-            this.commandManager.handleException(
-                    cloudSender,
-                    NoSuchCommandException.class,
-                    (NoSuchCommandException) throwable,
-                    (c, e) -> audience.sendMessage(MESSAGE_UNKNOWN_COMMAND)
-            );
-        } else if (throwable instanceof ArgumentParseException) {
-            this.commandManager.handleException(
-                    cloudSender,
-                    ArgumentParseException.class,
-                    (ArgumentParseException) throwable,
-                    (c, e) -> audience.sendMessage(text().append(
-                            text("Invalid Command Argument: ", RED),
-                            getMessage(throwable.getCause()).colorIfAbsent(GRAY)
-                    ).build())
-            );
-        } else if (throwable instanceof CommandExecutionException) {
-            this.commandManager.handleException(
-                    cloudSender,
-                    CommandExecutionException.class,
-                    (CommandExecutionException) throwable,
-                    (c, e) -> {
-                        audience.sendMessage(MESSAGE_INTERNAL_ERROR);
-                        this.commandManager.owningPluginContainer().logger()
-                                .error("Exception executing command handler", throwable.getCause());
-                    }
-            );
-        } else {
+    // todo
+    public static <C> void registerExceptionHandlers(final SpongeCommandManager<C> mgr) {
+        mgr.exceptionController().registerHandler(InvalidSyntaxException.class, ctx -> {
+            final Audience audience = ctx.context().get(SpongeCommandContextKeys.COMMAND_CAUSE).audience();
+            audience.sendMessage(text().append(
+                text("Invalid Command Syntax. Correct command syntax is: ", RED),
+                text("/" + ctx.exception().correctSyntax(), GRAY)
+            ).build());
+        });
+        mgr.exceptionController().registerHandler(InvalidCommandSenderException.class, ctx -> {
+            final Audience audience = ctx.context().get(SpongeCommandContextKeys.COMMAND_CAUSE).audience();
+            audience.sendMessage(text(ctx.exception().getMessage(), RED));
+        });
+        mgr.exceptionController().registerHandler(NoPermissionException.class, ctx -> {
+            final Audience audience = ctx.context().get(SpongeCommandContextKeys.COMMAND_CAUSE).audience();
+            audience.sendMessage(MESSAGE_NO_PERMS);
+        });
+        mgr.exceptionController().registerHandler(NoSuchCommandException.class, ctx -> {
+            final Audience audience = ctx.context().get(SpongeCommandContextKeys.COMMAND_CAUSE).audience();
+            audience.sendMessage(MESSAGE_UNKNOWN_COMMAND);
+        });
+        mgr.exceptionController().registerHandler(ArgumentParseException.class, ctx -> {
+            final Audience audience = ctx.context().get(SpongeCommandContextKeys.COMMAND_CAUSE).audience();
+            audience.sendMessage(text().append(
+                text("Invalid Command Argument: ", RED),
+                getMessage(ctx.exception().getCause()).colorIfAbsent(GRAY)
+            ).build());
+        });
+        mgr.exceptionController().registerHandler(CommandExecutionException.class, ctx -> {
+            final Audience audience = ctx.context().get(SpongeCommandContextKeys.COMMAND_CAUSE).audience();
             audience.sendMessage(MESSAGE_INTERNAL_ERROR);
-            this.commandManager.owningPluginContainer().logger()
-                    .error("An unhandled exception was thrown during command execution", throwable);
-        }
+            mgr.owningPluginContainer().logger()
+                .error("Exception executing command handler", ctx.exception().getCause());
+        });
+        mgr.exceptionController().registerHandler(Throwable.class, ctx -> {
+            final Audience audience = ctx.context().get(SpongeCommandContextKeys.COMMAND_CAUSE).audience();
+            audience.sendMessage(MESSAGE_INTERNAL_ERROR);
+            mgr.owningPluginContainer().logger()
+                .error("An unhandled exception was thrown during command execution", ctx.exception());
+        });
     }
 
     private static Component getMessage(final Throwable throwable) {
@@ -163,48 +133,45 @@ final class CloudSpongeCommand<C> implements Command.Raw {
 
     @Override
     public List<CommandCompletion> complete(
-            final @NonNull CommandCause cause,
-            final ArgumentReader.@NonNull Mutable arguments
+        final @NonNull CommandCause cause,
+        final ArgumentReader.@NonNull Mutable arguments
     ) {
-        return this.commandManager.suggest(
-                this.commandManager.backwardsCauseMapper().apply(cause),
-                this.formatCommandForSuggestions(arguments.input())
-        ).stream().map(CommandCompletion::of).collect(Collectors.toList());
+        return this.commandManager.suggestionFactory().suggestImmediately(
+            this.commandManager.senderMapper().map(cause),
+            this.formatCommandForSuggestions(arguments.input())
+            // todo
+        ).list().stream().map(s -> CommandCompletion.of(s.suggestion())).collect(Collectors.toList());
     }
 
     @Override
     public boolean canExecute(final @NonNull CommandCause cause) {
-        return this.commandManager.hasPermission(
-                this.commandManager.backwardsCauseMapper().apply(cause),
-                (CommandPermission) this.namedNode().getNodeMeta().getOrDefault("permission", Permission.empty())
-        );
+        return this.commandManager.testPermission(
+            this.commandManager.senderMapper().map(cause),
+            (Permission) this.namedNode().nodeMeta().getOrDefault(CommandNode.META_KEY_PERMISSION, Permission.empty())
+        ).allowed();
     }
 
     @Override
     public Optional<Component> shortDescription(final CommandCause cause) {
-        return Optional.of(this.usage());
+        return Optional.of(this.usage(cause));
     }
 
     @Override
     public Optional<Component> extendedDescription(final CommandCause cause) {
-        return Optional.of(this.usage());
+        return Optional.of(this.usage(cause));
     }
 
     @Override
     public Optional<Component> help(final @NonNull CommandCause cause) {
-        return Optional.of(this.usage());
+        return Optional.of(this.usage(cause));
     }
 
     @Override
     public Component usage(final CommandCause cause) {
-        return this.usage();
+        return text(this.commandManager.commandSyntaxFormatter().apply(this.commandManager.senderMapper().map(cause), Collections.emptyList(), this.namedNode()));
     }
 
-    private Component usage() {
-        return text(this.commandManager.commandSyntaxFormatter().apply(Collections.emptyList(), this.namedNode()));
-    }
-
-    private CommandTree.Node<CommandArgument<C, ?>> namedNode() {
+    private CommandNode<C> namedNode() {
         return this.commandManager.commandTree().getNamedNode(this.label);
     }
 
@@ -212,9 +179,9 @@ final class CloudSpongeCommand<C> implements Command.Raw {
     public CommandTreeNode.Root commandTree() {
         final CommandTreeNode<CommandTreeNode.Root> root = CommandTreeNode.root();
 
-        final CommandTree.Node<CommandArgument<C, ?>> cloud = this.namedNode();
+        final CommandNode<C> cloud = this.namedNode();
 
-        if (cloud.isLeaf() || cloud.getValue().getOwningCommand() != null) {
+        if (cloud.isLeaf() || cloud.command() != null) {
             root.executable();
         }
 
@@ -224,81 +191,76 @@ final class CloudSpongeCommand<C> implements Command.Raw {
         return (CommandTreeNode.Root) root;
     }
 
-    @SuppressWarnings("unchecked")
-    private void addChildren(final CommandTreeNode<?> node, final CommandTree.Node<CommandArgument<C, ?>> cloud) {
-        for (final CommandTree.Node<CommandArgument<C, ?>> child : cloud.getChildren()) {
-            final CommandArgument<C, ?> value = child.getValue();
+    private void addChildren(final CommandTreeNode<?> node, final CommandNode<C> cloud) {
+        for (final CommandNode<C> child : cloud.children()) {
+            final CommandComponent<C> value = child.component();
             final CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>> treeNode;
-            if (value instanceof StaticArgument) {
+            if (value.parser() instanceof LiteralParser) {
                 treeNode = (CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>) CommandTreeNode.literal();
-            } else if (value instanceof CompoundArgument) {
-                final CompoundArgument<?, C, ?> compound = (CompoundArgument<?, C, ?>) value;
+            } else if (value.parser() instanceof CompoundParser) {
+                final CompoundParser<?, C, ?> compound = (CompoundParser<?, C, ?>) value.parser();
                 this.handleCompoundArgument(node, child, compound);
                 continue;
             } else {
-                treeNode = this.commandManager.parserMapper().mapArgument(value);
+                treeNode = this.commandManager.parserMapper().mapComponent(value);
             }
             this.addRequirement(child, treeNode);
             if (canExecute(child)) {
                 treeNode.executable();
             }
             this.addChildren(treeNode, child);
-            node.child(value.getName(), treeNode);
+            node.child(value.name(), treeNode);
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void handleCompoundArgument(
-            final CommandTreeNode<?> node,
-            final CommandTree.Node<CommandArgument<C, ?>> child,
-            final CompoundArgument<?, C, ?> compound
+        final CommandTreeNode<?> node,
+        final CommandNode<C> child,
+        final CompoundParser<?, C, ?> compound
     ) {
         final CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>> treeNode;
-        final Object[] names = compound.getNames().toArray();
-        final Object[] parsers = compound.getParserTuple().toArray();
         final ArrayDeque<Pair<String, CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>>> nodes = new ArrayDeque<>();
-        for (int i = 0; i < parsers.length; i++) {
-            final ArgumentParser<C, Object> parser = (ArgumentParser<C, Object>) parsers[i];
-            final String name = (String) names[i];
-            nodes.add(Pair.of(name, this.commandManager.parserMapper().mapParser(parser)));
+        for (final CommandComponent<C> component : compound.components()) {
+            final String name = component.name();
+            nodes.add(Pair.of(name, this.commandManager.parserMapper().mapParser(component.parser())));
         }
         Pair<String, CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>> argument = null;
         while (!nodes.isEmpty()) {
             final Pair<String, CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>> prev = argument;
             argument = nodes.removeLast();
             if (prev != null) {
-                argument.getSecond().child(prev.getFirst(), prev.getSecond());
+                argument.second().child(prev.first(), prev.second());
             } else {
                 // last node
                 if (canExecute(child)) {
-                    argument.getSecond().executable();
+                    argument.second().executable();
                 }
             }
-            this.addRequirement(child, argument.getSecond());
+            this.addRequirement(child, argument.second());
         }
-        treeNode = argument.getSecond();
+        treeNode = argument.second();
         this.addChildren(treeNode, child);
-        node.child(names[0].toString(), treeNode);
+        node.child(compound.components().get(0).toString(), treeNode);
     }
 
-    private static <C> boolean canExecute(final CommandTree.@NonNull Node<CommandArgument<C, ?>> node) {
+    private static <C> boolean canExecute(final @NonNull CommandNode<C> node) {
         return node.isLeaf()
-                || !node.getValue().isRequired()
-                || node.getValue().getOwningCommand() != null
-                || node.getChildren().stream().noneMatch(c -> c.getValue().isRequired());
+            || !node.component().required()
+            || node.command() != null
+            || node.children().stream().noneMatch(c -> c.component().required());
     }
 
     private void addRequirement(
-            final CommandTree.@NonNull Node<CommandArgument<C, ?>> cloud,
-            final @NonNull CommandTreeNode<? extends CommandTreeNode<?>> node
+        final @NonNull CommandNode<C> cloud,
+        final @NonNull CommandTreeNode<? extends CommandTreeNode<?>> node
     ) {
-        final CommandPermission permission = (CommandPermission) cloud.getNodeMeta()
-                .getOrDefault("permission", Permission.empty());
+        final Permission permission = (Permission) cloud.nodeMeta()
+            .getOrDefault(CommandNode.META_KEY_PERMISSION, Permission.empty());
         if (permission == Permission.empty()) {
             return;
         }
         node.requires(cause ->
-                this.commandManager.hasPermission(this.commandManager.backwardsCauseMapper().apply(cause), permission));
+            this.commandManager.testPermission(this.commandManager.senderMapper().map(cause), permission).allowed());
     }
 
     private String formatCommandForParsing(final @NonNull String arguments) {

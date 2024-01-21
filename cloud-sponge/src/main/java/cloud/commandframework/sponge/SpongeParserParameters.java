@@ -41,8 +41,8 @@ public final class SpongeParserParameters {
     public static final ParserParameter<Boolean> CENTER_INTEGERS = create("center_integers", TypeToken.get(Boolean.class));
 
     private static <T> @NonNull ParserParameter<T> create(
-            final @NonNull String key,
-            final @NonNull TypeToken<T> expectedType
+        final @NonNull String key,
+        final @NonNull TypeToken<T> expectedType
     ) {
         return new ParserParameter<>(key, expectedType);
     }

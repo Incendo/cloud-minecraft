@@ -24,7 +24,6 @@
 package cloud.commandframework.sponge;
 
 import cloud.commandframework.keys.CloudKey;
-import cloud.commandframework.keys.SimpleCloudKey;
 import io.leangen.geantyref.TypeToken;
 import org.spongepowered.api.command.CommandCause;
 
@@ -37,9 +36,9 @@ public final class SpongeCommandContextKeys {
      * The Sponge native {@link org.spongepowered.api.command.CommandCause} instance is stored in the {@link cloud.commandframework.context.CommandContext}
      * by {@link SpongeCommandPreprocessor}
      */
-    public static final CloudKey<CommandCause> COMMAND_CAUSE = SimpleCloudKey.of(
-            "cloud:sponge_command_cause",
-            TypeToken.get(CommandCause.class)
+    public static final CloudKey<CommandCause> COMMAND_CAUSE = CloudKey.of(
+        "cloud:sponge_command_cause",
+        TypeToken.get(CommandCause.class)
     );
 
     private SpongeCommandContextKeys() {

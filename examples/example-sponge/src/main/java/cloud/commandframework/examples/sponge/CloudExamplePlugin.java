@@ -25,11 +25,8 @@ package cloud.commandframework.examples.sponge;
 
 import cloud.commandframework.ArgumentDescription;
 import cloud.commandframework.Command;
-import cloud.commandframework.arguments.standard.DoubleArgument;
-import cloud.commandframework.arguments.standard.IntegerArgument;
-import cloud.commandframework.arguments.standard.StringArgument;
 import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.execution.CommandExecutionCoordinator;
+import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.minecraft.extras.MinecraftExceptionHandler;
 import cloud.commandframework.sponge.CloudInjectionModule;
 import cloud.commandframework.sponge.SpongeCommandManager;
@@ -129,7 +126,7 @@ public final class CloudExamplePlugin {
     public CloudExamplePlugin(final @NonNull Injector injector) {
         // Create child injector with cloud module
         final Injector childInjector = injector.createChildInjector(
-                CloudInjectionModule.createNative(CommandExecutionCoordinator.simpleCoordinator())
+                CloudInjectionModule.createNative(ExecutionCoordinator.simpleCoordinator())
         );
 
         // Get command manager instance
@@ -140,10 +137,10 @@ public final class CloudExamplePlugin {
         this.commandManager.parserMapper().cloudNumberSuggestions(true);
 
         // Register minecraft-extras exception handlers
-        new MinecraftExceptionHandler<CommandCause>()
-                .withDefaultHandlers()
-                .withDecorator(message -> Component.text().append(COMMAND_PREFIX, space(), message).build())
-                .apply(this.commandManager, CommandCause::audience);
+        MinecraftExceptionHandler.create(CommandCause::audience)
+                .defaultHandlers()
+                .decorator(message -> Component.text().append(COMMAND_PREFIX, space(), message).build())
+                .registerTo(this.commandManager);
 
         this.registerCommands();
     }
@@ -151,20 +148,20 @@ public final class CloudExamplePlugin {
     private void registerCommands() {
         this.commandManager.command(this.commandManager.commandBuilder("cloud_test1")
                 .permission("cloud.test1")
-                .handler(ctx -> ctx.getSender().audience().sendMessage(text("success"))));
+                .handler(ctx -> ctx.sender().audience().sendMessage(text("success"))));
         this.commandManager.command(this.commandManager.commandBuilder("cloud_test2")
                 .literal("test")
                 .literal("test1")
-                .handler(ctx -> ctx.getSender().audience().sendMessage(text("success"))));
+                .handler(ctx -> ctx.sender().audience().sendMessage(text("success"))));
         final Command.Builder<CommandCause> cloudTest3 = this.commandManager.commandBuilder("cloud_test3");
         final Command.Builder<CommandCause> test = cloudTest3.literal("test");
         this.commandManager.command(test.argument(StringArgument.single("string_arg"))
                 .literal("test2")
-                .handler(ctx -> ctx.getSender().audience().sendMessage(text("success"))));
+                .handler(ctx -> ctx.sender().audience().sendMessage(text("success"))));
         this.commandManager.command(test.literal("literal_arg")
-                .handler(ctx -> ctx.getSender().audience().sendMessage(text("success"))));
+                .handler(ctx -> ctx.sender().audience().sendMessage(text("success"))));
         this.commandManager.command(cloudTest3.literal("another_test")
-                .handler(ctx -> ctx.getSender().audience().sendMessage(text("success"))));
+                .handler(ctx -> ctx.sender().audience().sendMessage(text("success"))));
         final Command.Builder<CommandCause> cloud = this.commandManager.commandBuilder("cloud");
         this.commandManager.command(cloud.literal("string_test")
                 .argument(StringArgument.single("single"))
@@ -176,14 +173,14 @@ public final class CloudExamplePlugin {
                 .argument(IntegerArgument.<CommandCause>newBuilder("gt0").withMin(1))
                 .argument(IntegerArgument.<CommandCause>newBuilder("lt100").withMax(99))
                 .argument(IntegerArgument.<CommandCause>newBuilder("5to20").withMin(5).withMax(20))
-                .handler(ctx -> ctx.getSender().audience().sendMessage(text("success"))));
+                .handler(ctx -> ctx.sender().audience().sendMessage(text("success"))));
         this.commandManager.command(cloud.literal("enchantment_type_test")
                 .argument(RegistryEntryArgument.of("enchantment_type", EnchantmentType.class, RegistryTypes.ENCHANTMENT_TYPE))
                 .argument(IntegerArgument.optional("level", 1))
                 .handler(ctx -> {
-                    final Object subject = ctx.getSender().subject();
+                    final Object subject = ctx.sender().subject();
                     if (!(subject instanceof Player)) {
-                        ctx.getSender().audience().sendMessage(text("This command is for players only!", RED));
+                        ctx.sender().audience().sendMessage(text("This command is for players only!", RED));
                         return;
                     }
                     final Player player = (Player) subject;
@@ -210,7 +207,7 @@ public final class CloudExamplePlugin {
                 .argument(NamedTextColorArgument.of("color"))
                 .argument(StringArgument.greedy("message"))
                 .handler(ctx -> {
-                    ctx.getSender().audience().sendMessage(
+                    ctx.sender().audience().sendMessage(
                             text(ctx.get("message"), ctx.<NamedTextColor>get("color"))
                     );
                 }));
@@ -223,12 +220,12 @@ public final class CloudExamplePlugin {
                     final int second = ctx.get("second");
                     final Operator operator = ctx.get("operator");
                     if (!(operator instanceof Operator.Simple)) {
-                        ctx.getSender().audience().sendMessage(
+                        ctx.sender().audience().sendMessage(
                                 text("That type of operator is not applicable here!", RED)
                         );
                         return;
                     }
-                    ctx.getSender().audience().sendMessage(text()
+                    ctx.sender().audience().sendMessage(text()
                             .color(AQUA)
                             .append(text(first))
                             .append(space())
@@ -245,9 +242,9 @@ public final class CloudExamplePlugin {
                 .argument(OperatorArgument.of("operator"))
                 .argument(DoubleArgument.of("value"))
                 .handler(ctx -> {
-                    final Object subject = ctx.getSender().subject();
+                    final Object subject = ctx.sender().subject();
                     if (!(subject instanceof Player)) { // todo: a solution to this
-                        ctx.getSender().audience().sendMessage(text("This command is for players only!", RED));
+                        ctx.sender().audience().sendMessage(text("This command is for players only!", RED));
                         return;
                     }
                     final Player player = (Player) subject;
@@ -258,7 +255,7 @@ public final class CloudExamplePlugin {
                         return;
                     }
                     if (!(operator instanceof Operator.Simple)) {
-                        ctx.getSender().audience().sendMessage(
+                        ctx.sender().audience().sendMessage(
                                 text("That type of operator is not applicable here!", RED)
                         );
                         return;
@@ -270,7 +267,7 @@ public final class CloudExamplePlugin {
                 .argument(SinglePlayerSelectorArgument.of("player"))
                 .handler(ctx -> {
                     final Player player = ctx.<SinglePlayerSelector>get("player").getSingle();
-                    ctx.getSender().audience().sendMessage(Component.text().append(
+                    ctx.sender().audience().sendMessage(Component.text().append(
                             text("Display name of selected player: ", GRAY),
                             player.displayName().get()
                     ).build());
@@ -278,7 +275,7 @@ public final class CloudExamplePlugin {
         this.commandManager.command(cloud.literal("world_test")
                 .argument(WorldArgument.of("world"))
                 .handler(ctx -> {
-                    ctx.getSender().audience().sendMessage(text(ctx.<ServerWorld>get("world").key().asString()));
+                    ctx.sender().audience().sendMessage(text(ctx.<ServerWorld>get("world").key().asString()));
                 }));
         this.commandManager.command(cloud.literal("test_item")
                 .argument(ProtoItemStackArgument.of("item"))
@@ -296,13 +293,13 @@ public final class CloudExamplePlugin {
                         }
                         builder.append(text("does not pass!", RED));
                     });
-                    ctx.getSender().audience().sendMessage(message);
+                    ctx.sender().audience().sendMessage(message);
                 }));
         this.commandManager.command(cloud.literal("test_entity_type")
                 .argument(RegistryEntryArgument.of("type", new TypeToken<EntityType<?>>() {
                 }, RegistryTypes.ENTITY_TYPE))
                 .handler(ctx -> {
-                    ctx.getSender().audience().sendMessage(ctx.<EntityType<?>>get("type"));
+                    ctx.sender().audience().sendMessage(ctx.<EntityType<?>>get("type"));
                 }));
         final Function<CommandContext<CommandCause>, RegistryHolder> holderFunction = ctx -> ctx.getSender()
                 .location()
@@ -315,20 +312,20 @@ public final class CloudExamplePlugin {
                             .registry(RegistryTypes.BIOME)
                             .findValueKey(ctx.get("biome"))
                             .orElseThrow(IllegalStateException::new);
-                    ctx.getSender().audience().sendMessage(text(biomeKey.asString()));
+                    ctx.sender().audience().sendMessage(text(biomeKey.asString()));
                 }));
         this.commandManager.command(cloud.literal("test_sounds")
                 .argument(RegistryEntryArgument.of("type", SoundType.class, RegistryTypes.SOUND_TYPE))
                 .handler(ctx -> {
-                    ctx.getSender().audience().sendMessage(text(ctx.<SoundType>get("type").key().asString()));
+                    ctx.sender().audience().sendMessage(text(ctx.<SoundType>get("type").key().asString()));
                 }));
         this.commandManager.command(cloud.literal("summon_villager")
                 .argument(RegistryEntryArgument.of("type", VillagerType.class, RegistryTypes.VILLAGER_TYPE))
                 .argument(RegistryEntryArgument.of("profession", ProfessionType.class, RegistryTypes.PROFESSION_TYPE))
                 .handler(ctx -> {
-                    final ServerLocation loc = ctx.getSender().location().orElse(null);
+                    final ServerLocation loc = ctx.sender().location().orElse(null);
                     if (loc == null) {
-                        ctx.getSender().audience().sendMessage(text("No location!"));
+                        ctx.sender().audience().sendMessage(text("No location!"));
                         return;
                     }
                     final ServerWorld world = loc.world();
@@ -336,25 +333,25 @@ public final class CloudExamplePlugin {
                     villager.offer(Keys.VILLAGER_TYPE, ctx.get("type"));
                     villager.offer(Keys.PROFESSION_TYPE, ctx.get("profession"));
                     if (world.spawnEntity(villager)) {
-                        ctx.getSender().audience().sendMessage(text()
+                        ctx.sender().audience().sendMessage(text()
                                 .append(text("Spawned entity!", GREEN))
                                 .append(space())
                                 .append(villager.displayName().get())
                                 .hoverEvent(villager));
                     } else {
-                        ctx.getSender().audience().sendMessage(text("failed to spawn :("));
+                        ctx.sender().audience().sendMessage(text("failed to spawn :("));
                     }
                 }));
         this.commandManager.command(cloud.literal("vec3d")
                 .argument(Vector3dArgument.of("vec3d"))
                 .handler(ctx -> {
-                    ctx.getSender().audience().sendMessage(text(ctx.<Vector3d>get("vec3d").toString()));
+                    ctx.sender().audience().sendMessage(text(ctx.<Vector3d>get("vec3d").toString()));
                 }));
         this.commandManager.command(cloud.literal("selectentities")
                 .argument(MultipleEntitySelectorArgument.of("selector"))
                 .handler(ctx -> {
                     final MultipleEntitySelector selector = ctx.get("selector");
-                    ctx.getSender().audience().sendMessage(Component.text().append(
+                    ctx.sender().audience().sendMessage(Component.text().append(
                             text("Using selector: ", BLUE),
                             text(selector.inputString()),
                             newline(),
@@ -368,12 +365,12 @@ public final class CloudExamplePlugin {
         this.commandManager.command(cloud.literal("user")
                 .argument(UserArgument.of("user"))
                 .handler(ctx -> {
-                    ctx.getSender().audience().sendMessage(text(ctx.<User>get("user").toString()));
+                    ctx.sender().audience().sendMessage(text(ctx.<User>get("user").toString()));
                 }));
         this.commandManager.command(cloud.literal("data")
                 .argument(DataContainerArgument.of("data"))
                 .handler(ctx -> {
-                    ctx.getSender().audience().sendMessage(text(ctx.<DataContainer>get("data").toString()));
+                    ctx.sender().audience().sendMessage(text(ctx.<DataContainer>get("data").toString()));
                 }));
         this.commandManager.command(cloud.literal("setblock")
                 .permission("cloud.setblock")
@@ -382,20 +379,20 @@ public final class CloudExamplePlugin {
                 .handler(ctx -> {
                     final Vector3i position = ctx.get("position");
                     final BlockInput input = ctx.get("block");
-                    final Optional<ServerLocation> location = ctx.getSender().location();
+                    final Optional<ServerLocation> location = ctx.sender().location();
                     if (location.isPresent()) {
                         final ServerWorld world = location.get().world();
                         input.place(world.location(position));
-                        ctx.getSender().audience().sendMessage(text("set block!"));
+                        ctx.sender().audience().sendMessage(text("set block!"));
                     } else {
-                        ctx.getSender().audience().sendMessage(text("no location!"));
+                        ctx.sender().audience().sendMessage(text("no location!"));
                     }
                 }));
         this.commandManager.command(cloud.literal("blockinput")
                 .argument(BlockInputArgument.of("block"))
                 .handler(ctx -> {
                     final BlockInput input = ctx.get("block");
-                    ctx.getSender().audience().sendMessage(text(
+                    ctx.sender().audience().sendMessage(text(
                             PaletteTypes.BLOCK_STATE_PALETTE.get().stringifier()
                                     .apply(RegistryTypes.BLOCK_TYPE.get(), input.blockState())
                     ));
@@ -430,7 +427,7 @@ public final class CloudExamplePlugin {
                     final BlockInput replacement = ctx.get("replacement");
 
                     // its a player so get is fine
-                    final ServerLocation loc = ctx.getSender().location().get();
+                    final ServerLocation loc = ctx.sender().location().get();
                     final ServerWorld world = loc.world();
                     final Vector3d vec = loc.position();
 

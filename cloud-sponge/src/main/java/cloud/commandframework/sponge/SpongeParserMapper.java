@@ -23,20 +23,20 @@
 //
 package cloud.commandframework.sponge;
 
-import cloud.commandframework.arguments.CommandArgument;
-import cloud.commandframework.arguments.compound.FlagArgument;
+import cloud.commandframework.CommandComponent;
+import cloud.commandframework.arguments.flags.CommandFlagParser;
 import cloud.commandframework.arguments.parser.ArgumentParser;
 import cloud.commandframework.arguments.parser.MappedArgumentParser;
-import cloud.commandframework.arguments.standard.BooleanArgument;
-import cloud.commandframework.arguments.standard.ByteArgument;
-import cloud.commandframework.arguments.standard.DoubleArgument;
-import cloud.commandframework.arguments.standard.FloatArgument;
-import cloud.commandframework.arguments.standard.IntegerArgument;
-import cloud.commandframework.arguments.standard.LongArgument;
-import cloud.commandframework.arguments.standard.ShortArgument;
-import cloud.commandframework.arguments.standard.StringArgument;
-import cloud.commandframework.arguments.standard.StringArrayArgument;
-import cloud.commandframework.arguments.standard.UUIDArgument;
+import cloud.commandframework.arguments.standard.BooleanParser;
+import cloud.commandframework.arguments.standard.ByteParser;
+import cloud.commandframework.arguments.standard.DoubleParser;
+import cloud.commandframework.arguments.standard.FloatParser;
+import cloud.commandframework.arguments.standard.IntegerParser;
+import cloud.commandframework.arguments.standard.LongParser;
+import cloud.commandframework.arguments.standard.ShortParser;
+import cloud.commandframework.arguments.standard.StringArrayParser;
+import cloud.commandframework.arguments.standard.StringParser;
+import cloud.commandframework.arguments.standard.UUIDParser;
 import io.leangen.geantyref.GenericTypeReflector;
 import io.leangen.geantyref.TypeToken;
 import java.util.HashMap;
@@ -73,9 +73,11 @@ public final class SpongeParserMapper<C> {
         this.initStandardMappers();
     }
 
-    CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>> mapArgument(final CommandArgument<C, ?> value) {
-        final CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>> result = this.mapParser(value.getParser());
-        final boolean customSuggestionsProvider = !DELEGATING_SUGGESTIONS_PROVIDER.isInstance(value.getSuggestionsProvider());
+    CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>> mapComponent(final CommandComponent<C> commandComponent) {
+        final CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>> result = this.mapParser(commandComponent.parser());
+        // final boolean customSuggestionsProvider = !DELEGATING_SUGGESTIONS_PROVIDER.isInstance(commandComponent.getSuggestionsProvider());
+        // todo: not exactly the same as in v1...
+        final boolean customSuggestionsProvider = commandComponent.parser() != commandComponent.suggestionProvider();
         if (customSuggestionsProvider) {
             result.customCompletions();
         }
@@ -87,12 +89,12 @@ public final class SpongeParserMapper<C> {
         final CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>> result;
         ArgumentParser<C, ?> parser = argumentParser;
         while (parser instanceof MappedArgumentParser<?, ?, ?>) {
-            parser = ((MappedArgumentParser<C, ?, ?>) parser).getBaseParser();
+            parser = ((MappedArgumentParser<C, ?, ?>) parser).baseParser();
         }
         final Mapping<C, ?> mapper = this.mappers.get(parser.getClass());
         if (mapper != null) {
             final CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>> apply =
-                    (CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>) ((Function) mapper.mapper).apply(parser);
+                (CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>) ((Function) mapper.mapper).apply(parser);
             if (mapper.cloudSuggestions) {
                 apply.customCompletions();
                 return apply;
@@ -107,89 +109,89 @@ public final class SpongeParserMapper<C> {
     }
 
     private void initStandardMappers() {
-        this.registerMapping(new TypeToken<StringArgument.StringParser<C>>() {
+        this.registerMapping(new TypeToken<StringParser<C>>() {
         }, builder -> builder.to(stringParser -> {
-            final StringArgument.StringMode mode = stringParser.getStringMode();
-            if (mode == StringArgument.StringMode.SINGLE) {
+            final StringParser.StringMode mode = stringParser.stringMode();
+            if (mode == StringParser.StringMode.SINGLE) {
                 return CommandTreeNodeTypes.STRING.get().createNode().customCompletions().word();
-            } else if (mode == StringArgument.StringMode.QUOTED) {
+            } else if (mode == StringParser.StringMode.QUOTED) {
                 return CommandTreeNodeTypes.STRING.get().createNode().customCompletions();
-            } else if (mode == StringArgument.StringMode.GREEDY || mode == StringArgument.StringMode.GREEDY_FLAG_YIELDING) {
+            } else if (mode == StringParser.StringMode.GREEDY || mode == StringParser.StringMode.GREEDY_FLAG_YIELDING) {
                 return CommandTreeNodeTypes.STRING.get().createNode().customCompletions().greedy();
             }
             throw new IllegalArgumentException("Unknown string mode '" + mode + "'!");
         }));
-        this.registerMapping(new TypeToken<ByteArgument.ByteParser<C>>() {
+        this.registerMapping(new TypeToken<ByteParser<C>>() {
         }, builder -> builder.to(byteParser -> {
             final CommandTreeNode.Range<Integer> node = CommandTreeNodeTypes.INTEGER.get().createNode();
-            node.min((int) byteParser.getMin());
-            node.max((int) byteParser.getMax());
+            node.min((int) byteParser.range().minByte());
+            node.max((int) byteParser.range().maxByte());
             return node;
         }));
-        this.registerMapping(new TypeToken<ShortArgument.ShortParser<C>>() {
+        this.registerMapping(new TypeToken<ShortParser<C>>() {
         }, builder -> builder.to(shortParser -> {
             final CommandTreeNode.Range<Integer> node = CommandTreeNodeTypes.INTEGER.get().createNode();
-            node.min((int) shortParser.getMin());
-            node.max((int) shortParser.getMax());
+            node.min((int) shortParser.range().minShort());
+            node.max((int) shortParser.range().maxShort());
             return node;
         }));
-        this.registerMapping(new TypeToken<IntegerArgument.IntegerParser<C>>() {
+        this.registerMapping(new TypeToken<IntegerParser<C>>() {
         }, builder -> builder.to(integerParser -> {
             final CommandTreeNode.Range<Integer> node = CommandTreeNodeTypes.INTEGER.get().createNode();
             if (integerParser.hasMin()) {
-                node.min(integerParser.getMin());
+                node.min(integerParser.range().minInt());
             }
             if (integerParser.hasMax()) {
-                node.max(integerParser.getMax());
+                node.max(integerParser.range().maxInt());
             }
             return node;
         }));
-        this.registerMapping(new TypeToken<FloatArgument.FloatParser<C>>() {
+        this.registerMapping(new TypeToken<FloatParser<C>>() {
         }, builder -> builder.to(floatParser -> {
             final CommandTreeNode.Range<Float> node = CommandTreeNodeTypes.FLOAT.get().createNode();
             if (floatParser.hasMin()) {
-                node.min(floatParser.getMin());
+                node.min(floatParser.range().minFloat());
             }
             if (floatParser.hasMax()) {
-                node.max(floatParser.getMax());
+                node.max(floatParser.range().maxFloat());
             }
             return node;
         }));
-        this.registerMapping(new TypeToken<DoubleArgument.DoubleParser<C>>() {
+        this.registerMapping(new TypeToken<DoubleParser<C>>() {
         }, builder -> builder.to(doubleParser -> {
             final CommandTreeNode.Range<Double> node = CommandTreeNodeTypes.DOUBLE.get().createNode();
             if (doubleParser.hasMin()) {
-                node.min(doubleParser.getMin());
+                node.min(doubleParser.range().minDouble());
             }
             if (doubleParser.hasMax()) {
-                node.max(doubleParser.getMax());
+                node.max(doubleParser.range().maxDouble());
             }
             return node;
         }));
-        this.registerMapping(new TypeToken<LongArgument.LongParser<C>>() {
+        this.registerMapping(new TypeToken<LongParser<C>>() {
         }, builder -> builder.to(longParser -> {
             final CommandTreeNode.Range<Long> node = CommandTreeNodeTypes.LONG.get().createNode();
             if (longParser.hasMin()) {
-                node.min(longParser.getMin());
+                node.min(longParser.range().minLong());
             }
             if (longParser.hasMax()) {
-                node.max(longParser.getMax());
+                node.max(longParser.range().maxLong());
             }
             return node;
         }));
-        this.registerMapping(new TypeToken<BooleanArgument.BooleanParser<C>>() {
+        this.registerMapping(new TypeToken<BooleanParser<C>>() {
         }, builder -> builder.to(booleanParser -> {
             return CommandTreeNodeTypes.BOOL.get().createNode();
         }));
-        this.registerMapping(new TypeToken<FlagArgument.FlagArgumentParser<C>>() {
+        this.registerMapping(new TypeToken<CommandFlagParser<C>>() {
         }, builder -> builder.to(flagArgumentParser -> {
             return CommandTreeNodeTypes.STRING.get().createNode().customCompletions().greedy();
         }));
-        this.registerMapping(new TypeToken<StringArrayArgument.StringArrayParser<C>>() {
+        this.registerMapping(new TypeToken<StringArrayParser<C>>() {
         }, builder -> builder.to(stringArrayParser -> {
             return CommandTreeNodeTypes.STRING.get().createNode().customCompletions().greedy();
         }));
-        this.registerMapping(new TypeToken<UUIDArgument.UUIDParser<C>>() {
+        this.registerMapping(new TypeToken<UUIDParser<C>>() {
         }, builder -> builder.to(uuidParser -> {
             return CommandTreeNodeTypes.UUID.get().createNode();
         }));
@@ -204,8 +206,8 @@ public final class SpongeParserMapper<C> {
      * @param <A>        cloud argument parser type
      */
     public <A extends ArgumentParser<C, ?>> void registerMapping(
-            final @NonNull TypeToken<A> cloudType,
-            final @NonNull Consumer<MappingBuilder<C, A>> configurer
+        final @NonNull TypeToken<A> cloudType,
+        final @NonNull Consumer<MappingBuilder<C, A>> configurer
     ) {
         final MappingBuilderImpl<C, A> builder = new MappingBuilderImpl<>();
         configurer.accept(builder);
@@ -223,20 +225,20 @@ public final class SpongeParserMapper<C> {
      * @throws IllegalArgumentException when there is no mapper registered for the provided argument type
      */
     public <T, A extends ArgumentParser<C, T>> void cloudSuggestions(
-            final @NonNull TypeToken<A> parserType,
-            final boolean cloudSuggestions
+        final @NonNull TypeToken<A> parserType,
+        final boolean cloudSuggestions
     ) throws IllegalArgumentException {
         final Mapping<C, ?> mapping = this.mappers.get(GenericTypeReflector.erase(parserType.getType()));
         if (mapping == null) {
             throw new IllegalArgumentException(
-                    "No mapper registered for type: " + GenericTypeReflector
-                            .erase(parserType.getType())
-                            .toGenericString()
+                "No mapper registered for type: " + GenericTypeReflector
+                    .erase(parserType.getType())
+                    .toGenericString()
             );
         }
         this.mappers.put(
-                GenericTypeReflector.erase(parserType.getType()),
-                new Mapping<>(mapping.mapper, cloudSuggestions)
+            GenericTypeReflector.erase(parserType.getType()),
+            new Mapping<>(mapping.mapper, cloudSuggestions)
         );
     }
 
@@ -247,17 +249,17 @@ public final class SpongeParserMapper<C> {
      * @param cloudNumberSuggestions whether to use Cloud number suggestions
      */
     public void cloudNumberSuggestions(final boolean cloudNumberSuggestions) {
-        this.cloudSuggestions(new TypeToken<ByteArgument.ByteParser<C>>() {
+        this.cloudSuggestions(new TypeToken<ByteParser<C>>() {
         }, cloudNumberSuggestions);
-        this.cloudSuggestions(new TypeToken<ShortArgument.ShortParser<C>>() {
+        this.cloudSuggestions(new TypeToken<ShortParser<C>>() {
         }, cloudNumberSuggestions);
-        this.cloudSuggestions(new TypeToken<IntegerArgument.IntegerParser<C>>() {
+        this.cloudSuggestions(new TypeToken<IntegerParser<C>>() {
         }, cloudNumberSuggestions);
-        this.cloudSuggestions(new TypeToken<FloatArgument.FloatParser<C>>() {
+        this.cloudSuggestions(new TypeToken<FloatParser<C>>() {
         }, cloudNumberSuggestions);
-        this.cloudSuggestions(new TypeToken<DoubleArgument.DoubleParser<C>>() {
+        this.cloudSuggestions(new TypeToken<DoubleParser<C>>() {
         }, cloudNumberSuggestions);
-        this.cloudSuggestions(new TypeToken<LongArgument.LongParser<C>>() {
+        this.cloudSuggestions(new TypeToken<LongParser<C>>() {
         }, cloudNumberSuggestions);
     }
 
@@ -302,7 +304,7 @@ public final class SpongeParserMapper<C> {
 
         @Override
         public @NonNull MappingBuilder<C, A> to(
-                final @NonNull Function<A, CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>> mapper
+            final @NonNull Function<A, CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>> mapper
         ) {
             this.mapper = mapper;
             return this;
@@ -321,8 +323,8 @@ public final class SpongeParserMapper<C> {
         private final boolean cloudSuggestions;
 
         private Mapping(
-                final Function<A, CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>> mapper,
-                final boolean cloudSuggestions
+            final Function<A, CommandTreeNode.Argument<? extends CommandTreeNode.Argument<?>>> mapper,
+            final boolean cloudSuggestions
         ) {
             this.mapper = mapper;
             this.cloudSuggestions = cloudSuggestions;

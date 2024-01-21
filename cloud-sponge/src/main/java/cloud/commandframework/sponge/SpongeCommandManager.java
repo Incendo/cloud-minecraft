@@ -24,9 +24,10 @@
 package cloud.commandframework.sponge;
 
 import cloud.commandframework.CommandManager;
-import cloud.commandframework.CommandTree;
+import cloud.commandframework.SenderMapper;
+import cloud.commandframework.SenderMapperHolder;
 import cloud.commandframework.arguments.parser.ParserParameters;
-import cloud.commandframework.execution.CommandExecutionCoordinator;
+import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.meta.CommandMeta;
 import cloud.commandframework.meta.SimpleCommandMeta;
 import cloud.commandframework.sponge.annotation.specifier.Center;
@@ -60,6 +61,7 @@ import cloud.commandframework.sponge.data.MultiplePlayerSelector;
 import cloud.commandframework.sponge.data.ProtoItemStack;
 import cloud.commandframework.sponge.data.SingleEntitySelector;
 import cloud.commandframework.sponge.data.SinglePlayerSelector;
+import cloud.commandframework.state.RegistrationState;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 import com.google.inject.Module;
@@ -70,7 +72,6 @@ import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.spongepowered.api.ResourceKey;
@@ -101,39 +102,37 @@ import org.spongepowered.plugin.PluginContainer;
  *
  * @param <C> Command sender type
  */
-public final class SpongeCommandManager<C> extends CommandManager<C> {
+public final class SpongeCommandManager<C> extends CommandManager<C> implements SenderMapperHolder<CommandCause, C> {
 
     private final PluginContainer pluginContainer;
-    private final Function<C, CommandCause> causeMapper;
-    private final Function<CommandCause, C> backwardsCauseMapper;
+    private final SenderMapper<CommandCause, C> senderMapper;
     private final SpongeParserMapper<C> parserMapper;
 
     /**
      * Create a new command manager instance
      *
-     * @param pluginContainer             Owning plugin
-     * @param commandExecutionCoordinator Execution coordinator instance
-     * @param causeMapper                 Function mapping the custom command sender type to a Sponge CommandCause
-     * @param backwardsCauseMapper        Function mapping Sponge CommandCause to the custom command sender type
+     * @param pluginContainer      Owning plugin
+     * @param executionCoordinator Execution coordinator instance
+     * @param senderMapper         Function mapping the custom command sender type to a Sponge CommandCause
      */
     @SuppressWarnings("unchecked")
     @Inject
     public SpongeCommandManager(
-            final @NonNull PluginContainer pluginContainer,
-            final @NonNull Function<@NonNull CommandTree<C>, @NonNull CommandExecutionCoordinator<C>> commandExecutionCoordinator,
-            final @NonNull Function<@NonNull C, @NonNull CommandCause> causeMapper,
-            final @NonNull Function<@NonNull CommandCause, @NonNull C> backwardsCauseMapper
+        final @NonNull PluginContainer pluginContainer,
+        final @NonNull ExecutionCoordinator<C> executionCoordinator,
+        final @NonNull SenderMapper<CommandCause, C> senderMapper
     ) {
-        super(commandExecutionCoordinator, new SpongeRegistrationHandler<C>());
+        super(executionCoordinator, new SpongeRegistrationHandler<C>());
         this.checkLateCreation();
         this.pluginContainer = pluginContainer;
         ((SpongeRegistrationHandler<C>) this.commandRegistrationHandler()).initialize(this);
-        this.causeMapper = causeMapper;
-        this.backwardsCauseMapper = backwardsCauseMapper;
+        this.senderMapper = senderMapper;
         this.parserMapper = new SpongeParserMapper<>();
         this.registerCommandPreProcessor(new SpongeCommandPreprocessor<>(this));
         this.registerParsers();
         this.captionRegistry(new SpongeCaptionRegistry<>());
+
+        CloudSpongeCommand.registerExceptionHandlers(this);
     }
 
     private void checkLateCreation() {
@@ -142,102 +141,102 @@ public final class SpongeCommandManager<C> extends CommandManager<C> {
             return;
         }
         throw new IllegalStateException(
-                "SpongeCommandManager must be created before the first firing of RegisterCommandEvent. (created too late)"
+            "SpongeCommandManager must be created before the first firing of RegisterCommandEvent. (created too late)"
         );
     }
 
     private void registerParsers() {
         this.parserRegistry().registerParserSupplier(
-                TypeToken.get(ComponentArgument.class),
-                params -> new ComponentArgument.Parser<>()
+            TypeToken.get(ComponentArgument.class),
+            params -> new ComponentArgument.Parser<>()
         );
         this.parserRegistry().registerParserSupplier(
-                TypeToken.get(NamedTextColor.class),
-                params -> new NamedTextColorArgument.Parser<>()
+            TypeToken.get(NamedTextColor.class),
+            params -> new NamedTextColorArgument.Parser<>()
         );
         this.parserRegistry().registerParserSupplier(
-                TypeToken.get(Operator.class),
-                params -> new OperatorArgument.Parser<>()
+            TypeToken.get(Operator.class),
+            params -> new OperatorArgument.Parser<>()
         );
         this.parserRegistry().registerParserSupplier(
-                TypeToken.get(ServerWorld.class),
-                params -> new WorldArgument.Parser<>()
+            TypeToken.get(ServerWorld.class),
+            params -> new WorldArgument.Parser<>()
         );
         this.parserRegistry().registerParserSupplier(
-                TypeToken.get(ProtoItemStack.class),
-                params -> new ProtoItemStackArgument.Parser<>()
+            TypeToken.get(ProtoItemStack.class),
+            params -> new ProtoItemStackArgument.Parser<>()
         );
         this.parserRegistry().registerParserSupplier(
-                TypeToken.get(ItemStackPredicate.class),
-                params -> new ItemStackPredicateArgument.Parser<>()
+            TypeToken.get(ItemStackPredicate.class),
+            params -> new ItemStackPredicateArgument.Parser<>()
         );
         this.parserRegistry().registerParserSupplier(
-                TypeToken.get(ResourceKey.class),
-                params -> new ResourceKeyArgument.Parser<>()
+            TypeToken.get(ResourceKey.class),
+            params -> new ResourceKeyArgument.Parser<>()
         );
         this.parserRegistry().registerParserSupplier(
-                TypeToken.get(GameProfile.class),
-                params -> new GameProfileArgument.Parser<>()
+            TypeToken.get(GameProfile.class),
+            params -> new GameProfileArgument.Parser<>()
         );
         this.parserRegistry().registerParserSupplier(
-                TypeToken.get(GameProfileCollection.class),
-                params -> new GameProfileCollectionArgument.Parser<>()
+            TypeToken.get(GameProfileCollection.class),
+            params -> new GameProfileCollectionArgument.Parser<>()
         );
         this.parserRegistry().registerParserSupplier(
-                TypeToken.get(BlockInputArgument.class),
-                params -> new BlockInputArgument.Parser<>()
+            TypeToken.get(BlockInputArgument.class),
+            params -> new BlockInputArgument.Parser<>()
         );
         this.parserRegistry().registerParserSupplier(
-                TypeToken.get(BlockPredicate.class),
-                params -> new BlockPredicateArgument.Parser<>()
+            TypeToken.get(BlockPredicate.class),
+            params -> new BlockPredicateArgument.Parser<>()
         );
         this.parserRegistry().registerParserSupplier(
-                TypeToken.get(User.class),
-                params -> new UserArgument.Parser<>()
+            TypeToken.get(User.class),
+            params -> new UserArgument.Parser<>()
         );
         this.parserRegistry().registerParserSupplier(
-                TypeToken.get(DataContainer.class),
-                params -> new DataContainerArgument.Parser<>()
+            TypeToken.get(DataContainer.class),
+            params -> new DataContainerArgument.Parser<>()
         );
 
         // Position arguments
         this.parserRegistry().registerAnnotationMapper(
-                Center.class,
-                (annotation, type) -> ParserParameters.single(SpongeParserParameters.CENTER_INTEGERS, true)
+            Center.class,
+            (annotation, type) -> ParserParameters.single(SpongeParserParameters.CENTER_INTEGERS, true)
         );
         this.parserRegistry().registerParserSupplier(
-                TypeToken.get(Vector2d.class),
-                params -> new Vector2dArgument.Parser<>(params.get(SpongeParserParameters.CENTER_INTEGERS, false))
+            TypeToken.get(Vector2d.class),
+            params -> new Vector2dArgument.Parser<>(params.get(SpongeParserParameters.CENTER_INTEGERS, false))
         );
         this.parserRegistry().registerParserSupplier(
-                TypeToken.get(Vector3d.class),
-                params -> new Vector3dArgument.Parser<>(params.get(SpongeParserParameters.CENTER_INTEGERS, false))
+            TypeToken.get(Vector3d.class),
+            params -> new Vector3dArgument.Parser<>(params.get(SpongeParserParameters.CENTER_INTEGERS, false))
         );
         this.parserRegistry().registerParserSupplier(
-                TypeToken.get(Vector2i.class),
-                params -> new Vector2iArgument.Parser<>()
+            TypeToken.get(Vector2i.class),
+            params -> new Vector2iArgument.Parser<>()
         );
         this.parserRegistry().registerParserSupplier(
-                TypeToken.get(Vector3i.class),
-                params -> new Vector3iArgument.Parser<>()
+            TypeToken.get(Vector3i.class),
+            params -> new Vector3iArgument.Parser<>()
         );
 
         // Entity selectors
         this.parserRegistry().registerParserSupplier(
-                TypeToken.get(SinglePlayerSelector.class),
-                params -> new SinglePlayerSelectorArgument.Parser<>()
+            TypeToken.get(SinglePlayerSelector.class),
+            params -> new SinglePlayerSelectorArgument.Parser<>()
         );
         this.parserRegistry().registerParserSupplier(
-                TypeToken.get(MultiplePlayerSelector.class),
-                params -> new MultiplePlayerSelectorArgument.Parser<>()
+            TypeToken.get(MultiplePlayerSelector.class),
+            params -> new MultiplePlayerSelectorArgument.Parser<>()
         );
         this.parserRegistry().registerParserSupplier(
-                TypeToken.get(SingleEntitySelector.class),
-                params -> new SingleEntitySelectorArgument.Parser<>()
+            TypeToken.get(SingleEntitySelector.class),
+            params -> new SingleEntitySelectorArgument.Parser<>()
         );
         this.parserRegistry().registerParserSupplier(
-                TypeToken.get(MultipleEntitySelector.class),
-                params -> new MultipleEntitySelectorArgument.Parser<>()
+            TypeToken.get(MultipleEntitySelector.class),
+            params -> new MultipleEntitySelectorArgument.Parser<>()
         );
 
         this.registerRegistryParsers();
@@ -245,7 +244,7 @@ public final class SpongeCommandManager<C> extends CommandManager<C> {
 
     private void registerRegistryParsers() {
         final Set<RegistryType<?>> ignoredRegistryTypes = ImmutableSet.of(
-                RegistryTypes.OPERATOR // We have a different Operator parser that doesn't use a ResourceKey as input
+            RegistryTypes.OPERATOR // We have a different Operator parser that doesn't use a ResourceKey as input
         );
         for (final Field field : RegistryTypes.class.getDeclaredFields()) {
             final Type generic = field.getGenericType(); /* RegistryType<?> */
@@ -266,21 +265,21 @@ public final class SpongeCommandManager<C> extends CommandManager<C> {
             final Type valueType = ((ParameterizedType) generic).getActualTypeArguments()[0];
 
             this.parserRegistry().registerParserSupplier(
-                    TypeToken.get(valueType),
-                    params -> new RegistryEntryArgument.Parser<>(defaultedRegistryType)
+                TypeToken.get(valueType),
+                params -> new RegistryEntryArgument.Parser<>(defaultedRegistryType)
             );
         }
     }
 
     @Override
     public boolean hasPermission(
-            @NonNull final C sender,
-            @NonNull final String permission
+        @NonNull final C sender,
+        @NonNull final String permission
     ) {
         if (permission.isEmpty()) {
             return true;
         }
-        return this.causeMapper.apply(sender).hasPermission(permission);
+        return this.senderMapper.reverse(sender).hasPermission(permission);
     }
 
     @Override
@@ -299,7 +298,7 @@ public final class SpongeCommandManager<C> extends CommandManager<C> {
 
     /**
      * Get the {@link SpongeParserMapper}, responsible for mapping Cloud
-     * {@link cloud.commandframework.arguments.CommandArgument CommandArguments} to Sponge
+     * {@link cloud.commandframework.arguments.parser.ArgumentParser ArgumentParser} to Sponge
      * {@link org.spongepowered.api.command.registrar.tree.CommandTreeNode.Argument CommandTreeNode.Arguments}.
      *
      * @return the parser mapper
@@ -308,22 +307,9 @@ public final class SpongeCommandManager<C> extends CommandManager<C> {
         return this.parserMapper;
     }
 
-    /**
-     * Get the {@link Function} used to map {@link C command senders} to {@link CommandCause CommandCauses}.
-     *
-     * @return command cause mapper
-     */
-    public @NonNull Function<@NonNull C, @NonNull CommandCause> causeMapper() {
-        return this.causeMapper;
-    }
-
-    /**
-     * Get the {@link Function} used to map {@link CommandCause CommandCauses} to {@link C command senders}.
-     *
-     * @return backwards command cause mapper
-     */
-    public @NonNull Function<@NonNull CommandCause, @NonNull C> backwardsCauseMapper() {
-        return this.backwardsCauseMapper;
+    @Override
+    public @NonNull SenderMapper<CommandCause, C> senderMapper() {
+        return this.senderMapper;
     }
 
     void registrationCalled() {
@@ -331,7 +317,7 @@ public final class SpongeCommandManager<C> extends CommandManager<C> {
             this.registrationCallbackListeners.forEach(listener -> listener.accept(this));
             this.registrationCallbackListeners.clear();
         }
-        if (this.registrationState() != RegistrationState.AFTER_REGISTRATION) {
+        if (this.state() != RegistrationState.AFTER_REGISTRATION) {
             this.lockRegistration();
         }
     }
@@ -351,7 +337,7 @@ public final class SpongeCommandManager<C> extends CommandManager<C> {
      * @param listener listener
      */
     public void addRegistrationCallbackListener(final @NonNull Consumer<@NonNull SpongeCommandManager<C>> listener) {
-        if (this.registrationState() == RegistrationState.AFTER_REGISTRATION) {
+        if (this.state() == RegistrationState.AFTER_REGISTRATION) {
             throw new IllegalStateException("The SpongeCommandManager is in the AFTER_REGISTRATION state!");
         }
         this.registrationCallbackListeners.add(listener);

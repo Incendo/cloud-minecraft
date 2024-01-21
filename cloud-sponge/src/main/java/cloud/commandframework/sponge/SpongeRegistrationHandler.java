@@ -23,9 +23,8 @@
 //
 package cloud.commandframework.sponge;
 
-import cloud.commandframework.CommandTree;
-import cloud.commandframework.arguments.CommandArgument;
-import cloud.commandframework.arguments.StaticArgument;
+import cloud.commandframework.CommandComponent;
+import cloud.commandframework.internal.CommandNode;
 import cloud.commandframework.internal.CommandRegistrationHandler;
 import io.leangen.geantyref.TypeToken;
 import java.util.HashSet;
@@ -47,22 +46,20 @@ final class SpongeRegistrationHandler<C> implements CommandRegistrationHandler {
     SpongeRegistrationHandler() {
     }
 
-    @SuppressWarnings("unchecked")
     private void handleRegistrationEvent(final RegisterCommandEvent<Command.Raw> event) {
         this.commandManager.registrationCalled();
-        for (final CommandTree.Node<CommandArgument<C, ?>> node : this.commandManager.commandTree().getRootNodes()) {
-            final StaticArgument<C> value = requireNonNull((StaticArgument<C>) node.getValue());
-            this.registerCommand(event, value);
+        for (final CommandNode<C> node : this.commandManager.commandTree().rootNodes()) {
+            this.registerCommand(event, requireNonNull(node.component()));
         }
     }
 
-    private void registerCommand(final RegisterCommandEvent<Command.Raw> event, final StaticArgument<C> rootLiteral) {
-        final String label = rootLiteral.getName();
+    private void registerCommand(final RegisterCommandEvent<Command.Raw> event, final CommandComponent<C> rootLiteral) {
+        final String label = rootLiteral.name();
         event.register(
                 this.commandManager.owningPluginContainer(),
                 new CloudSpongeCommand<>(label, this.commandManager),
                 label,
-                rootLiteral.getAlternativeAliases().toArray(new String[0])
+                rootLiteral.alternativeAliases().toArray(new String[0])
         );
     }
 
@@ -79,9 +76,8 @@ final class SpongeRegistrationHandler<C> implements CommandRegistrationHandler {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean registerCommand(final cloud.commandframework.@NonNull Command<?> command) {
+    public boolean registerCommand(cloud.commandframework.@NonNull Command command) {
         this.registeredCommands.add((cloud.commandframework.Command<C>) command);
         return true;
     }
-
 }

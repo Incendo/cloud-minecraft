@@ -23,7 +23,7 @@
 //
 package cloud.commandframework.sponge;
 
-import cloud.commandframework.brigadier.argument.WrappedBrigadierParser;
+import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
 import cloud.commandframework.execution.preprocessor.CommandPreprocessingContext;
 import cloud.commandframework.execution.preprocessor.CommandPreprocessor;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -50,13 +50,13 @@ final class SpongeCommandPreprocessor<C> implements CommandPreprocessor<C> {
 
     @Override
     public void accept(final @NonNull CommandPreprocessingContext<C> context) {
-        final CommandCause commandCause = this.commandManager.causeMapper().apply(context.getCommandContext().getSender());
-        context.getCommandContext().store(SpongeCommandContextKeys.COMMAND_CAUSE, commandCause);
+        final CommandCause commandCause = this.commandManager.senderMapper().reverse(context.commandContext().sender());
+        context.commandContext().store(SpongeCommandContextKeys.COMMAND_CAUSE, commandCause);
 
         // For WrappedBrigadierParser. The CloudBrigadierManager will store this in context as well, however we are not using
         // the CloudBrigadierManager, only the WrapperBrigadierParser. CommandCause is mixed into CommandSourceStack, which is
         // Minecraft's native Brigadier sender type on the server.
-        context.getCommandContext().store(WrappedBrigadierParser.COMMAND_CONTEXT_BRIGADIER_NATIVE_SENDER, commandCause);
+        context.commandContext().store(WrappedBrigadierParser.COMMAND_CONTEXT_BRIGADIER_NATIVE_SENDER, commandCause);
     }
 
 }
