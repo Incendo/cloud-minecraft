@@ -1,6 +1,11 @@
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+        maven("https://repo.spongepowered.org/repository/maven-public/")
+    }
     includeBuild("gradle/build-logic")
 }
 
