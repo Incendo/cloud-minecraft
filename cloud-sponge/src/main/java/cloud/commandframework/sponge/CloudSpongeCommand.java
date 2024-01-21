@@ -169,7 +169,8 @@ final class CloudSpongeCommand<C> implements Command.Raw {
 
     @Override
     public Component usage(final CommandCause cause) {
-        return text(this.commandManager.commandSyntaxFormatter().apply(this.commandManager.senderMapper().map(cause), Collections.emptyList(), this.namedNode()));
+        return text(this.commandManager.commandSyntaxFormatter()
+            .apply(this.commandManager.senderMapper().map(cause), Collections.emptyList(), this.namedNode()));
     }
 
     private CommandNode<C> namedNode() {

@@ -68,8 +68,8 @@ public final class OperatorParser<C> implements NodeSource, ArgumentParser<C, Op
 
     @Override
     public @NonNull ArgumentParseResult<@NonNull Operator> parse(
-        @NonNull final CommandContext<@NonNull C> commandContext,
-        @NonNull final CommandInput inputQueue
+        final @NonNull CommandContext<@NonNull C> commandContext,
+        final @NonNull CommandInput inputQueue
     ) {
         final String input = inputQueue.readString();
         final Optional<Operator> operator = RegistryTypes.OPERATOR.get().stream()

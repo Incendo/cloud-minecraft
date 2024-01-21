@@ -51,8 +51,8 @@ public final class NamedTextColorParser<C> implements NodeSource, ArgumentParser
 
     @Override
     public @NonNull ArgumentParseResult<@NonNull NamedTextColor> parse(
-        @NonNull final CommandContext<@NonNull C> commandContext,
-        @NonNull final CommandInput inputQueue
+        final @NonNull CommandContext<@NonNull C> commandContext,
+        final @NonNull CommandInput inputQueue
     ) {
         final String input = inputQueue.readString().toLowerCase(Locale.ROOT);
         final NamedTextColor color = NamedTextColor.NAMES.value(input);

@@ -75,8 +75,8 @@ public final class UserParser<C> implements NodeSource, ArgumentParser<C, UUID>,
 
     @Override
     public @NonNull ArgumentParseResult<@NonNull UUID> parse(
-        @NonNull final CommandContext<@NonNull C> commandContext,
-        @NonNull final CommandInput inputQueue
+        final @NonNull CommandContext<@NonNull C> commandContext,
+        final @NonNull CommandInput inputQueue
     ) {
         final CommandInput inputCopy = inputQueue.copy();
         final String peek = inputQueue.readString();

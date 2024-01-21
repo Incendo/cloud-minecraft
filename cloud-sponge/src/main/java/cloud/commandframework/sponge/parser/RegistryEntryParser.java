@@ -58,7 +58,8 @@ import org.spongepowered.api.registry.RegistryTypes;
  * @param <C> sender type
  * @param <V> value type
  */
-public final class RegistryEntryParser<C, V> implements NodeSource, ArgumentParser.FutureArgumentParser<C, V>, BlockingSuggestionProvider.Strings<C> {
+public final class RegistryEntryParser<C, V> implements NodeSource,
+    ArgumentParser.FutureArgumentParser<C, V>, BlockingSuggestionProvider.Strings<C> {
 
     // Start DefaultedRegistryType methods
 
@@ -182,8 +183,8 @@ public final class RegistryEntryParser<C, V> implements NodeSource, ArgumentPars
     @SuppressWarnings("unchecked")
     @Override
     public @NonNull CompletableFuture<@NonNull ArgumentParseResult<@NonNull V>> parseFuture(
-        @NonNull final CommandContext<@NonNull C> commandContext,
-        @NonNull final CommandInput inputQueue
+        final @NonNull CommandContext<@NonNull C> commandContext,
+        final @NonNull CommandInput inputQueue
     ) {
         return ((ArgumentParser<C, ResourceKey>) RESOURCE_KEY_PARSER).parseFuture(commandContext, inputQueue).thenApply(keyResult -> {
             if (keyResult.failure().isPresent()) {

@@ -51,7 +51,8 @@ import org.spongepowered.api.item.inventory.ItemStack;
  *
  * @param <C> sender type
  */
-public final class ItemStackPredicateParser<C> implements ArgumentParser.FutureArgumentParser<C, ItemStackPredicate>, NodeSource, SuggestionProvider<C> {
+public final class ItemStackPredicateParser<C> implements ArgumentParser.FutureArgumentParser<C, ItemStackPredicate>,
+    NodeSource, SuggestionProvider<C> {
 
     public static <C> ParserDescriptor<C, ItemStackPredicate> itemStackPredicateParser() {
         return ParserDescriptor.of(new ItemStackPredicateParser<>(), ItemStackPredicate.class);
@@ -74,8 +75,8 @@ public final class ItemStackPredicateParser<C> implements ArgumentParser.FutureA
 
     @Override
     public @NonNull CompletableFuture<ArgumentParseResult<@NonNull ItemStackPredicate>> parseFuture(
-        @NonNull final CommandContext<@NonNull C> commandContext,
-        @NonNull final CommandInput inputQueue
+        final @NonNull CommandContext<@NonNull C> commandContext,
+        final @NonNull CommandInput inputQueue
     ) {
         return this.mappedParser.parseFuture(commandContext, inputQueue);
     }

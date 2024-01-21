@@ -197,8 +197,8 @@ public final class SpongeCommandManager<C> extends CommandManager<C> implements 
 
     @Override
     public boolean hasPermission(
-        @NonNull final C sender,
-        @NonNull final String permission
+        final @NonNull C sender,
+        final @NonNull String permission
     ) {
         if (permission.isEmpty()) {
             return true;

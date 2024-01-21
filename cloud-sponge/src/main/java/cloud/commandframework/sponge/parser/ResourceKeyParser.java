@@ -47,8 +47,8 @@ public final class ResourceKeyParser<C> implements NodeSource, ArgumentParser<C,
 
     @Override
     public @NonNull ArgumentParseResult<@NonNull ResourceKey> parse(
-        @NonNull final CommandContext<@NonNull C> commandContext,
-        @NonNull final CommandInput inputQueue
+        final @NonNull CommandContext<@NonNull C> commandContext,
+        final @NonNull CommandInput inputQueue
     ) {
         final String input = inputQueue.readString();
         final ResourceKey key = ResourceKeyUtil.resourceKey(input);

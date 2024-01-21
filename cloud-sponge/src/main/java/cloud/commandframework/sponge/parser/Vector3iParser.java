@@ -72,8 +72,8 @@ public final class Vector3iParser<C> implements NodeSource, ArgumentParser.Futur
 
     @Override
     public @NonNull CompletableFuture<ArgumentParseResult<@NonNull Vector3i>> parseFuture(
-        @NonNull final CommandContext<@NonNull C> commandContext,
-        @NonNull final CommandInput inputQueue
+        final @NonNull CommandContext<@NonNull C> commandContext,
+        final @NonNull CommandInput inputQueue
     ) {
         return this.mappedParser.parseFuture(commandContext, inputQueue);
     }

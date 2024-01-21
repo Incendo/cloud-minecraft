@@ -50,7 +50,8 @@ import org.spongepowered.api.entity.Entity;
  *
  * @param <C> sender type
  */
-public final class SingleEntitySelectorParser<C> implements NodeSource, ArgumentParser.FutureArgumentParser<C, SingleEntitySelector>, SuggestionProvider<C> {
+public final class SingleEntitySelectorParser<C> implements NodeSource,
+    ArgumentParser.FutureArgumentParser<C, SingleEntitySelector>, SuggestionProvider<C> {
 
     public static <C> ParserDescriptor<C, SingleEntitySelector> singleEntitySelectorParser() {
         return ParserDescriptor.of(new SingleEntitySelectorParser<>(), SingleEntitySelector.class);
@@ -60,8 +61,8 @@ public final class SingleEntitySelectorParser<C> implements NodeSource, Argument
 
     @Override
     public @NonNull CompletableFuture<ArgumentParseResult<@NonNull SingleEntitySelector>> parseFuture(
-        @NonNull final CommandContext<@NonNull C> commandContext,
-        @NonNull final CommandInput inputQueue
+        final @NonNull CommandContext<@NonNull C> commandContext,
+        final @NonNull CommandInput inputQueue
     ) {
         final CommandInput originalInput = inputQueue.copy();
         return this.nativeParser.parseFuture(commandContext, inputQueue).thenApply(result -> {

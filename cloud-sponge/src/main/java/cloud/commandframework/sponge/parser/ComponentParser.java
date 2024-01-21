@@ -58,8 +58,8 @@ public final class ComponentParser<C> implements ArgumentParser.FutureArgumentPa
 
     @Override
     public @NonNull CompletableFuture<ArgumentParseResult<@NonNull Component>> parseFuture(
-        @NonNull final CommandContext<@NonNull C> commandContext,
-        @NonNull final CommandInput inputQueue
+        final @NonNull CommandContext<@NonNull C> commandContext,
+        final @NonNull CommandInput inputQueue
     ) {
         return this.mappedParser.parseFuture(commandContext, inputQueue);
     }

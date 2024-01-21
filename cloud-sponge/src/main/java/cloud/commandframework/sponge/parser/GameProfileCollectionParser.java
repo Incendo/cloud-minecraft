@@ -58,7 +58,8 @@ import org.spongepowered.common.profile.SpongeGameProfile;
  *
  * @param <C> sender type
  */
-public final class GameProfileCollectionParser<C> implements NodeSource, ArgumentParser.FutureArgumentParser<C, GameProfileCollection>, SuggestionProvider<C> {
+public final class GameProfileCollectionParser<C> implements NodeSource,
+    ArgumentParser.FutureArgumentParser<C, GameProfileCollection>, SuggestionProvider<C> {
 
     public static <C> ParserDescriptor<C, GameProfileCollection> gameProfileCollectionParser() {
         return ParserDescriptor.of(new GameProfileCollectionParser<>(), GameProfileCollection.class);
@@ -83,8 +84,8 @@ public final class GameProfileCollectionParser<C> implements NodeSource, Argumen
 
     @Override
     public @NonNull CompletableFuture<ArgumentParseResult<@NonNull GameProfileCollection>> parseFuture(
-        @NonNull final CommandContext<@NonNull C> commandContext,
-        @NonNull final CommandInput inputQueue
+        final @NonNull CommandContext<@NonNull C> commandContext,
+        final @NonNull CommandInput inputQueue
     ) {
         return this.mappedParser.parseFuture(commandContext, inputQueue);
     }

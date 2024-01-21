@@ -51,7 +51,8 @@ import org.spongepowered.api.entity.living.player.server.ServerPlayer;
  *
  * @param <C> sender type
  */
-public final class SinglePlayerSelectorParser<C> implements NodeSource, ArgumentParser.FutureArgumentParser<C, SinglePlayerSelector>, SuggestionProvider<C> {
+public final class SinglePlayerSelectorParser<C> implements NodeSource,
+    ArgumentParser.FutureArgumentParser<C, SinglePlayerSelector>, SuggestionProvider<C> {
 
     public static <C> ParserDescriptor<C, SinglePlayerSelector> singlePlayerSelectorParser() {
         return ParserDescriptor.of(new SinglePlayerSelectorParser<>(), SinglePlayerSelector.class);
@@ -61,8 +62,8 @@ public final class SinglePlayerSelectorParser<C> implements NodeSource, Argument
 
     @Override
     public @NonNull CompletableFuture<ArgumentParseResult<@NonNull SinglePlayerSelector>> parseFuture(
-        @NonNull final CommandContext<@NonNull C> commandContext,
-        @NonNull final CommandInput inputQueue
+        final @NonNull CommandContext<@NonNull C> commandContext,
+        final @NonNull CommandInput inputQueue
     ) {
         final CommandInput originalInput = inputQueue.copy();
         return this.nativeParser.parseFuture(commandContext, inputQueue).thenApply(result -> {

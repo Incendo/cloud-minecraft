@@ -77,8 +77,8 @@ public final class BlockInputParser<C> implements NodeSource, ArgumentParser.Fut
 
     @Override
     public @NonNull CompletableFuture<ArgumentParseResult<@NonNull BlockInput>> parseFuture(
-        @NonNull final CommandContext<@NonNull C> commandContext,
-        @NonNull final CommandInput inputQueue
+        final @NonNull CommandContext<@NonNull C> commandContext,
+        final @NonNull CommandInput inputQueue
     ) {
         return this.mappedParser.parseFuture(commandContext, inputQueue);
     }

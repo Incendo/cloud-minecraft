@@ -47,7 +47,8 @@ import org.spongepowered.common.data.persistence.NBTTranslator;
  *
  * @param <C> sender type
  */
-public final class DataContainerParser<C> implements ArgumentParser.FutureArgumentParser<C, DataContainer>, NodeSource, SuggestionProvider<C> {
+public final class DataContainerParser<C> implements ArgumentParser.FutureArgumentParser<C, DataContainer>,
+    NodeSource, SuggestionProvider<C> {
 
     public static <C> ParserDescriptor<C, DataContainer> dataContainerParser() {
         return ParserDescriptor.of(new DataContainerParser<>(), DataContainer.class);
@@ -60,14 +61,17 @@ public final class DataContainerParser<C> implements ArgumentParser.FutureArgume
 
     @Override
     public @NonNull CompletableFuture<ArgumentParseResult<@NonNull DataContainer>> parseFuture(
-        @NonNull final CommandContext<@NonNull C> commandContext,
-        @NonNull final CommandInput inputQueue
+        final @NonNull CommandContext<@NonNull C> commandContext,
+        final @NonNull CommandInput inputQueue
     ) {
         return this.mappedParser.parseFuture(commandContext, inputQueue);
     }
 
     @Override
-    public @NonNull CompletableFuture<@NonNull Iterable<@NonNull Suggestion>> suggestionsFuture(@NonNull CommandContext<C> context, @NonNull CommandInput input) {
+    public @NonNull CompletableFuture<@NonNull Iterable<@NonNull Suggestion>> suggestionsFuture(
+        final @NonNull CommandContext<C> context,
+        final @NonNull CommandInput input
+    ) {
         return this.mappedParser.suggestionProvider().suggestionsFuture(context, input);
     }
 

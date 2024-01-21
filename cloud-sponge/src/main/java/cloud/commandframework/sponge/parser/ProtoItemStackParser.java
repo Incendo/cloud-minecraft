@@ -65,7 +65,8 @@ import org.spongepowered.common.data.persistence.NBTTranslator;
  *
  * @param <C> sender type
  */
-public final class ProtoItemStackParser<C> implements NodeSource, ArgumentParser.FutureArgumentParser<C, ProtoItemStack>, SuggestionProvider<C> {
+public final class ProtoItemStackParser<C> implements NodeSource,
+    ArgumentParser.FutureArgumentParser<C, ProtoItemStack>, SuggestionProvider<C> {
 
     public static <C> ParserDescriptor<C, ProtoItemStack> protoItemStackParser() {
         return ParserDescriptor.of(new ProtoItemStackParser<>(), ProtoItemStack.class);
@@ -77,8 +78,8 @@ public final class ProtoItemStackParser<C> implements NodeSource, ArgumentParser
 
     @Override
     public @NonNull CompletableFuture<ArgumentParseResult<@NonNull ProtoItemStack>> parseFuture(
-        @NonNull final CommandContext<@NonNull C> commandContext,
-        @NonNull final CommandInput inputQueue
+        final @NonNull CommandContext<@NonNull C> commandContext,
+        final @NonNull CommandInput inputQueue
     ) {
         return this.mappedParser.parseFuture(commandContext, inputQueue);
     }

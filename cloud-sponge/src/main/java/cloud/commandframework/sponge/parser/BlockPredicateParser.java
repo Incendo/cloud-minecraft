@@ -51,7 +51,8 @@ import org.spongepowered.common.util.VecHelper;
  *
  * @param <C> sender type
  */
-public final class BlockPredicateParser<C> implements ArgumentParser.FutureArgumentParser<C, BlockPredicate>, NodeSource, SuggestionProvider<C> {
+public final class BlockPredicateParser<C> implements ArgumentParser.FutureArgumentParser<C, BlockPredicate>,
+    NodeSource, SuggestionProvider<C> {
 
     public static <C> ParserDescriptor<C, BlockPredicate> blockPredicateParser() {
         return ParserDescriptor.of(new BlockPredicateParser<>(), BlockPredicate.class);

@@ -75,7 +75,7 @@ final class SpongeRegistrationHandler<C> implements CommandRegistrationHandler<C
     }
 
     @Override
-    public boolean registerCommand(cloud.commandframework.@NonNull Command<C> command) {
+    public boolean registerCommand(final cloud.commandframework.@NonNull Command<C> command) {
         this.registeredCommands.add(command);
         return true;
     }

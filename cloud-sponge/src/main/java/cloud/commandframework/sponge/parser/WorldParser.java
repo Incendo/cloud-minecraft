@@ -75,8 +75,8 @@ public final class WorldParser<C> implements ArgumentParser<C, ServerWorld>, Nod
 
     @Override
     public @NonNull ArgumentParseResult<@NonNull ServerWorld> parse(
-        @NonNull final CommandContext<@NonNull C> commandContext,
-        @NonNull final CommandInput inputQueue
+        final @NonNull CommandContext<@NonNull C> commandContext,
+        final @NonNull CommandInput inputQueue
     ) {
         final String input = inputQueue.readString();
         final ResourceKey key = ResourceKeyUtil.resourceKey(input);

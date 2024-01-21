@@ -83,8 +83,8 @@ public final class Vector2dParser<C> extends VectorParser<C, Vector2d> {
 
     @Override
     public @NonNull CompletableFuture<ArgumentParseResult<@NonNull Vector2d>> parseFuture(
-        @NonNull final CommandContext<@NonNull C> commandContext,
-        @NonNull final CommandInput inputQueue
+        final @NonNull CommandContext<@NonNull C> commandContext,
+        final @NonNull CommandInput inputQueue
     ) {
         return this.mappedParser.parseFuture(commandContext, inputQueue);
     }
