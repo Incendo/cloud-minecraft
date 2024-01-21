@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2021 Alexander Söderberg & Contributors
+// Copyright (c) 2022 Alexander Söderberg & Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
+package cloud.commandframework.sponge;
+
+import cloud.commandframework.arguments.parser.ArgumentParser;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.spongepowered.api.command.registrar.tree.CommandTreeNode;
+
 /**
- * Arguments for the Sponge 8 environment.
+ * Implemented by {@link ArgumentParser} which also supply a special {@link CommandTreeNode.Argument}.
  */
-package cloud.commandframework.sponge.argument;
+public interface NodeSource {
+
+    /**
+     * Get the node for this parser.
+     *
+     * @return argument node
+     */
+    CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node();
+
+}

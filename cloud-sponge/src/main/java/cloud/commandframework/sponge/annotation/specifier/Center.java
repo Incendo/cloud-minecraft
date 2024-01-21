@@ -23,15 +23,15 @@
 //
 package cloud.commandframework.sponge.annotation.specifier;
 
-import cloud.commandframework.sponge.argument.Vector2dArgument;
-import cloud.commandframework.sponge.argument.Vector3dArgument;
+import cloud.commandframework.sponge.parser.Vector2dParser;
+import cloud.commandframework.sponge.parser.Vector3dParser;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation used to enable coordinate centering for {@link Vector3dArgument} and {@link Vector2dArgument}.
+ * Annotation used to enable coordinate centering for {@link Vector3dParser} and {@link Vector2dParser}.
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)

@@ -21,25 +21,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package cloud.commandframework.sponge;
+package cloud.commandframework.sponge.parser;
 
 import cloud.commandframework.arguments.parser.ArgumentParser;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.spongepowered.api.command.registrar.tree.CommandTreeNode;
+import cloud.commandframework.arguments.suggestion.SuggestionProvider;
+import cloud.commandframework.sponge.NodeSource;
 
 /**
- * An {@link ArgumentParser} which also supplies a special {@link CommandTreeNode.Argument}.
+ * Parent of {@link Vector3dParser} and {@link Vector2dParser} containing shared methods.
+ *
+ * <p>Not for extension by API users.</p>
  *
  * @param <C> sender type
- * @param <T> value type
+ * @param <V> vector type
  */
-public interface NodeSupplyingArgumentParser<C, T> extends ArgumentParser<C, T> {
+public abstract class VectorParser<C, V> implements NodeSource, ArgumentParser.FutureArgumentParser<C, V>, SuggestionProvider<C> {
+
+    private final boolean centerIntegers;
+
+    protected VectorParser(final boolean centerIntegers) {
+        this.centerIntegers = centerIntegers;
+    }
 
     /**
-     * Get the node for this parser.
+     * Get whether integers will be centered to x.5. Defaults to false.
      *
-     * @return argument node
+     * @return whether integers will be centered
      */
-    CommandTreeNode.@NonNull Argument<? extends CommandTreeNode.Argument<?>> node();
+    public final boolean centerIntegers() {
+        return this.centerIntegers;
+    }
 
 }

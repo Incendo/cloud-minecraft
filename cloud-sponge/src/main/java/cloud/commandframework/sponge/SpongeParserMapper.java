@@ -57,16 +57,6 @@ import static java.util.Objects.requireNonNull;
  */
 public final class SpongeParserMapper<C> {
 
-    private static final Class<?> DELEGATING_SUGGESTIONS_PROVIDER; // todo - ugly
-
-    static {
-        try {
-            DELEGATING_SUGGESTIONS_PROVIDER = Class.forName("cloud.commandframework.arguments.DelegatingSuggestionsProvider");
-        } catch (final ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private final Map<Class<?>, Mapping<C, ?>> mappers = new HashMap<>();
 
     SpongeParserMapper() {
@@ -100,8 +90,8 @@ public final class SpongeParserMapper<C> {
                 return apply;
             }
             result = apply;
-        } else if (parser instanceof NodeSupplyingArgumentParser) {
-            result = ((NodeSupplyingArgumentParser<C, ?>) parser).node();
+        } else if (parser instanceof NodeSource) {
+            result = ((NodeSource) parser).node();
         } else {
             result = CommandTreeNodeTypes.STRING.get().createNode().customCompletions().word();
         }

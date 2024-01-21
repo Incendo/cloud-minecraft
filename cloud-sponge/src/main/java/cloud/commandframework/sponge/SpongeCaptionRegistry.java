@@ -23,6 +23,7 @@
 //
 package cloud.commandframework.sponge;
 
+import cloud.commandframework.captions.CaptionProvider;
 import cloud.commandframework.captions.StandardCaptionRegistry;
 
 /**
@@ -36,56 +37,52 @@ public class SpongeCaptionRegistry<C> extends StandardCaptionRegistry<C> {
      * Default caption for {@link SpongeCaptionKeys#ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY}
      */
     public static final String ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY =
-            "No such entry '{id}' in registry '{registry}'.";
+        "No such entry '{id}' in registry '{registry}'.";
 
     /**
      * Default caption for {@link SpongeCaptionKeys#ARGUMENT_PARSE_FAILURE_USER_CANNOT_FIND_USER_WITH_NAME}
      */
     public static final String ARGUMENT_PARSE_FAILURE_USER_CANNOT_FIND_USER_WITH_NAME =
-            "Cannot find a user with the name '{name}'.";
+        "Cannot find a user with the name '{name}'.";
 
     /**
      * Default caption for {@link SpongeCaptionKeys#ARGUMENT_PARSE_FAILURE_USER_CANNOT_FIND_USER_WITH_UUID}
      */
     public static final String ARGUMENT_PARSE_FAILURE_USER_CANNOT_FIND_USER_WITH_UUID =
-            "Cannot find a user with the UUID '{uuid}'.";
+        "Cannot find a user with the UUID '{uuid}'.";
 
     /**
      * Default caption for {@link SpongeCaptionKeys#ARGUMENT_PARSE_FAILURE_USER_INVALID_INPUT}
      */
     public static final String ARGUMENT_PARSE_FAILURE_USER_INVALID_INPUT =
-            "Input '{input}' is not a valid UUID or username.";
+        "Input '{input}' is not a valid UUID or username.";
 
     /**
      * Default caption for {@link SpongeCaptionKeys#ARGUMENT_PARSE_FAILURE_GAME_PROFILE_TOO_MANY_SELECTED}
      */
     public static final String ARGUMENT_PARSE_FAILURE_GAME_PROFILE_TOO_MANY_SELECTED =
-            "The provided selector matched multiple game profiles, but only one is allowed.";
+        "The provided selector matched multiple game profiles, but only one is allowed.";
 
     protected SpongeCaptionRegistry() {
         super();
 
-        this.registerMessageFactory(
+        this.registerProvider(CaptionProvider.<C>constantProvider()
+            .putCaptions(
                 SpongeCaptionKeys.ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY,
-                (caption, sender) -> ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY
-        );
-        this.registerMessageFactory(
+                ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_UNKNOWN_ENTRY)
+            .putCaptions(
                 SpongeCaptionKeys.ARGUMENT_PARSE_FAILURE_USER_CANNOT_FIND_USER_WITH_NAME,
-                (caption, sender) -> ARGUMENT_PARSE_FAILURE_USER_CANNOT_FIND_USER_WITH_NAME
-        );
-        this.registerMessageFactory(
+                ARGUMENT_PARSE_FAILURE_USER_CANNOT_FIND_USER_WITH_NAME)
+            .putCaptions(
                 SpongeCaptionKeys.ARGUMENT_PARSE_FAILURE_USER_CANNOT_FIND_USER_WITH_UUID,
-                (caption, sender) -> ARGUMENT_PARSE_FAILURE_USER_CANNOT_FIND_USER_WITH_UUID
-        );
-        this.registerMessageFactory(
+                ARGUMENT_PARSE_FAILURE_USER_CANNOT_FIND_USER_WITH_UUID)
+            .putCaptions(
                 SpongeCaptionKeys.ARGUMENT_PARSE_FAILURE_USER_INVALID_INPUT,
-                (caption, sender) -> ARGUMENT_PARSE_FAILURE_USER_INVALID_INPUT
-        );
-        this.registerMessageFactory(
+                ARGUMENT_PARSE_FAILURE_USER_INVALID_INPUT)
+            .putCaptions(
                 SpongeCaptionKeys.ARGUMENT_PARSE_FAILURE_GAME_PROFILE_TOO_MANY_SELECTED,
-                (caption, sender) -> ARGUMENT_PARSE_FAILURE_GAME_PROFILE_TOO_MANY_SELECTED
-        );
+                ARGUMENT_PARSE_FAILURE_GAME_PROFILE_TOO_MANY_SELECTED)
+            .build());
     }
-
 
 }

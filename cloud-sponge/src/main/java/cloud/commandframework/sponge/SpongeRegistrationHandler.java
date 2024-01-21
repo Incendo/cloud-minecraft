@@ -38,7 +38,7 @@ import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
 
 import static java.util.Objects.requireNonNull;
 
-final class SpongeRegistrationHandler<C> implements CommandRegistrationHandler {
+final class SpongeRegistrationHandler<C> implements CommandRegistrationHandler<C> {
 
     private SpongeCommandManager<C> commandManager;
     private final Set<cloud.commandframework.Command<C>> registeredCommands = new HashSet<>();
@@ -74,10 +74,9 @@ final class SpongeRegistrationHandler<C> implements CommandRegistrationHandler {
         );
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public boolean registerCommand(cloud.commandframework.@NonNull Command command) {
-        this.registeredCommands.add((cloud.commandframework.Command<C>) command);
+    public boolean registerCommand(cloud.commandframework.@NonNull Command<C> command) {
+        this.registeredCommands.add(command);
         return true;
     }
 }

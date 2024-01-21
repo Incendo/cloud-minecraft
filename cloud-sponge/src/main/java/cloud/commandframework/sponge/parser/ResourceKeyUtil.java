@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package cloud.commandframework.sponge.argument;
+package cloud.commandframework.sponge.parser;
 
 import cloud.commandframework.arguments.parser.ArgumentParseResult;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
