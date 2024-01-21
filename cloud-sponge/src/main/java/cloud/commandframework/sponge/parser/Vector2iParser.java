@@ -55,10 +55,16 @@ import org.spongepowered.math.vector.Vector2i;
  *     <li>{@code ^ ^}</li>
  * </ul>
  *
- * @param <C> sender type
+ * @param <C> command sender type
  */
 public final class Vector2iParser<C> implements NodeSource, ArgumentParser.FutureArgumentParser<C, Vector2i>, SuggestionProvider<C> {
 
+    /**
+     * Creates a new {@link Vector2iParser}.
+     *
+     * @param <C> command sender type
+     * @return new parser
+     */
     public static <C> ParserDescriptor<C, Vector2i> vector2iParser() {
         return ParserDescriptor.of(new Vector2iParser<>(), Vector2i.class);
     }

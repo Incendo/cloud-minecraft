@@ -41,10 +41,16 @@ import org.spongepowered.api.command.registrar.tree.CommandTreeNodeTypes;
 /**
  * An argument for parsing {@link NamedTextColor NamedTextColors}.
  *
- * @param <C> sender type
+ * @param <C> command sender type
  */
 public final class NamedTextColorParser<C> implements NodeSource, ArgumentParser<C, NamedTextColor>, BlockingSuggestionProvider.Strings<C> {
 
+    /**
+     * Creates a new {@link NamedTextColorParser}.
+     *
+     * @param <C> command sender type
+     * @return new parser
+     */
     public static <C> ParserDescriptor<C, NamedTextColor> namedTextColorParser() {
         return ParserDescriptor.of(new NamedTextColorParser<>(), NamedTextColor.class);
     }

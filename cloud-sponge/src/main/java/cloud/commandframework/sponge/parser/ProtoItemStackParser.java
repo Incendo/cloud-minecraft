@@ -63,11 +63,17 @@ import org.spongepowered.common.data.persistence.NBTTranslator;
  *     <li>{@code diamond_sword{Enchantments:[{id:sharpness,lvl:5}]}}</li>
  * </ul>
  *
- * @param <C> sender type
+ * @param <C> command sender type
  */
 public final class ProtoItemStackParser<C> implements NodeSource,
     ArgumentParser.FutureArgumentParser<C, ProtoItemStack>, SuggestionProvider<C> {
 
+    /**
+     * Creates a new {@link ProtoItemStackParser}.
+     *
+     * @param <C> command sender type
+     * @return new parser
+     */
     public static <C> ParserDescriptor<C, ProtoItemStack> protoItemStackParser() {
         return ParserDescriptor.of(new ProtoItemStackParser<>(), ProtoItemStack.class);
     }

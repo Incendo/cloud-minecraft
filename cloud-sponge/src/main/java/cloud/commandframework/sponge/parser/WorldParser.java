@@ -49,10 +49,16 @@ import org.spongepowered.api.world.server.WorldManager;
 /**
  * Argument for retrieving {@link ServerWorld ServerWorlds} from the {@link WorldManager} by their {@link ResourceKey}.
  *
- * @param <C> sender type
+ * @param <C> command sender type
  */
 public final class WorldParser<C> implements ArgumentParser<C, ServerWorld>, NodeSource, BlockingSuggestionProvider.Strings<C> {
 
+    /**
+     * Creates a new {@link WorldParser}.
+     *
+     * @param <C> command sender type
+     * @return new parser
+     */
     public static <C> ParserDescriptor<C, ServerWorld> worldParser() {
         return ParserDescriptor.of(new WorldParser<>(), ServerWorld.class);
     }

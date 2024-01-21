@@ -37,10 +37,16 @@ import org.spongepowered.api.command.registrar.tree.CommandTreeNodeTypes;
 /**
  * Argument for parsing {@link ResourceKey ResourceKeys}.
  *
- * @param <C> sender type
+ * @param <C> command sender type
  */
 public final class ResourceKeyParser<C> implements NodeSource, ArgumentParser<C, ResourceKey> {
 
+    /**
+     * Creates a new {@link ResourceKeyParser}.
+     *
+     * @param <C> command sender type
+     * @return new parser
+     */
     public static <C> ParserDescriptor<C, ResourceKey> resourceKeyParser() {
         return ParserDescriptor.of(new ResourceKeyParser<>(), ResourceKey.class);
     }

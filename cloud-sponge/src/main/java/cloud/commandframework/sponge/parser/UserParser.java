@@ -62,10 +62,16 @@ import org.spongepowered.api.user.UserManager;
  * Argument for parsing {@link User} {@link UUID UUIDs} in the {@link UserManager} from
  * a {@link Selector}, last known username, or {@link UUID} string.
  *
- * @param <C> sender type
+ * @param <C> command sender type
  */
 public final class UserParser<C> implements NodeSource, ArgumentParser<C, UUID>, SuggestionProvider<C> {
 
+    /**
+     * Creates a new {@link UserParser}.
+     *
+     * @param <C> command sender type
+     * @return new parser
+     */
     public static <C> ParserDescriptor<C, UUID> userParser() {
         return ParserDescriptor.of(new UserParser<>(), UUID.class);
     }

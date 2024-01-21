@@ -53,7 +53,7 @@ import static java.util.Objects.requireNonNull;
  * Class responsible for mapping Cloud {@link ArgumentParser ArgumentParsers} to Sponge
  * {@link CommandTreeNode.Argument CommandTreeNode.Arguments}.
  *
- * @param <C> sender type
+ * @param <C> command sender type
  */
 public final class SpongeParserMapper<C> {
 
@@ -257,7 +257,7 @@ public final class SpongeParserMapper<C> {
      * Builder for mappings from Cloud {@link ArgumentParser ArgumentParsers} to Sponge
      * {@link CommandTreeNode.Argument CommandTreeNode.Arguments}
      *
-     * @param <C> sender type
+     * @param <C> command sender type
      * @param <A> parser type
      */
     public interface MappingBuilder<C, A extends ArgumentParser<C, ?>> {

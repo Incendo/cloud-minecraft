@@ -54,10 +54,16 @@ import org.spongepowered.math.vector.Vector3i;
  *     <li>{@code ^1 ^ ^-5}</li>
  * </ul>
  *
- * @param <C> sender type
+ * @param <C> command sender type
  */
 public final class Vector3iParser<C> implements NodeSource, ArgumentParser.FutureArgumentParser<C, Vector3i>, SuggestionProvider<C> {
 
+    /**
+     * Creates a new {@link Vector3iParser}.
+     *
+     * @param <C> command sender type
+     * @return new parser
+     */
     public static <C> ParserDescriptor<C, Vector3i> vector3iParser() {
         return ParserDescriptor.of(new Vector3iParser<>(), Vector3i.class);
     }

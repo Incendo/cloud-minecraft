@@ -48,11 +48,17 @@ import org.spongepowered.api.entity.Entity;
 /**
  * Argument for selecting a single {@link Entity} using a {@link Selector}.
  *
- * @param <C> sender type
+ * @param <C> command sender type
  */
 public final class SingleEntitySelectorParser<C> implements NodeSource,
     ArgumentParser.FutureArgumentParser<C, SingleEntitySelector>, SuggestionProvider<C> {
 
+    /**
+     * Creates a new {@link SingleEntitySelectorParser}.
+     *
+     * @param <C> command sender type
+     * @return new parser
+     */
     public static <C> ParserDescriptor<C, SingleEntitySelector> singleEntitySelectorParser() {
         return ParserDescriptor.of(new SingleEntitySelectorParser<>(), SingleEntitySelector.class);
     }

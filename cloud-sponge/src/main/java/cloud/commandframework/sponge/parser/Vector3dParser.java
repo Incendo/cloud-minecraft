@@ -52,14 +52,27 @@ import org.spongepowered.math.vector.Vector3d;
  *     <li>{@code ^1 ^ ^-5}</li>
  * </ul>
  *
- * @param <C> sender type
+ * @param <C> command sender type
  */
 public final class Vector3dParser<C> extends VectorParser<C, Vector3d> {
 
+    /**
+     * Creates a new {@link Vector3dParser}.
+     *
+     * @param <C> command sender type
+     * @return new parser
+     */
     public static <C> ParserDescriptor<C, Vector3d> vector3dParser() {
         return vector3dParser(false);
     }
 
+    /**
+     * Creates a new {@link Vector3dParser}.
+     *
+     * @param <C>            command sender type
+     * @param centerIntegers whether to center integers to x.5
+     * @return new parser
+     */
     public static <C> ParserDescriptor<C, Vector3d> vector3dParser(final boolean centerIntegers) {
         return ParserDescriptor.of(new Vector3dParser<>(centerIntegers), Vector3d.class);
     }

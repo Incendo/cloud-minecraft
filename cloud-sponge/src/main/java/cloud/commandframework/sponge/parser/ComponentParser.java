@@ -42,10 +42,16 @@ import org.spongepowered.common.adventure.SpongeAdventure;
 /**
  * An argument for parsing {@link Component Components} from json formatted text.
  *
- * @param <C> sender type
+ * @param <C> command sender type
  */
 public final class ComponentParser<C> implements ArgumentParser.FutureArgumentParser<C, Component>, NodeSource, SuggestionProvider<C> {
 
+    /**
+     * Creates a new {@link ComponentParser}.
+     *
+     * @param <C> command sender type
+     * @return new parser
+     */
     public static <C> ParserDescriptor<C, Component> componentParser() {
         return ParserDescriptor.of(new ComponentParser<>(), Component.class);
     }

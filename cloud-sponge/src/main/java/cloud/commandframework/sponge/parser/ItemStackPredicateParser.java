@@ -49,11 +49,17 @@ import org.spongepowered.api.item.inventory.ItemStack;
 /**
  * An argument for parsing {@link ItemStackPredicate ItemStackPredicates}.
  *
- * @param <C> sender type
+ * @param <C> command sender type
  */
 public final class ItemStackPredicateParser<C> implements ArgumentParser.FutureArgumentParser<C, ItemStackPredicate>,
     NodeSource, SuggestionProvider<C> {
 
+    /**
+     * Creates a new {@link ItemStackPredicateParser}.
+     *
+     * @param <C> command sender type
+     * @return new parser
+     */
     public static <C> ParserDescriptor<C, ItemStackPredicate> itemStackPredicateParser() {
         return ParserDescriptor.of(new ItemStackPredicateParser<>(), ItemStackPredicate.class);
     }

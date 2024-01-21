@@ -49,11 +49,17 @@ import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 /**
  * Argument for selecting a single {@link Player} using a {@link Selector}.
  *
- * @param <C> sender type
+ * @param <C> command sender type
  */
 public final class SinglePlayerSelectorParser<C> implements NodeSource,
     ArgumentParser.FutureArgumentParser<C, SinglePlayerSelector>, SuggestionProvider<C> {
 
+    /**
+     * Creates a new {@link SinglePlayerSelectorParser}.
+     *
+     * @param <C> command sender type
+     * @return new parser
+     */
     public static <C> ParserDescriptor<C, SinglePlayerSelector> singlePlayerSelectorParser() {
         return ParserDescriptor.of(new SinglePlayerSelectorParser<>(), SinglePlayerSelector.class);
     }

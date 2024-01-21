@@ -52,11 +52,17 @@ import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 /**
  * Argument for selecting one or more {@link Player Players} using a {@link Selector}.
  *
- * @param <C> sender type
+ * @param <C> command sender type
  */
 public final class MultiplePlayerSelectorParser<C> implements NodeSource,
     ArgumentParser.FutureArgumentParser<C, MultiplePlayerSelector>, SuggestionProvider<C> {
 
+    /**
+     * Creates a new {@link MultiplePlayerSelectorParser}.
+     *
+     * @param <C> command sender type
+     * @return new parser
+     */
     public static <C> ParserDescriptor<C, MultiplePlayerSelector> multiplePlayerSelectorParser() {
         return ParserDescriptor.of(new MultiplePlayerSelectorParser<>(), MultiplePlayerSelector.class);
     }

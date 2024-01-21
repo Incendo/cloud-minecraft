@@ -56,11 +56,17 @@ import org.spongepowered.common.profile.SpongeGameProfile;
  * Argument for parsing a {@link Collection} of {@link GameProfile GameProfiles} from a
  * {@link Selector}. A successfully parsed result will contain at least one element.
  *
- * @param <C> sender type
+ * @param <C> command sender type
  */
 public final class GameProfileCollectionParser<C> implements NodeSource,
     ArgumentParser.FutureArgumentParser<C, GameProfileCollection>, SuggestionProvider<C> {
 
+    /**
+     * Creates a new {@link GameProfileCollectionParser}.
+     *
+     * @param <C> command sender type
+     * @return new parser
+     */
     public static <C> ParserDescriptor<C, GameProfileCollection> gameProfileCollectionParser() {
         return ParserDescriptor.of(new GameProfileCollectionParser<>(), GameProfileCollection.class);
     }

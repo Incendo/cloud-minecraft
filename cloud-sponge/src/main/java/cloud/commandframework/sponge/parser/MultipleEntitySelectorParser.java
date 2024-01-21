@@ -51,11 +51,17 @@ import org.spongepowered.api.entity.Entity;
 /**
  * Argument for selecting one or more {@link Entity Entities} using a {@link Selector}.
  *
- * @param <C> sender type
+ * @param <C> command sender type
  */
 public final class MultipleEntitySelectorParser<C> implements NodeSource,
     ArgumentParser.FutureArgumentParser<C, MultipleEntitySelector>, SuggestionProvider<C> {
 
+    /**
+     * Creates a new {@link MultipleEntitySelectorParser}.
+     *
+     * @param <C> command sender type
+     * @return new parser
+     */
     public static <C> ParserDescriptor<C, MultipleEntitySelector> multipleEntitySelectorParser() {
         return ParserDescriptor.of(new MultipleEntitySelectorParser<>(), MultipleEntitySelector.class);
     }

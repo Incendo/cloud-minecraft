@@ -63,10 +63,16 @@ import org.spongepowered.common.world.SpongeBlockChangeFlag;
  *     <li>{@code andesite_stairs[waterlogged=true,facing=east]}</li>
  * </ul>
  *
- * @param <C> sender type
+ * @param <C> command sender type
  */
 public final class BlockInputParser<C> implements NodeSource, ArgumentParser.FutureArgumentParser<C, BlockInput>, SuggestionProvider<C> {
 
+    /**
+     * Creates a new {@link BlockInputParser}.
+     *
+     * @param <C> command sender type
+     * @return new parser
+     */
     public static <C> ParserDescriptor<C, BlockInput> blockInputParser() {
         return ParserDescriptor.of(new BlockInputParser<>(), BlockInput.class);
     }

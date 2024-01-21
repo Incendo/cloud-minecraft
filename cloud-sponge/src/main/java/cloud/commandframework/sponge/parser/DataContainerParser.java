@@ -45,11 +45,17 @@ import org.spongepowered.common.data.persistence.NBTTranslator;
  * Argument for parsing {@link DataContainer DataContainers} from
  * <a href="https://minecraft.fandom.com/wiki/NBT_format">SNBT</a> strings.
  *
- * @param <C> sender type
+ * @param <C> command sender type
  */
 public final class DataContainerParser<C> implements ArgumentParser.FutureArgumentParser<C, DataContainer>,
     NodeSource, SuggestionProvider<C> {
 
+    /**
+     * Creates a new {@link DataContainerParser}.
+     *
+     * @param <C> command sender type
+     * @return new parser
+     */
     public static <C> ParserDescriptor<C, DataContainer> dataContainerParser() {
         return ParserDescriptor.of(new DataContainerParser<>(), DataContainer.class);
     }

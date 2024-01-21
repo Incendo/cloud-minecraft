@@ -55,7 +55,7 @@ import org.spongepowered.api.registry.RegistryTypes;
 /**
  * An argument for retrieving values from any of Sponge's {@link Registry Registries}.
  *
- * @param <C> sender type
+ * @param <C> command sender type
  * @param <V> value type
  */
 public final class RegistryEntryParser<C, V> implements NodeSource,
@@ -64,12 +64,12 @@ public final class RegistryEntryParser<C, V> implements NodeSource,
     // Start DefaultedRegistryType methods
 
     /**
-     * Create a new required {@link RegistryEntryParser} for a {@link DefaultedRegistryType}.
+     * Create a new {@link RegistryEntryParser} for a {@link DefaultedRegistryType}.
      *
+     * @param <C>          command sender type
+     * @param <V>          value type
      * @param valueType    value type
      * @param registryType registry type
-     * @param <C>          sender type
-     * @param <V>          value type
      * @return a new {@link RegistryEntryParser}
      */
     public static <C, V> @NonNull ParserDescriptor<C, V> registryEntryParser(
@@ -80,12 +80,12 @@ public final class RegistryEntryParser<C, V> implements NodeSource,
     }
 
     /**
-     * Create a new required {@link RegistryEntryParser} for a {@link DefaultedRegistryType}.
+     * Create a new {@link RegistryEntryParser} for a {@link DefaultedRegistryType}.
      *
+     * @param <C>          command sender type
+     * @param <V>          value type
      * @param valueType    value type
      * @param registryType registry type
-     * @param <C>          sender type
-     * @param <V>          value type
      * @return a new {@link RegistryEntryParser}
      */
     public static <C, V> @NonNull ParserDescriptor<C, V> registryEntryParser(
@@ -100,13 +100,13 @@ public final class RegistryEntryParser<C, V> implements NodeSource,
     // Start RegistryType methods
 
     /**
-     * Create a new required {@link RegistryEntryParser} for a {@link RegistryType}
+     * Create a new {@link RegistryEntryParser} for a {@link RegistryType}
      * using the specified {@link RegistryHolder} function.
      *
      * <p>For {@link RegistryType RegistryTypes} which are {@link DefaultedRegistryType DefaultedRegistryTypes},
      * it is suggested to instead use {@link #registryEntryParser(TypeToken, DefaultedRegistryType)}.</p>
      *
-     * @param <C>            sender type
+     * @param <C>            command sender type
      * @param <V>            value type
      * @param valueType      value type
      * @param registryType   registry type
@@ -122,13 +122,13 @@ public final class RegistryEntryParser<C, V> implements NodeSource,
     }
 
     /**
-     * Create a new required {@link RegistryEntryParser} for a {@link RegistryType}
+     * Create a new {@link RegistryEntryParser} for a {@link RegistryType}
      * using the specified {@link RegistryHolder} function.
      *
      * <p>For {@link RegistryType RegistryTypes} which are {@link DefaultedRegistryType DefaultedRegistryTypes},
      * it is suggested to instead use {@link #registryEntryParser(TypeToken, DefaultedRegistryType)}.</p>
      *
-     * @param <C>            sender type
+     * @param <C>            command sender type
      * @param <V>            value type
      * @param valueType      value type
      * @param registryType   registry type

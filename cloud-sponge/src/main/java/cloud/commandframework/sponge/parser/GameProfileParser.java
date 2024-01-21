@@ -49,10 +49,16 @@ import org.spongepowered.common.profile.SpongeGameProfile;
 /**
  * Argument for parsing a single {@link GameProfile} from a {@link Selector}.
  *
- * @param <C> sender type
+ * @param <C> command sender type
  */
 public final class GameProfileParser<C> implements ArgumentParser.FutureArgumentParser<C, GameProfile>, NodeSource, SuggestionProvider<C> {
 
+    /**
+     * Creates a new {@link GameProfileParser}.
+     *
+     * @param <C> command sender type
+     * @return new parser
+     */
     public static <C> ParserDescriptor<C, GameProfile> gameProfileParser() {
         return ParserDescriptor.of(new GameProfileParser<>(), GameProfile.class);
     }

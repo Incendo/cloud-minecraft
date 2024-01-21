@@ -32,7 +32,7 @@ import cloud.commandframework.sponge.NodeSource;
  *
  * <p>Not for extension by API users.</p>
  *
- * @param <C> sender type
+ * @param <C> command sender type
  * @param <V> vector type
  */
 public abstract class VectorParser<C, V> implements NodeSource, ArgumentParser.FutureArgumentParser<C, V>, SuggestionProvider<C> {

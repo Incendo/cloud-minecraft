@@ -43,10 +43,16 @@ import org.spongepowered.api.registry.RegistryTypes;
 /**
  * An argument for parsing {@link Operator Operators}.
  *
- * @param <C> sender type
+ * @param <C> command sender type
  */
 public final class OperatorParser<C> implements NodeSource, ArgumentParser<C, Operator>, BlockingSuggestionProvider.Strings<C> {
 
+    /**
+     * Creates a new {@link OperatorParser}.
+     *
+     * @param <C> command sender type
+     * @return new parser
+     */
     public static <C> ParserDescriptor<C, Operator> operatorParser() {
         return ParserDescriptor.of(new OperatorParser<>(), Operator.class);
     }
