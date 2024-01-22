@@ -31,6 +31,7 @@ import cloud.commandframework.examples.bukkit.ExamplePlugin;
 import cloud.commandframework.examples.bukkit.builder.feature.AggregateCommandExample;
 import cloud.commandframework.examples.bukkit.builder.feature.CommandBeanExample;
 import cloud.commandframework.examples.bukkit.builder.feature.CompoundArgumentExample;
+import cloud.commandframework.examples.bukkit.builder.feature.EitherExample;
 import cloud.commandframework.examples.bukkit.builder.feature.EnumExample;
 import cloud.commandframework.examples.bukkit.builder.feature.FlagExample;
 import cloud.commandframework.examples.bukkit.builder.feature.HelpExample;
@@ -59,6 +60,7 @@ public final class BuilderExample {
             new AggregateCommandExample(),
             new CommandBeanExample(),
             new CompoundArgumentExample(),
+            new EitherExample(),
             new EnumExample(),
             new FlagExample(),
             new HelpExample(),
