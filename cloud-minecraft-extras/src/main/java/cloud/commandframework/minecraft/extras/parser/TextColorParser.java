@@ -101,7 +101,7 @@ public final class TextColorParser<C> implements ArgumentParser<C, TextColor>, B
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C> CommandComponent.@NonNull Builder<C, TextColor> itemStackComponent() {
+    public static <C> CommandComponent.@NonNull Builder<C, TextColor> textColorComponent() {
         return CommandComponent.<C, TextColor>builder().parser(textColorParser());
     }
 
