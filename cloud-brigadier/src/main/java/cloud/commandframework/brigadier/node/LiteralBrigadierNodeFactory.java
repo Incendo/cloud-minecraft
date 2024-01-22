@@ -25,7 +25,7 @@ package cloud.commandframework.brigadier.node;
 
 import cloud.commandframework.CommandComponent;
 import cloud.commandframework.CommandManager;
-import cloud.commandframework.arguments.aggregate.AggregateCommandParser;
+import cloud.commandframework.arguments.aggregate.AggregateParser;
 import cloud.commandframework.arguments.parser.ArgumentParser;
 import cloud.commandframework.arguments.parser.MappedArgumentParser;
 import cloud.commandframework.arguments.suggestion.SuggestionFactory;
@@ -148,8 +148,8 @@ public final class LiteralBrigadierNodeFactory<C, S> implements BrigadierNodeFac
             final @NonNull BrigadierPermissionChecker<C> permissionChecker,
             final com.mojang.brigadier.@NonNull Command<S> executor
     ) {
-        if (root.component().parser() instanceof AggregateCommandParser) {
-            final AggregateCommandParser<C, ?> aggregateParser = (AggregateCommandParser<C, ?>) root.component().parser();
+        if (root.component().parser() instanceof AggregateParser) {
+            final AggregateParser<C, ?> aggregateParser = (AggregateParser<C, ?>) root.component().parser();
             return this.constructAggregateNode(
                     aggregateParser,
                     root,
@@ -204,7 +204,7 @@ public final class LiteralBrigadierNodeFactory<C, S> implements BrigadierNodeFac
     }
 
     private @NonNull ArgumentBuilder<S, ?> constructAggregateNode(
-            final @NonNull AggregateCommandParser<C, ?> aggregateParser,
+            final @NonNull AggregateParser<C, ?> aggregateParser,
             final cloud.commandframework.internal.@NonNull CommandNode<C> root,
             final @NonNull BrigadierPermissionChecker<C> permissionChecker,
             final com.mojang.brigadier.@NonNull Command<S> executor

@@ -25,7 +25,7 @@ package cloud.commandframework.examples.bukkit.builder.feature;
 
 import cloud.commandframework.CommandManager;
 import cloud.commandframework.arguments.DefaultValue;
-import cloud.commandframework.arguments.aggregate.AggregateCommandParser;
+import cloud.commandframework.arguments.aggregate.AggregateParser;
 import cloud.commandframework.arguments.parser.ArgumentParseResult;
 import cloud.commandframework.arguments.suggestion.BlockingSuggestionProvider;
 import cloud.commandframework.arguments.suggestion.Suggestion;
@@ -66,7 +66,7 @@ public final class AggregateCommandExample implements BuilderFeature {
     }
 
     private void registerLocationExample(final CommandManager<CommandSender> manager) {
-        final AggregateCommandParser<CommandSender, Location> locationParser = AggregateCommandParser.<CommandSender>builder()
+        final AggregateParser<CommandSender, Location> locationParser = AggregateParser.<CommandSender>builder()
                 .withComponent("world", worldParser())
                 .withComponent("x", integerParser())
                 .withComponent("y", integerParser())
@@ -96,8 +96,8 @@ public final class AggregateCommandExample implements BuilderFeature {
     }
 
     private void registerRenameExample(final CommandManager<CommandSender> manager) {
-        final AggregateCommandParser<CommandSender, Pair<Integer, String>> parser =
-                AggregateCommandParser.<CommandSender>builder()
+        final AggregateParser<CommandSender, Pair<Integer, String>> parser =
+                AggregateParser.<CommandSender>builder()
                         .withComponent("slot", integerParser(), this.slotSuggestions())
                         .withComponent("name", stringParser(), this.nameSuggestions())
                         .withMapper(new TypeToken<Pair<Integer, String>>(){}, (commandContext, context) -> {
