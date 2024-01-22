@@ -26,7 +26,7 @@ package cloud.commandframework.brigadier.node;
 import cloud.commandframework.Command;
 import cloud.commandframework.CommandManager;
 import cloud.commandframework.SenderMapper;
-import cloud.commandframework.arguments.aggregate.AggregateCommandParser;
+import cloud.commandframework.arguments.aggregate.AggregateParser;
 import cloud.commandframework.arguments.parser.ArgumentParseResult;
 import cloud.commandframework.arguments.suggestion.Suggestion;
 import cloud.commandframework.brigadier.CloudBrigadierManager;
@@ -151,7 +151,7 @@ class LiteralBrigadierNodeFactoryTest {
                 .literal("literal")
                 .required(
                         "aggregate",
-                        AggregateCommandParser.builder()
+                        AggregateParser.builder()
                                 .withComponent("integer", integerParser(0, 10))
                                 .withComponent("string", greedyStringParser())
                                 .withDirectMapper(
