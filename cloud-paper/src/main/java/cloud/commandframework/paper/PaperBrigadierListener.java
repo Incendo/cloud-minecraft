@@ -29,8 +29,8 @@ import cloud.commandframework.brigadier.CloudBrigadierCommand;
 import cloud.commandframework.brigadier.CloudBrigadierManager;
 import cloud.commandframework.brigadier.node.LiteralBrigadierNodeFactory;
 import cloud.commandframework.brigadier.permission.BrigadierPermissionChecker;
-import cloud.commandframework.bukkit.BukkitBrigadierMapper;
 import cloud.commandframework.bukkit.internal.BukkitBackwardsBrigadierSenderMapper;
+import cloud.commandframework.bukkit.internal.BukkitBrigadierMapper;
 import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.internal.CommandNode;
 import com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource;
@@ -61,7 +61,10 @@ class PaperBrigadierListener<C> implements Listener {
                 )
         );
 
-        new PaperBrigadierMapper<>(new BukkitBrigadierMapper<>(this.paperCommandManager, this.brigadierManager));
+        final BukkitBrigadierMapper<C> mapper =
+            new BukkitBrigadierMapper<>(this.paperCommandManager, this.brigadierManager);
+        mapper.registerBuiltInMappings();
+        PaperBrigadierMappings.register(mapper);
     }
 
     protected @NonNull CloudBrigadierManager<C, BukkitBrigadierCommandSource> brigadierManager() {

@@ -23,33 +23,30 @@
 //
 package cloud.commandframework.paper;
 
-import cloud.commandframework.bukkit.BukkitBrigadierMapper;
+import cloud.commandframework.bukkit.internal.BukkitBrigadierMapper;
 import cloud.commandframework.bukkit.internal.CraftBukkitReflection;
 import cloud.commandframework.paper.parser.KeyedWorldParser;
 import io.leangen.geantyref.TypeToken;
+import org.apiguardian.api.API;
 import org.bukkit.World;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * Brigadier mappings for Paper native Brigadier. This is currently only used when the PaperBrigadierListener is in use,
- * not when the CloudCommodoreManager is in use on Paper. This is because all argument types registered here require
- * Paper 1.15+ anyways.
+ * Brigadier mappings for cloud-paper parsers.
  *
- * @param <C> sender type
+ * <p>This is currently only used when the PaperBrigadierListener is in use, not when the CloudCommodoreManager
+ * is in use on Paper. This is because all argument types registered here require Paper 1.15+ anyways.</p>
  */
-final class PaperBrigadierMapper<C> {
+@API(status = API.Status.INTERNAL)
+final class PaperBrigadierMappings {
 
-    PaperBrigadierMapper(
-            final @NonNull BukkitBrigadierMapper<C> mapper
-    ) {
-        this.registerMappings(mapper);
+    private PaperBrigadierMappings() {
     }
 
-    private void registerMappings(final @NonNull BukkitBrigadierMapper<C> mapper) {
+    static <C> void register(final @NonNull BukkitBrigadierMapper<C> mapper) {
         final Class<?> keyed = CraftBukkitReflection.findClass("org.bukkit.Keyed");
         if (keyed != null && keyed.isAssignableFrom(World.class)) {
-            mapper.mapSimpleNMS(new TypeToken<KeyedWorldParser<C>>() {
-            }, "resource_location", true);
+            mapper.mapSimpleNMS(new TypeToken<KeyedWorldParser<C>>() {}, "resource_location", true);
         }
     }
 }
