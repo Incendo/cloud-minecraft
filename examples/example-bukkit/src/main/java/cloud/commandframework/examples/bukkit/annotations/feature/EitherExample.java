@@ -55,7 +55,7 @@ public final class EitherExample implements AnnotationFeature {
 
     @Command("annotations either <uuid>")
     public void eitherCommand(final @NonNull CommandSender sender, final @NonNull Either<UUID, Player> uuid) {
-        final UUID resolvedUuid = uuid.primary().orElseGet(() -> uuid.fallback().map(Player::getUniqueId).get());
+        final UUID resolvedUuid = uuid.primaryOrMapFallback(Player::getUniqueId);
         this.bukkitAudiences.sender(sender)
             .sendMessage(text("The UUID is: ", NamedTextColor.DARK_GREEN).append(text(resolvedUuid.toString(), NamedTextColor.GREEN)));
     }

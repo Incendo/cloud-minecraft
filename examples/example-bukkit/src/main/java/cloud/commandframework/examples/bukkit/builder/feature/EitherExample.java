@@ -58,7 +58,7 @@ public final class EitherExample implements BuilderFeature {
                 .required(EITHER_KEY, ArgumentParser.firstOf(UUIDParser.uuidParser(), PlayerParser.playerParser()))
                 .handler(context -> {
                     final Either<UUID, Player> either = context.get(EITHER_KEY);
-                    final UUID uuid = either.primary().orElseGet(() -> either.fallback().map(Player::getUniqueId).get());
+                    final UUID uuid = either.primaryOrMapFallback(Player::getUniqueId);
                     examplePlugin.bukkitAudiences()
                         .sender(context.sender())
                         .sendMessage(text("The UUID is: ", NamedTextColor.DARK_GREEN).append(text(uuid.toString(), NamedTextColor.GREEN)));
