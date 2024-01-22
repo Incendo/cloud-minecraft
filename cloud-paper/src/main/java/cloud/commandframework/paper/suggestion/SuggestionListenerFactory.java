@@ -23,11 +23,11 @@
 //
 package cloud.commandframework.paper.suggestion;
 
+import cloud.commandframework.bukkit.internal.CraftBukkitReflection;
 import cloud.commandframework.paper.PaperCommandManager;
-import net.kyori.adventure.audience.Audience;
 import org.apiguardian.api.API;
-import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 @API(status = API.Status.INTERNAL, since = "2.0.0")
 public interface SuggestionListenerFactory<C> {
@@ -61,7 +61,10 @@ public interface SuggestionListenerFactory<C> {
 
         @Override
         public @NonNull SuggestionListener<C> createListener() {
-            if (Audience.class.isAssignableFrom(Player.class)) {
+            final @Nullable Class<?> completionCls = CraftBukkitReflection.findClass(
+                "com.destroystokyo.paper.event.server.AsyncTabCompleteEvent$Completion"
+            );
+            if (completionCls != null) {
                 return new BrigadierAsyncCommandSuggestionListener<>(this.commandManager);
             }
             return new AsyncCommandSuggestionListener<>(this.commandManager);
