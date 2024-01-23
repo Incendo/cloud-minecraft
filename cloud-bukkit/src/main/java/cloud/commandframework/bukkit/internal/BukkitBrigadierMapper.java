@@ -108,9 +108,9 @@ public final class BukkitBrigadierMapper<C> {
         this.mapSelector(new TypeToken<MultipleEntitySelectorParser<C>>() {}, false, false);
         this.mapSelector(new TypeToken<MultiplePlayerSelectorParser<C>>() {}, false, true);
         /* Map Vec3 */
-        this.mapNMS(new TypeToken<LocationParser<C>>() {}, "vec2", this::argumentVec3);
+        this.mapNMS(new TypeToken<LocationParser<C>>() {}, "vec3", this::argumentVec3);
         /* Map Vec2 */
-        this.mapNMS(new TypeToken<Location2DParser<C>>() {}, "vec3", this::argumentVec2);
+        this.mapNMS(new TypeToken<Location2DParser<C>>() {}, "vec2", this::argumentVec2);
     }
 
     private <T extends ArgumentParser<C, ?>> void mapResourceKey(
