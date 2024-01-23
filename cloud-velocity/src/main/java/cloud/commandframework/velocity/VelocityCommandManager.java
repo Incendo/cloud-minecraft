@@ -30,7 +30,7 @@ import cloud.commandframework.arguments.suggestion.SuggestionFactory;
 import cloud.commandframework.brigadier.BrigadierManagerHolder;
 import cloud.commandframework.brigadier.CloudBrigadierManager;
 import cloud.commandframework.brigadier.suggestion.TooltipSuggestion;
-import cloud.commandframework.captions.FactoryDelegatingCaptionRegistry;
+import cloud.commandframework.captions.CaptionProvider;
 import cloud.commandframework.exceptions.ArgumentParseException;
 import cloud.commandframework.exceptions.CommandExecutionException;
 import cloud.commandframework.exceptions.InvalidCommandSenderException;
@@ -124,18 +124,11 @@ public class VelocityCommandManager<C> extends CommandManager<C>
                 .registerParser(ServerParser.serverParser());
 
         /* Register default captions */
-        if (this.captionRegistry() instanceof FactoryDelegatingCaptionRegistry) {
-            final FactoryDelegatingCaptionRegistry<C> factoryDelegatingCaptionRegistry = (FactoryDelegatingCaptionRegistry<C>)
-                    this.captionRegistry();
-            factoryDelegatingCaptionRegistry.registerMessageFactory(
-                    VelocityCaptionKeys.ARGUMENT_PARSE_FAILURE_PLAYER,
-                    (context, key) -> ARGUMENT_PARSE_FAILURE_PLAYER
-            );
-            factoryDelegatingCaptionRegistry.registerMessageFactory(
-                    VelocityCaptionKeys.ARGUMENT_PARSE_FAILURE_SERVER,
-                    (context, key) -> ARGUMENT_PARSE_FAILURE_SERVER
-            );
-        }
+        this.captionRegistry()
+            .registerProvider(CaptionProvider.<C>constantProvider()
+                .putCaption(VelocityCaptionKeys.ARGUMENT_PARSE_FAILURE_PLAYER, ARGUMENT_PARSE_FAILURE_PLAYER)
+                .putCaption(VelocityCaptionKeys.ARGUMENT_PARSE_FAILURE_SERVER, ARGUMENT_PARSE_FAILURE_SERVER)
+                .build());
 
         this.proxyServer.getEventManager().register(plugin, ServerPreConnectEvent.class, ev -> {
             this.lockRegistration();

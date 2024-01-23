@@ -28,7 +28,7 @@ import cloud.commandframework.SenderMapper;
 import cloud.commandframework.SenderMapperHolder;
 import cloud.commandframework.bungee.parser.PlayerParser;
 import cloud.commandframework.bungee.parser.ServerParser;
-import cloud.commandframework.captions.FactoryDelegatingCaptionRegistry;
+import cloud.commandframework.captions.CaptionProvider;
 import cloud.commandframework.exceptions.ArgumentParseException;
 import cloud.commandframework.exceptions.CommandExecutionException;
 import cloud.commandframework.exceptions.InvalidCommandSenderException;
@@ -91,18 +91,11 @@ public class BungeeCommandManager<C> extends CommandManager<C> implements Sender
                 .registerParser(ServerParser.serverParser());
 
         /* Register default captions */
-        if (this.captionRegistry() instanceof FactoryDelegatingCaptionRegistry) {
-            final FactoryDelegatingCaptionRegistry<C> factoryDelegatingCaptionRegistry = (FactoryDelegatingCaptionRegistry<C>)
-                    this.captionRegistry();
-            factoryDelegatingCaptionRegistry.registerMessageFactory(
-                    BungeeCaptionKeys.ARGUMENT_PARSE_FAILURE_PLAYER,
-                    (context, key) -> ARGUMENT_PARSE_FAILURE_PLAYER
-            );
-            factoryDelegatingCaptionRegistry.registerMessageFactory(
-                    BungeeCaptionKeys.ARGUMENT_PARSE_FAILURE_SERVER,
-                    (context, key) -> ARGUMENT_PARSE_FAILURE_SERVER
-            );
-        }
+        this.captionRegistry()
+            .registerProvider(CaptionProvider.<C>constantProvider()
+                .putCaption(BungeeCaptionKeys.ARGUMENT_PARSE_FAILURE_PLAYER, ARGUMENT_PARSE_FAILURE_PLAYER)
+                .putCaption(BungeeCaptionKeys.ARGUMENT_PARSE_FAILURE_SERVER, ARGUMENT_PARSE_FAILURE_SERVER)
+                .build());
 
         this.registerDefaultExceptionHandlers();
     }
