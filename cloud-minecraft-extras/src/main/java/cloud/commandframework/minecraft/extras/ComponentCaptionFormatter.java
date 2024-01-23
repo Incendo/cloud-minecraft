@@ -26,11 +26,14 @@ package cloud.commandframework.minecraft.extras;
 import cloud.commandframework.captions.Caption;
 import cloud.commandframework.captions.CaptionFormatter;
 import cloud.commandframework.captions.CaptionVariable;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -46,6 +49,45 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 @API(status = API.Status.STABLE, since = "2.0.0")
 public interface ComponentCaptionFormatter<C> extends CaptionFormatter<C, Component> {
+
+    /**
+     * Create a MiniMessage formatter with the {@link MiniMessage#miniMessage() default MiniMessage instance} and
+     * no extra {@link TagResolver TagResolvers}.
+     *
+     * @param <C> command sender type
+     * @return MiniMessage formatter
+     */
+    static <C> @NonNull ComponentCaptionFormatter<C> miniMessage() {
+        return miniMessage(MiniMessage.miniMessage());
+    }
+
+    /**
+     * Create a MiniMessage formatter with the provided MiniMessage instance and
+     * no extra {@link TagResolver TagResolvers}.
+     *
+     * @param <C> command sender type
+     * @param miniMessage MiniMessage instance
+     * @return MiniMessage formatter
+     */
+    static <C> @NonNull ComponentCaptionFormatter<C> miniMessage(final @NonNull MiniMessage miniMessage) {
+        return miniMessage(miniMessage, new TagResolver[] {});
+    }
+
+    /**
+     * Create a MiniMessage formatter with the provided MiniMessage instance and
+     * no extra {@link TagResolver TagResolvers}.
+     *
+     * @param <C> command sender type
+     * @param miniMessage MiniMessage instance
+     * @param resolvers   extra resolvers
+     * @return MiniMessage formatter
+     */
+    static <C> @NonNull ComponentCaptionFormatter<C> miniMessage(
+        final @NonNull MiniMessage miniMessage,
+        final @NonNull TagResolver @NonNull... resolvers
+    ) {
+        return new MiniMessageComponentCaptionFormatter<>(miniMessage, Arrays.asList(resolvers));
+    }
 
     /**
      * Returns a caption formatter that replaces the results from the given {@code pattern} with

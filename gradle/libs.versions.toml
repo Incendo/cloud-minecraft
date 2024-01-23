@@ -47,6 +47,7 @@ commodore = { group = "me.lucko", name = "commodore", version.ref = "commodore" 
 bungeecord = { group = "net.md-5", name = "bungeecord-api", version.ref = "bungeecord" }
 cloudburst = { group = "org.cloudburstmc", name = "cloudburst-server", version.ref = "cloudburst" }
 adventureApi = { group = "net.kyori", name = "adventure-api", version.ref = "adventureApi" }
+minimessage = { group = "net.kyori", name = "adventure-text-minimessage", version.ref = "adventureApi" }
 adventurePlatformBukkit = { group = "net.kyori", name = "adventure-platform-bukkit", version.ref = "adventurePlatform" }
 adventurePlatformBungeecord = { group = "net.kyori", name = "adventure-platform-bungeecord", version.ref = "adventurePlatform" }
 adventureTextSerializerPlain = { group = "net.kyori", name = "adventure-text-serializer-plain", version.ref = "adventureApi" }
