@@ -189,7 +189,7 @@ public class BukkitCommandManager<C> extends CommandManager<C>
         );
 
         this.registerDefaultExceptionHandlers();
-        this.captionRegistry(new BukkitCaptionRegistryFactory<C>().create());
+        this.captionRegistry().registerProvider(new BukkitDefaultCaptionsProvider<>());
     }
 
     /**
