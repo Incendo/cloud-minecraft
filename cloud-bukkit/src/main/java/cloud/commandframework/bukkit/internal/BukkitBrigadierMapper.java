@@ -217,8 +217,13 @@ public final class BukkitBrigadierMapper<C> {
         final @NonNull ArgumentTypeFactory factory,
         final boolean cloudSuggestions
     ) {
-        final Class<? extends ArgumentType<?>> argumentTypeClass =
-            MinecraftArgumentTypes.getClassByKey(NamespacedKey.minecraft(argumentId));
+        final Class<? extends ArgumentType<?>> argumentTypeClass;
+        try {
+            argumentTypeClass = MinecraftArgumentTypes.getClassByKey(NamespacedKey.minecraft(argumentId));
+        } catch (final Exception e) {
+            this.commandManager.owningPlugin().getLogger().log(Level.WARNING, "Failed to locate class for " + argumentId, e);
+            return;
+        }
         this.brigadierManager.registerMapping(type, builder -> {
             builder.to(argument -> {
                 try {
