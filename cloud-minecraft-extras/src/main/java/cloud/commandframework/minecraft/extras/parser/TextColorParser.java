@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -143,18 +144,25 @@ public final class TextColorParser<C> implements ArgumentParser<C, TextColor>, B
     ) {
         final List<String> suggestions = new LinkedList<>();
         final String token = input.readString();
-        if (token.isEmpty() || token.equals("#") || (HEX_PREDICATE.matcher(token).matches()
-                && token.length() < (token.startsWith("#") ? 7 : 6))) {
-            for (char c = 'a'; c <= 'f'; c++) {
-                suggestions.add(String.format("%s%c", token, c));
-                suggestions.add(String.format("&%c", c));
+        final String tokenLower = token.toLowerCase(Locale.ROOT);
+        boolean matchedName = false;
+        for (final String name : NamedTextColor.NAMES.keys()) {
+            if (name.contains(tokenLower)) {
+                matchedName = true;
             }
-            for (char c = '0'; c <= '9'; c++) {
-                suggestions.add(String.format("%s%c", token, c));
-                suggestions.add(String.format("&%c", c));
+            suggestions.add(name);
+        }
+        if (!matchedName && !token.isEmpty()) {
+            if (token.equals("#") ||
+                (HEX_PREDICATE.matcher(token).matches() && (token.length() < (token.startsWith("#") ? 7 : 6)))) {
+                for (char c = 'a'; c <= 'f'; c++) {
+                    suggestions.add(String.format("%s%c", token, c));
+                }
+                for (char c = '0'; c <= '9'; c++) {
+                    suggestions.add(String.format("%s%c", token, c));
+                }
             }
         }
-        suggestions.addAll(NamedTextColor.NAMES.keys());
         return suggestions;
     }
 
