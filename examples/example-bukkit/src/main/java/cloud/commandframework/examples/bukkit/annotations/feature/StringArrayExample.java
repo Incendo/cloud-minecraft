@@ -29,7 +29,6 @@ import cloud.commandframework.annotations.Command;
 import cloud.commandframework.annotations.Default;
 import cloud.commandframework.examples.bukkit.ExamplePlugin;
 import cloud.commandframework.examples.bukkit.annotations.AnnotationFeature;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -52,6 +51,6 @@ public final class StringArrayExample implements AnnotationFeature {
             final @NonNull CommandSender sender,
             @Argument(value = "args") @Default("") final @NonNull String[] args
     ) {
-        sender.sendMessage("You wrote: " + StringUtils.join(args, " "));
+        sender.sendMessage("You wrote: " + String.join(" ", args));
     }
 }

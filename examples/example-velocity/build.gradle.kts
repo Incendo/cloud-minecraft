@@ -1,11 +1,7 @@
 plugins {
     alias(libs.plugins.shadow)
-    id("conventions.base")
+    id("conventions.example")
     alias(libs.plugins.run.velocity)
-}
-
-indra {
-    javaVersions().target(11) // Velocity 3 requires Java 11
 }
 
 tasks {
