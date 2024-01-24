@@ -153,8 +153,8 @@ public final class TextColorParser<C> implements ArgumentParser<C, TextColor>, B
             suggestions.add(name);
         }
         if (!matchedName && !token.isEmpty()) {
-            if (token.equals("#") ||
-                (HEX_PREDICATE.matcher(token).matches() && (token.length() < (token.startsWith("#") ? 7 : 6)))) {
+            if (token.equals("#")
+                || (HEX_PREDICATE.matcher(token).matches() && (token.length() < (token.startsWith("#") ? 7 : 6)))) {
                 for (char c = 'a'; c <= 'f'; c++) {
                     suggestions.add(String.format("%s%c", token, c));
                 }
