@@ -36,7 +36,6 @@ import cloud.commandframework.examples.bukkit.annotations.AnnotationFeature;
 import cloud.commandframework.help.result.CommandEntry;
 import cloud.commandframework.minecraft.extras.MinecraftHelp;
 import java.util.List;
-import java.util.stream.Collectors;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -91,7 +90,7 @@ public final class HelpExample implements AnnotationFeature {
                 .entries()
                 .stream()
                 .map(CommandEntry::syntax)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Command("annotations|an|a help [query]")
