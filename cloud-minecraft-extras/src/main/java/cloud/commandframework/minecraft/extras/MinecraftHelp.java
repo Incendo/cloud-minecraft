@@ -83,7 +83,7 @@ public abstract class MinecraftHelp<C> {
     /**
      * The default color scheme for {@link MinecraftHelp}
      */
-    public static final HelpColors DEFAULT_HELP_COLORS = HelpColors.of(
+    public static final HelpColors DEFAULT_HELP_COLORS = helpColors(
             NamedTextColor.GOLD,
             NamedTextColor.GREEN,
             NamedTextColor.YELLOW,
@@ -802,6 +802,26 @@ public abstract class MinecraftHelp<C> {
     }
 
     /**
+     * Creates a new {@link HelpColors} instance.
+     *
+     * @param primary            the primary color for the color scheme
+     * @param highlight          the primary color used to highlight commands and queries
+     * @param alternateHighlight the secondary color used to highlight commands and queries
+     * @param text               the color used for description text
+     * @param accent             the color used for accents and symbols
+     * @return a new {@link HelpColors} instance
+     */
+    public static @NonNull HelpColors helpColors(
+        final @NonNull TextColor primary,
+        final @NonNull TextColor highlight,
+        final @NonNull TextColor alternateHighlight,
+        final @NonNull TextColor text,
+        final @NonNull TextColor accent
+    ) {
+        return HelpColorsImpl.of(primary, highlight, alternateHighlight, text, accent);
+    }
+
+    /**
      * Class for holding the {@link TextColor TextColors} used for help menus
      */
     @ImmutableImpl
@@ -842,25 +862,5 @@ public abstract class MinecraftHelp<C> {
          * @return the color used for accents and symbols
          */
         @NonNull TextColor accent();
-
-        /**
-         * Creates a new {@link HelpColors} instance.
-         *
-         * @param primary            the primary color for the color scheme
-         * @param highlight          the primary color used to highlight commands and queries
-         * @param alternateHighlight the secondary color used to highlight commands and queries
-         * @param text               the color used for description text
-         * @param accent             the color used for accents and symbols
-         * @return a new {@link HelpColors} instance
-         */
-        static @NonNull HelpColors of(
-                final @NonNull TextColor primary,
-                final @NonNull TextColor highlight,
-                final @NonNull TextColor alternateHighlight,
-                final @NonNull TextColor text,
-                final @NonNull TextColor accent
-        ) {
-            return HelpColorsImpl.of(primary, highlight, alternateHighlight, text, accent);
-        }
     }
 }

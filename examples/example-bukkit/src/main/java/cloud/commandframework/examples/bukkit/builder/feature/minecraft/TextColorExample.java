@@ -76,7 +76,7 @@ public final class TextColorExample implements BuilderFeature {
                         .required("accent", textColorParser(), RichDescription.of(text("The color used for accents and symbols")))
                         .handler(c -> examplePlugin.minecraftHelp(
                                 ImmutableMinecraftHelp.copyOf(examplePlugin.minecraftHelp()).withColors(
-                                        MinecraftHelp.HelpColors.of(
+                                        MinecraftHelp.helpColors(
                                                 c.get("primary"),
                                                 c.get("highlight"),
                                                 c.get("alternate_highlight"),
