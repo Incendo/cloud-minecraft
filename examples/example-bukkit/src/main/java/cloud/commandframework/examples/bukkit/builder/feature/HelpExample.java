@@ -31,7 +31,6 @@ import cloud.commandframework.examples.bukkit.ExamplePlugin;
 import cloud.commandframework.examples.bukkit.builder.BuilderFeature;
 import cloud.commandframework.help.result.CommandEntry;
 import cloud.commandframework.minecraft.extras.MinecraftHelp;
-import java.util.stream.Collectors;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -62,7 +61,7 @@ public final class HelpExample implements BuilderFeature {
                                         .stream()
                                         .map(CommandEntry::syntax)
                                         .map(Suggestion::simple)
-                                        .collect(Collectors.toList()))
+                                        .toList())
                         )
                         .handler(context -> {
                             examplePlugin.minecraftHelp().queryCommands(context.get("query"), context.sender());

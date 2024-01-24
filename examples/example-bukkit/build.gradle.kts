@@ -1,7 +1,7 @@
 import xyz.jpenilla.runpaper.task.RunServer
 
 plugins {
-    id("conventions.base")
+    id("conventions.example")
     alias(libs.plugins.shadow)
     alias(libs.plugins.run.paper)
 }

@@ -27,7 +27,6 @@ import cloud.commandframework.Description;
 import cloud.commandframework.bukkit.BukkitCommandManager;
 import cloud.commandframework.examples.bukkit.ExamplePlugin;
 import cloud.commandframework.examples.bukkit.builder.BuilderFeature;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -50,7 +49,7 @@ public final class StringArrayExample implements BuilderFeature {
                         .optional("args", stringArrayParser(), Description.of("Arguments"))
                         .handler(context -> {
                             final String[] args = context.getOrDefault("args", new String[0]);
-                            context.sender().sendMessage("You wrote: " + StringUtils.join(args, " "));
+                            context.sender().sendMessage("You wrote: " + String.join(" ", args));
                         })
         );
     }

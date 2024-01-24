@@ -35,7 +35,6 @@ import cloud.commandframework.examples.bukkit.builder.BuilderFeature;
 import cloud.commandframework.types.tuples.Pair;
 import io.leangen.geantyref.TypeToken;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import org.bukkit.Location;
@@ -129,13 +128,13 @@ public final class AggregateCommandExample implements BuilderFeature {
         return (context, input) -> IntStream.rangeClosed(1, 9)
                 .mapToObj(Integer::toString)
                 .map(Suggestion::simple)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private @NonNull BlockingSuggestionProvider<CommandSender> nameSuggestions() {
         return (context, input) -> Stream.of(context.<Integer>get("slot"), context.sender().getName())
                 .map(Object::toString)
                 .map(Suggestion::simple)
-                .collect(Collectors.toList());
+                .toList();
     }
 }
