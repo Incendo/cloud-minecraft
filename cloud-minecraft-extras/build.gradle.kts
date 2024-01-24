@@ -11,8 +11,12 @@ dependencies {
     //     or
     //   2) Shaded/included by the user either explicitly or as a
     //      transitive dependency of adventure-platform
-    compileOnlyApi(libs.adventureApi)
-    compileOnlyApi(libs.adventureTextSerializerPlain)
+    fun compileOnlyApiAndTests(dep: Any) {
+        compileOnlyApi(dep)
+        testImplementation(dep)
+    }
+    compileOnlyApiAndTests(libs.adventureApi)
+    compileOnlyApiAndTests(libs.adventureTextSerializerPlain)
     // Only needed for features that explicitly mention MiniMessage
-    compileOnlyApi(libs.minimessage)
+    compileOnlyApiAndTests(libs.minimessage)
 }
