@@ -2,7 +2,7 @@
  * Brigadier mappings.
  *
  * <p>For platform implementations using Brigadier, {@link cloud.commandframework.brigadier.CloudBrigadierManager} can map
- * Cloud {@link cloud.commandframework.CommandTree command trees} to Brigadier nodes.</p>
+ * Cloud {@link org.incendo.cloud.CommandTree command trees} to Brigadier nodes.</p>
  *
  * <p>To bridge Brigadier and Cloud argument types, an argument parser that wraps Brigadier argument types is available in
  * {@link cloud.commandframework.brigadier.parser.WrappedBrigadierParser}. Other classes in that package allow constructing

@@ -23,12 +23,6 @@
 //
 package cloud.commandframework.brigadier.node;
 
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.arguments.aggregate.AggregateParser;
-import cloud.commandframework.arguments.parser.ArgumentParser;
-import cloud.commandframework.arguments.parser.MappedArgumentParser;
-import cloud.commandframework.arguments.suggestion.SuggestionFactory;
 import cloud.commandframework.brigadier.BrigadierSetting;
 import cloud.commandframework.brigadier.CloudBrigadierManager;
 import cloud.commandframework.brigadier.argument.ArgumentTypeFactory;
@@ -39,8 +33,6 @@ import cloud.commandframework.brigadier.suggestion.BrigadierSuggestionFactory;
 import cloud.commandframework.brigadier.suggestion.CloudDelegatingSuggestionProvider;
 import cloud.commandframework.brigadier.suggestion.SuggestionsType;
 import cloud.commandframework.brigadier.suggestion.TooltipSuggestion;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.internal.CommandNode;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -59,6 +51,14 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.internal.CommandNode;
+import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.parser.MappedArgumentParser;
+import org.incendo.cloud.parser.aggregate.AggregateParser;
+import org.incendo.cloud.suggestion.SuggestionFactory;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 @API(status = API.Status.STABLE, since = "2.0.0")
@@ -95,7 +95,7 @@ public final class LiteralBrigadierNodeFactory<C, S> implements BrigadierNodeFac
     @Override
     public @NonNull LiteralCommandNode<S> createNode(
             final @NonNull String label,
-            final cloud.commandframework.internal.@NonNull CommandNode<C> cloudCommand,
+            final @NonNull CommandNode<C> cloudCommand,
             final @NonNull Command<S> executor,
             final @NonNull BrigadierPermissionChecker<C> permissionChecker
     ) {
@@ -106,7 +106,7 @@ public final class LiteralBrigadierNodeFactory<C, S> implements BrigadierNodeFac
         this.updateExecutes(literalArgumentBuilder, cloudCommand, executor);
 
         final LiteralCommandNode<S> constructedRoot = literalArgumentBuilder.build();
-        for (final cloud.commandframework.internal.CommandNode<C> child : cloudCommand.children()) {
+        for (final CommandNode<C> child : cloudCommand.children()) {
             constructedRoot.addChild(this.constructCommandNode(child, permissionChecker, executor).build());
         }
         return constructedRoot;
@@ -122,11 +122,11 @@ public final class LiteralBrigadierNodeFactory<C, S> implements BrigadierNodeFac
     @Override
     public @NonNull LiteralCommandNode<S> createNode(
             final @NonNull String label,
-            final cloud.commandframework.@NonNull Command<C> cloudCommand,
+            final org.incendo.cloud.@NonNull Command<C> cloudCommand,
             final @NonNull Command<S> executor,
             final @NonNull BrigadierPermissionChecker<C> permissionChecker
     ) {
-        final cloud.commandframework.internal.CommandNode<C> node =
+        final CommandNode<C> node =
                 this.commandManager.commandTree().getNamedNode(cloudCommand.rootComponent().name());
         Objects.requireNonNull(node, "node");
 
@@ -136,7 +136,7 @@ public final class LiteralBrigadierNodeFactory<C, S> implements BrigadierNodeFac
     @Override
     public @NonNull LiteralCommandNode<S> createNode(
             final @NonNull String label,
-            final cloud.commandframework.@NonNull Command<C> cloudCommand,
+        final org.incendo.cloud.@NonNull Command<C> cloudCommand,
             final @NonNull Command<S> executor
     ) {
         return this.createNode(label, cloudCommand, executor,
@@ -144,7 +144,7 @@ public final class LiteralBrigadierNodeFactory<C, S> implements BrigadierNodeFac
     }
 
     private @NonNull ArgumentBuilder<S, ?> constructCommandNode(
-            final cloud.commandframework.internal.@NonNull CommandNode<C> root,
+            final @NonNull CommandNode<C> root,
             final @NonNull BrigadierPermissionChecker<C> permissionChecker,
             final com.mojang.brigadier.@NonNull Command<S> executor
     ) {
@@ -165,7 +165,7 @@ public final class LiteralBrigadierNodeFactory<C, S> implements BrigadierNodeFac
             argumentBuilder = this.createVariableArgumentBuilder(root.component(), root, permissionChecker);
         }
         this.updateExecutes(argumentBuilder, root, executor);
-        for (final cloud.commandframework.internal.CommandNode<C> node : root.children()) {
+        for (final CommandNode<C> node : root.children()) {
             argumentBuilder.then(this.constructCommandNode(node, permissionChecker, executor));
         }
         return argumentBuilder;
@@ -173,7 +173,7 @@ public final class LiteralBrigadierNodeFactory<C, S> implements BrigadierNodeFac
 
     private @NonNull ArgumentBuilder<S, ?> createLiteralArgumentBuilder(
             final @NonNull CommandComponent<C> component,
-            final cloud.commandframework.internal.@NonNull CommandNode<C> root,
+            final @NonNull CommandNode<C> root,
             final @NonNull BrigadierPermissionChecker<C> permissionChecker
     ) {
         return LiteralArgumentBuilder.<S>literal(component.name())
@@ -182,7 +182,7 @@ public final class LiteralBrigadierNodeFactory<C, S> implements BrigadierNodeFac
 
     private @NonNull ArgumentBuilder<S, ?> createVariableArgumentBuilder(
             final @NonNull CommandComponent<C> component,
-            final cloud.commandframework.internal.@NonNull CommandNode<C> root,
+            final @NonNull CommandNode<C> root,
             final @NonNull BrigadierPermissionChecker<C> permissionChecker
     ) {
         final ArgumentMapping<S> argumentMapping = this.getArgument(
@@ -205,7 +205,7 @@ public final class LiteralBrigadierNodeFactory<C, S> implements BrigadierNodeFac
 
     private @NonNull ArgumentBuilder<S, ?> constructAggregateNode(
             final @NonNull AggregateParser<C, ?> aggregateParser,
-            final cloud.commandframework.internal.@NonNull CommandNode<C> root,
+            final @NonNull CommandNode<C> root,
             final @NonNull BrigadierPermissionChecker<C> permissionChecker,
             final com.mojang.brigadier.@NonNull Command<S> executor
     ) {
@@ -225,7 +225,7 @@ public final class LiteralBrigadierNodeFactory<C, S> implements BrigadierNodeFac
 
         // We now want to link up all subsequent components to the tail.
         final ArgumentBuilder<S, ?> tail = argumentBuilders.get(argumentBuilders.size() - 1);
-        for (final cloud.commandframework.internal.CommandNode<C> node : root.children()) {
+        for (final CommandNode<C> node : root.children()) {
             tail.then(this.constructCommandNode(node, permissionChecker, executor));
         }
 

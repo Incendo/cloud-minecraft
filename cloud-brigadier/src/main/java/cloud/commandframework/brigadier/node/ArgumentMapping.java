@@ -24,13 +24,13 @@
 package cloud.commandframework.brigadier.node;
 
 import cloud.commandframework.brigadier.suggestion.SuggestionsType;
-import cloud.commandframework.internal.ImmutableBuilder;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.immutables.value.Value;
+import org.incendo.cloud.internal.ImmutableBuilder;
 
 @ImmutableBuilder
 @Value.Immutable

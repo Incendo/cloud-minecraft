@@ -1,6 +1,6 @@
 /**
  * Support for wrapping brigadier {@link com.mojang.brigadier.arguments.ArgumentType ArgumentTypes}
- * as Cloud {@link cloud.commandframework.arguments.parser.ArgumentParser}.
+ * as Cloud {@link org.incendo.cloud.parser.ArgumentParser}.
  *
  * @since 1.5.0
  */

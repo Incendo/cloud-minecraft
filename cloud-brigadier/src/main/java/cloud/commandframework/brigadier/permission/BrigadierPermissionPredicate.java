@@ -23,14 +23,14 @@
 //
 package cloud.commandframework.brigadier.permission;
 
-import cloud.commandframework.SenderMapper;
-import cloud.commandframework.internal.CommandNode;
-import cloud.commandframework.permission.Permission;
 import java.util.Collections;
 import java.util.Set;
 import java.util.function.Predicate;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.internal.CommandNode;
+import org.incendo.cloud.permission.Permission;
 
 @API(status = API.Status.INTERNAL, since = "2.0.0")
 public final class BrigadierPermissionPredicate<C, S> implements Predicate<S> {

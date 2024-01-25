@@ -23,12 +23,6 @@
 //
 package cloud.commandframework.brigadier.parser;
 
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
-import cloud.commandframework.arguments.parser.ArgumentParser;
-import cloud.commandframework.arguments.suggestion.Suggestion;
-import cloud.commandframework.arguments.suggestion.SuggestionProvider;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.context.CommandInput;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.StringRange;
@@ -42,6 +36,12 @@ import java.util.function.Supplier;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.parser.ArgumentParseResult;
+import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.suggestion.Suggestion;
+import org.incendo.cloud.suggestion.SuggestionProvider;
 
 import static cloud.commandframework.brigadier.suggestion.TooltipSuggestion.tooltipSuggestion;
 import static java.util.Objects.requireNonNull;
@@ -153,7 +153,7 @@ public class WrappedBrigadierParser<C, T> implements ArgumentParser<C, T>, Sugge
                 reverseMappedContext,
                 new SuggestionsBuilder(input.input(), input.cursor())
         ).thenApply(suggestions -> {
-            final List<cloud.commandframework.arguments.suggestion.Suggestion> cloud = new ArrayList<>();
+            final List<Suggestion> cloud = new ArrayList<>();
             for (final com.mojang.brigadier.suggestion.Suggestion suggestion : suggestions.getList()) {
                 final String beforeSuggestion = input.input().substring(input.cursor(), suggestion.getRange().getStart());
                 final String afterSuggestion = input.input().substring(suggestion.getRange().getEnd());

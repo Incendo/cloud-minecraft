@@ -23,13 +23,13 @@
 //
 package cloud.commandframework.brigadier.argument;
 
-import cloud.commandframework.arguments.parser.ArgumentParser;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import java.util.function.Function;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.common.returnsreceiver.qual.This;
+import org.incendo.cloud.parser.ArgumentParser;
 
 import static java.util.Objects.requireNonNull;
 

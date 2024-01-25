@@ -23,10 +23,10 @@
 //
 package cloud.commandframework.brigadier.argument;
 
-import cloud.commandframework.arguments.parser.ArgumentParser;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.parser.ArgumentParser;
 
 @API(status = API.Status.INTERNAL, since = "2.0.0")
 public interface BrigadierMappings<C, S> {

@@ -23,7 +23,6 @@
 //
 package cloud.commandframework.brigadier.suggestion;
 
-import cloud.commandframework.internal.CommandNode;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
@@ -32,6 +31,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import java.util.concurrent.CompletableFuture;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.internal.CommandNode;
 
 /**
  * Brigadier suggestion provider that delegates to Cloud's suggestion provider.

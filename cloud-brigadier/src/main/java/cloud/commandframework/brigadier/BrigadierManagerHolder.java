@@ -25,9 +25,10 @@ package cloud.commandframework.brigadier;
 
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.CommandManager;
 
 /**
- * Interface implemented by {@link cloud.commandframework.CommandManager command managers} that are capable of registering
+ * Interface implemented by {@link CommandManager command managers} that are capable of registering
  * commands to Brigadier using {@link CloudBrigadierManager}.
  *
  * @param <C> cloud command sender type
@@ -47,7 +48,7 @@ public interface BrigadierManagerHolder<C, S> {
     boolean hasBrigadierManager();
 
     /**
-     * Get the {@link CloudBrigadierManager} used by this {@link cloud.commandframework.CommandManager command manager}.
+     * Get the {@link CloudBrigadierManager} used by this {@link CommandManager command manager}.
      *
      * <p>Generally, {@link #hasBrigadierManager()} should be checked before calling this method. However, some command managers
      * will always use Brigadier and in those cases the check can be skipped (this will be in the relevant manager's

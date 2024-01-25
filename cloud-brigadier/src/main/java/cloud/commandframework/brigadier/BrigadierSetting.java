@@ -23,8 +23,8 @@
 //
 package cloud.commandframework.brigadier;
 
-import cloud.commandframework.setting.Setting;
 import org.apiguardian.api.API;
+import org.incendo.cloud.setting.Setting;
 
 /**
  * Configurable options that determine how {@link CloudBrigadierManager} behaves.

@@ -23,11 +23,11 @@
 //
 package cloud.commandframework.brigadier.suggestion;
 
-import cloud.commandframework.arguments.suggestion.Suggestion;
 import com.mojang.brigadier.Message;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.suggestion.Suggestion;
 
 /**
  * {@link Suggestion} that has an optional Brigadier {@link Message message} tooltip.

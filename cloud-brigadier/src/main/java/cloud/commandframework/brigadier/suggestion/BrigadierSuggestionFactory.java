@@ -23,12 +23,7 @@
 //
 package cloud.commandframework.brigadier.suggestion;
 
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.arguments.suggestion.SuggestionFactory;
 import cloud.commandframework.brigadier.CloudBrigadierManager;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.types.tuples.Pair;
 import com.mojang.brigadier.context.ParsedCommandNode;
 import com.mojang.brigadier.context.StringRange;
 import com.mojang.brigadier.suggestion.Suggestions;
@@ -46,6 +41,11 @@ import java.util.stream.Collectors;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.suggestion.SuggestionFactory;
+import org.incendo.cloud.type.tuple.Pair;
 
 /**
  * Produces Brigadier suggestions by invoking the Cloud suggestion provider.
@@ -93,7 +93,7 @@ public final class BrigadierSuggestionFactory<C, S> {
      */
     public @NonNull CompletableFuture<@NonNull Suggestions> buildSuggestions(
             final com.mojang.brigadier.context.@Nullable CommandContext<S> senderContext,
-            final cloud.commandframework.internal.@Nullable CommandNode<C> parentNode,
+            final org.incendo.cloud.internal.@Nullable CommandNode<C> parentNode,
             final @NonNull CommandComponent<C> component,
             final @NonNull SuggestionsBuilder builder
     ) {
@@ -125,7 +125,7 @@ public final class BrigadierSuggestionFactory<C, S> {
             final List<TooltipSuggestion> suggestions = new ArrayList<>(suggestionsResult.list());
             if (parentNode != null) {
                 final Set<String> siblingLiterals = parentNode.children().stream()
-                        .map(cloud.commandframework.internal.CommandNode::component)
+                        .map(org.incendo.cloud.internal.CommandNode::component)
                         .filter(Objects::nonNull)
                         .filter(c -> c.type() == CommandComponent.ComponentType.LITERAL)
                         .flatMap(commandComponent -> commandComponent.aliases().stream())

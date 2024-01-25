@@ -23,22 +23,6 @@
 //
 package cloud.commandframework.brigadier;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.SenderMapper;
-import cloud.commandframework.SenderMapperHolder;
-import cloud.commandframework.arguments.flags.CommandFlagParser;
-import cloud.commandframework.arguments.parser.ArgumentParser;
-import cloud.commandframework.arguments.standard.BooleanParser;
-import cloud.commandframework.arguments.standard.ByteParser;
-import cloud.commandframework.arguments.standard.DoubleParser;
-import cloud.commandframework.arguments.standard.FloatParser;
-import cloud.commandframework.arguments.standard.IntegerParser;
-import cloud.commandframework.arguments.standard.LongParser;
-import cloud.commandframework.arguments.standard.ShortParser;
-import cloud.commandframework.arguments.standard.StringArrayParser;
-import cloud.commandframework.arguments.standard.StringParser;
-import cloud.commandframework.arguments.suggestion.SuggestionProvider;
 import cloud.commandframework.brigadier.argument.ArgumentTypeFactory;
 import cloud.commandframework.brigadier.argument.BrigadierMapping;
 import cloud.commandframework.brigadier.argument.BrigadierMappingBuilder;
@@ -46,8 +30,6 @@ import cloud.commandframework.brigadier.argument.BrigadierMappings;
 import cloud.commandframework.brigadier.node.LiteralBrigadierNodeFactory;
 import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
 import cloud.commandframework.brigadier.suggestion.TooltipSuggestion;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.setting.Configurable;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
@@ -65,9 +47,25 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.SenderMapperHolder;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.parser.flag.CommandFlagParser;
+import org.incendo.cloud.parser.standard.BooleanParser;
+import org.incendo.cloud.parser.standard.ByteParser;
+import org.incendo.cloud.parser.standard.DoubleParser;
+import org.incendo.cloud.parser.standard.FloatParser;
+import org.incendo.cloud.parser.standard.IntegerParser;
+import org.incendo.cloud.parser.standard.LongParser;
+import org.incendo.cloud.parser.standard.ShortParser;
+import org.incendo.cloud.parser.standard.StringArrayParser;
+import org.incendo.cloud.parser.standard.StringParser;
+import org.incendo.cloud.setting.Configurable;
 
 /**
- * Manager used to map cloud {@link Command}
+ * Manager used to map cloud {@link org.incendo.cloud.Command}
  * <p>
  * The structure of this class is largely inspired by
  * <a href="https://github.com/aikar/commands/blob/master/brigadier/src/main/java/co.aikar.commands/ACFBrigadierManager.java">
@@ -229,7 +227,7 @@ public final class CloudBrigadierManager<C, S> implements SenderMapperHolder<S, 
     /**
      * Sets whether Brigadier's native suggestions for number types will be used, or if cloud's number suggestions should be
      * used instead. At the time of writing the native suggestions are equivalent to
-     * {@link SuggestionProvider#noSuggestions()}.
+     * {@link org.incendo.cloud.suggestion.SuggestionProvider#noSuggestions()}.
      *
      * <p>The default is to use cloud's suggestions, or {@code false}.</p>
      *

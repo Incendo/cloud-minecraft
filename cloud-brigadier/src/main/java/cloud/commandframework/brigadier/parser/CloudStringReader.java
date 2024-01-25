@@ -23,9 +23,9 @@
 //
 package cloud.commandframework.brigadier.parser;
 
-import cloud.commandframework.context.CommandInput;
 import com.mojang.brigadier.StringReader;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.context.CommandInput;
 
 final class CloudStringReader extends StringReader {
 

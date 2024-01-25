@@ -7,7 +7,7 @@ ktlint = "0.50.0"
 errorprone = "2.24.1"
 run-task = "2.2.2"
 
-cloudCore = "2.0.0-SNAPSHOT"
+cloudCore = "2.0.0-beta.1"
 
 immutables = "2.10.0"
 
@@ -34,9 +34,9 @@ cloud-build-logic = { module = "org.incendo:cloud-build-logic", version.ref = "c
 stylecheck = { module = "ca.stellardrift:stylecheck", version.ref = "stylecheck" }
 errorproneCore = { group = "com.google.errorprone", name = "error_prone_core", version.ref = "errorprone" }
 
-cloud-bom = { module = "cloud.commandframework:cloud-bom", version.ref = "cloudCore" }
-cloud-core = { module = "cloud.commandframework:cloud-core", version.ref = "cloudCore" }
-cloud-annotations = { module = "cloud.commandframework:cloud-annotations", version.ref = "cloudCore" }
+cloud-bom = { module = "org.incendo:cloud-bom", version.ref = "cloudCore" }
+cloud-core = { module = "org.incendo:cloud-core", version.ref = "cloudCore" }
+cloud-annotations = { module = "org.incendo:cloud-annotations", version.ref = "cloudCore" }
 
 immutables = { group = "org.immutables", name = "value", version.ref = "immutables" }
 immutablesAnnotate = { group = "org.immutables", name = "annotate", version.ref = "immutables" }

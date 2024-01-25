@@ -23,9 +23,9 @@
 //
 package cloud.commandframework.brigadier.permission;
 
-import cloud.commandframework.permission.Permission;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.permission.Permission;
 
 @FunctionalInterface
 @API(status = API.Status.INTERNAL, since = "2.0.0")

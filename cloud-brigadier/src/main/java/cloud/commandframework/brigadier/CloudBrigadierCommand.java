@@ -23,12 +23,12 @@
 //
 package cloud.commandframework.brigadier;
 
-import cloud.commandframework.CommandManager;
 import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.CommandManager;
 
 /**
  * Brigadier {@link Command} implementation that delegates to cloud.
