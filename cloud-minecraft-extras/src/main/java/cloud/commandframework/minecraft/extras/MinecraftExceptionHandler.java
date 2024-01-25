@@ -23,14 +23,6 @@
 //
 package cloud.commandframework.minecraft.extras;
 
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.exceptions.ArgumentParseException;
-import cloud.commandframework.exceptions.CommandExecutionException;
-import cloud.commandframework.exceptions.InvalidCommandSenderException;
-import cloud.commandframework.exceptions.InvalidSyntaxException;
-import cloud.commandframework.exceptions.NoPermissionException;
-import cloud.commandframework.exceptions.handling.ExceptionContext;
-import cloud.commandframework.exceptions.handling.ExceptionHandler;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -49,12 +41,19 @@ import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.common.returnsreceiver.qual.This;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.exception.ArgumentParseException;
+import org.incendo.cloud.exception.CommandExecutionException;
+import org.incendo.cloud.exception.InvalidCommandSenderException;
+import org.incendo.cloud.exception.InvalidSyntaxException;
+import org.incendo.cloud.exception.NoPermissionException;
+import org.incendo.cloud.exception.handling.ExceptionContext;
 
 import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.text;
 
 /**
- * Creates and registers {@link ExceptionHandler ExceptionHandlers} that send a {@link Component} to the
+ * Creates and registers {@link org.incendo.cloud.exception.handling.ExceptionHandler ExceptionHandlers} that send a {@link Component} to the
  * command sender.
  *
  * @param <C> command sender type
@@ -374,7 +373,7 @@ public final class MinecraftExceptionHandler<C> {
     }
 
     /**
-     * Registers configured handlers to the {@link cloud.commandframework.exceptions.handling.ExceptionController}.
+     * Registers configured handlers to the {@link org.incendo.cloud.exception.handling.ExceptionController}.
      *
      * @param manager the manager instance
      * @since 2.0.0

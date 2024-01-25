@@ -23,22 +23,6 @@
 //
 package cloud.commandframework.minecraft.extras;
 
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.CommandDescription;
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.Description;
-import cloud.commandframework.help.CommandPredicate;
-import cloud.commandframework.help.HelpHandler;
-import cloud.commandframework.help.HelpQuery;
-import cloud.commandframework.help.HelpRenderer;
-import cloud.commandframework.help.result.CommandEntry;
-import cloud.commandframework.help.result.HelpQueryResult;
-import cloud.commandframework.help.result.IndexCommandResult;
-import cloud.commandframework.help.result.MultipleCommandResult;
-import cloud.commandframework.help.result.VerboseCommandResult;
-import cloud.commandframework.internal.ImmutableImpl;
-import cloud.commandframework.internal.StagedImmutableBuilder;
-import cloud.commandframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -58,13 +42,28 @@ import org.apiguardian.api.API;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.immutables.value.Value;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.description.CommandDescription;
+import org.incendo.cloud.description.Description;
+import org.incendo.cloud.help.CommandPredicate;
+import org.incendo.cloud.help.HelpHandler;
+import org.incendo.cloud.help.HelpQuery;
+import org.incendo.cloud.help.result.CommandEntry;
+import org.incendo.cloud.help.result.HelpQueryResult;
+import org.incendo.cloud.help.result.IndexCommandResult;
+import org.incendo.cloud.help.result.MultipleCommandResult;
+import org.incendo.cloud.help.result.VerboseCommandResult;
+import org.incendo.cloud.internal.ImmutableImpl;
+import org.incendo.cloud.internal.StagedImmutableBuilder;
+import org.incendo.cloud.util.StringUtils;
 
 import static net.kyori.adventure.text.Component.space;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.event.ClickEvent.runCommand;
 
 /**
- * Opinionated extension of {@link HelpRenderer} for Minecraft.
+ * Opinionated extension of {@link org.incendo.cloud.help.HelpRenderer} for Minecraft.
  * <p>
  * This class should <b>not</b> be extended, and the only implementation of it is {@link ImmutableMinecraftHelp}.
  * <p>
@@ -232,7 +231,7 @@ public abstract class MinecraftHelp<C> {
     /**
      * Returns the filter that determines what commands are visible inside the help menu.
      * <p>
-     * The default filter is {@link cloud.commandframework.help.CommandPredicate#acceptAll()}.
+     * The default filter is {@link org.incendo.cloud.help.CommandPredicate#acceptAll()}.
      *
      * @return the filter
      * @since 2.0.0

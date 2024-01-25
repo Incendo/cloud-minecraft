@@ -23,7 +23,6 @@
 //
 package cloud.commandframework.minecraft.extras;
 
-import cloud.commandframework.Description;
 import java.util.Locale;
 import java.util.Objects;
 import net.kyori.adventure.text.Component;
@@ -31,6 +30,7 @@ import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.translation.GlobalTranslator;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.description.Description;
 
 import static java.util.Objects.requireNonNull;
 

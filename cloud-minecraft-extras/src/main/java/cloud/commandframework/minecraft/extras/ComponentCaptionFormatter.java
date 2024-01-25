@@ -23,9 +23,6 @@
 //
 package cloud.commandframework.minecraft.extras;
 
-import cloud.commandframework.captions.Caption;
-import cloud.commandframework.captions.CaptionFormatter;
-import cloud.commandframework.captions.CaptionVariable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +33,9 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.caption.Caption;
+import org.incendo.cloud.caption.CaptionFormatter;
+import org.incendo.cloud.caption.CaptionVariable;
 
 /**
  * Extension of {@link CaptionFormatter} to make it easier to convert from {@link Caption captions}

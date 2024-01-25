@@ -23,8 +23,6 @@
 //
 package cloud.commandframework.minecraft.extras;
 
-import cloud.commandframework.captions.Caption;
-import cloud.commandframework.captions.CaptionVariable;
 import java.util.List;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -32,6 +30,8 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.caption.Caption;
+import org.incendo.cloud.caption.CaptionVariable;
 import org.intellij.lang.annotations.Subst;
 
 @API(status = API.Status.INTERNAL)
