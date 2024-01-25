@@ -23,12 +23,9 @@
 //
 package cloud.commandframework.examples.bungee;
 
-import cloud.commandframework.Description;
-import cloud.commandframework.SenderMapper;
 import cloud.commandframework.bungee.BungeeCommandManager;
 import cloud.commandframework.bungee.parser.PlayerParser;
 import cloud.commandframework.bungee.parser.ServerParser;
-import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.minecraft.extras.MinecraftExceptionHandler;
 import cloud.commandframework.minecraft.extras.RichDescription;
 import net.kyori.adventure.platform.bungeecord.BungeeAudiences;
@@ -37,6 +34,9 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.description.Description;
+import org.incendo.cloud.execution.ExecutionCoordinator;
 
 import static net.kyori.adventure.text.Component.text;
 

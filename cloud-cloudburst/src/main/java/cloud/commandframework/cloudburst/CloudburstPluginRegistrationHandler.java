@@ -23,14 +23,14 @@
 //
 package cloud.commandframework.cloudburst;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.internal.CommandRegistrationHandler;
 import java.util.HashMap;
 import java.util.Map;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.cloudburstmc.server.Server;
 import org.cloudburstmc.server.plugin.Plugin;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.internal.CommandRegistrationHandler;
 
 class CloudburstPluginRegistrationHandler<C> implements CommandRegistrationHandler<C> {
 

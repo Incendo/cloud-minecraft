@@ -23,14 +23,14 @@
 //
 package cloud.commandframework.cloudburst;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.CommandComponent;
 import java.util.Collection;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.cloudburstmc.server.command.CommandSender;
 import org.cloudburstmc.server.command.PluginCommand;
 import org.cloudburstmc.server.command.data.CommandData;
 import org.cloudburstmc.server.plugin.Plugin;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.component.CommandComponent;
 
 final class CloudburstCommand<C> extends PluginCommand<Plugin> {
 

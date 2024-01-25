@@ -23,19 +23,19 @@
 //
 package cloud.commandframework.bungee;
 
-import cloud.commandframework.keys.CloudKey;
 import io.leangen.geantyref.TypeToken;
 import net.md_5.bungee.api.ProxyServer;
+import org.incendo.cloud.key.CloudKey;
 
 /**
- * BungeeCord related {@link cloud.commandframework.context.CommandContext} keys
+ * BungeeCord related {@link org.incendo.cloud.context.CommandContext} keys
  *
  * @since 1.4.0
  */
 public final class BungeeContextKeys {
 
     /**
-     * The {@link ProxyServer} instance is stored in the {@link cloud.commandframework.context.CommandContext}
+     * The {@link ProxyServer} instance is stored in the {@link org.incendo.cloud.context.CommandContext}
      * in {@link BungeeCommandPreprocessor}
      */
     public static final CloudKey<ProxyServer> PROXY_SERVER_KEY = CloudKey.of(

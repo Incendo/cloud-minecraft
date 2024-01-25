@@ -23,25 +23,25 @@
 //
 package cloud.commandframework.bungee;
 
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.SenderMapper;
-import cloud.commandframework.SenderMapperHolder;
 import cloud.commandframework.bungee.parser.PlayerParser;
 import cloud.commandframework.bungee.parser.ServerParser;
-import cloud.commandframework.captions.CaptionProvider;
-import cloud.commandframework.exceptions.ArgumentParseException;
-import cloud.commandframework.exceptions.CommandExecutionException;
-import cloud.commandframework.exceptions.InvalidCommandSenderException;
-import cloud.commandframework.exceptions.InvalidSyntaxException;
-import cloud.commandframework.exceptions.NoPermissionException;
-import cloud.commandframework.exceptions.NoSuchCommandException;
-import cloud.commandframework.execution.ExecutionCoordinator;
 import java.util.logging.Level;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.SenderMapperHolder;
+import org.incendo.cloud.caption.CaptionProvider;
+import org.incendo.cloud.exception.ArgumentParseException;
+import org.incendo.cloud.exception.CommandExecutionException;
+import org.incendo.cloud.exception.InvalidCommandSenderException;
+import org.incendo.cloud.exception.InvalidSyntaxException;
+import org.incendo.cloud.exception.NoPermissionException;
+import org.incendo.cloud.exception.NoSuchCommandException;
+import org.incendo.cloud.execution.ExecutionCoordinator;
 
 public class BungeeCommandManager<C> extends CommandManager<C> implements SenderMapperHolder<CommandSender, C> {
 

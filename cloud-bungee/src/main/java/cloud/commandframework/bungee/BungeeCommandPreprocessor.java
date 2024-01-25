@@ -23,12 +23,12 @@
 //
 package cloud.commandframework.bungee;
 
-import cloud.commandframework.execution.preprocessor.CommandPreprocessingContext;
-import cloud.commandframework.execution.preprocessor.CommandPreprocessor;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.execution.preprocessor.CommandPreprocessingContext;
+import org.incendo.cloud.execution.preprocessor.CommandPreprocessor;
 
 /**
- * Command preprocessor which decorates incoming {@link cloud.commandframework.context.CommandContext}
+ * Command preprocessor which decorates incoming {@link org.incendo.cloud.context.CommandContext}
  * with Bungee specific objects
  *
  * @param <C> Command sender type

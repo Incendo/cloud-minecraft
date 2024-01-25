@@ -23,12 +23,12 @@
 //
 package cloud.commandframework.bungee;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.internal.CommandRegistrationHandler;
 import java.util.HashMap;
 import java.util.Map;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.internal.CommandRegistrationHandler;
 
 final class BungeePluginRegistrationHandler<C> implements CommandRegistrationHandler<C> {
 

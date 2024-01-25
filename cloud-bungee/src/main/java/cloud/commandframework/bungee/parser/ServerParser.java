@@ -23,19 +23,19 @@
 //
 package cloud.commandframework.bungee.parser;
 
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
-import cloud.commandframework.arguments.parser.ArgumentParser;
-import cloud.commandframework.arguments.parser.ParserDescriptor;
 import cloud.commandframework.bungee.BungeeCaptionKeys;
-import cloud.commandframework.captions.CaptionVariable;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.context.CommandInput;
-import cloud.commandframework.exceptions.parsing.ParserException;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.caption.CaptionVariable;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.exception.parsing.ParserException;
+import org.incendo.cloud.parser.ArgumentParseResult;
+import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.parser.ParserDescriptor;
 
 /**
  * Argument parser for {@link net.md_5.bungee.api.config.ServerInfo servers}

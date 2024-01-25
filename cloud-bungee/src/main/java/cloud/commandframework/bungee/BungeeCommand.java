@@ -23,16 +23,16 @@
 //
 package cloud.commandframework.bungee;
 
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.arguments.suggestion.Suggestion;
-import cloud.commandframework.arguments.suggestion.Suggestions;
-import cloud.commandframework.util.StringUtils;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.suggestion.Suggestion;
+import org.incendo.cloud.suggestion.Suggestions;
+import org.incendo.cloud.util.StringUtils;
 
 public final class BungeeCommand<C> extends Command implements TabExecutor {
 
@@ -40,7 +40,7 @@ public final class BungeeCommand<C> extends Command implements TabExecutor {
     private final CommandComponent<C> command;
 
     BungeeCommand(
-            final cloud.commandframework.@NonNull Command<C> cloudCommand,
+            final org.incendo.cloud.@NonNull Command<C> cloudCommand,
             final @NonNull CommandComponent<C> command,
             final @NonNull BungeeCommandManager<C> manager
     ) {
