@@ -23,16 +23,8 @@
 //
 package cloud.commandframework.examples.bukkit.annotations.feature;
 
-import cloud.commandframework.annotations.AnnotationAccessor;
-import cloud.commandframework.annotations.AnnotationParser;
-import cloud.commandframework.annotations.Command;
-import cloud.commandframework.annotations.injection.ParameterInjector;
-import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.examples.bukkit.ExamplePlugin;
 import cloud.commandframework.examples.bukkit.annotations.AnnotationFeature;
-import cloud.commandframework.exceptions.CommandExecutionException;
-import cloud.commandframework.exceptions.InjectionException;
-import cloud.commandframework.exceptions.handling.ExceptionHandler;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.GameMode;
@@ -40,6 +32,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.annotations.AnnotationParser;
+import org.incendo.cloud.annotations.Command;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.exception.CommandExecutionException;
+import org.incendo.cloud.exception.InjectionException;
+import org.incendo.cloud.exception.handling.ExceptionHandler;
+import org.incendo.cloud.injection.ParameterInjector;
+import org.incendo.cloud.util.annotation.AnnotationAccessor;
 
 import static net.kyori.adventure.text.Component.text;
 

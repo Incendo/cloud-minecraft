@@ -23,12 +23,9 @@
 //
 package cloud.commandframework.examples.bukkit.builder.feature;
 
-import cloud.commandframework.Description;
 import cloud.commandframework.bukkit.BukkitCommandManager;
 import cloud.commandframework.examples.bukkit.ExamplePlugin;
 import cloud.commandframework.examples.bukkit.builder.BuilderFeature;
-import cloud.commandframework.keys.CloudKey;
-import cloud.commandframework.types.tuples.Triplet;
 import io.leangen.geantyref.TypeToken;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -36,6 +33,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.description.Description;
+import org.incendo.cloud.key.CloudKey;
+import org.incendo.cloud.type.tuple.Triplet;
 
 import static cloud.commandframework.bukkit.parser.WorldParser.worldParser;
 

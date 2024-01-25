@@ -23,20 +23,20 @@
 //
 package cloud.commandframework.examples.bukkit.builder.feature;
 
-import cloud.commandframework.arguments.parser.ArgumentParser;
-import cloud.commandframework.arguments.standard.UUIDParser;
 import cloud.commandframework.bukkit.BukkitCommandManager;
 import cloud.commandframework.bukkit.parser.PlayerParser;
 import cloud.commandframework.examples.bukkit.ExamplePlugin;
 import cloud.commandframework.examples.bukkit.builder.BuilderFeature;
-import cloud.commandframework.keys.CloudKey;
-import cloud.commandframework.types.Either;
 import io.leangen.geantyref.TypeToken;
 import java.util.UUID;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.key.CloudKey;
+import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.parser.standard.UUIDParser;
+import org.incendo.cloud.type.Either;
 
 import static net.kyori.adventure.text.Component.text;
 

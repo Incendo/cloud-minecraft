@@ -23,19 +23,19 @@
 //
 package cloud.commandframework.examples.bukkit.annotations.feature;
 
-import cloud.commandframework.annotations.AnnotationParser;
-import cloud.commandframework.annotations.Argument;
-import cloud.commandframework.annotations.Command;
-import cloud.commandframework.annotations.CommandDescription;
-import cloud.commandframework.annotations.Regex;
-import cloud.commandframework.captions.Caption;
-import cloud.commandframework.captions.CaptionProvider;
 import cloud.commandframework.examples.bukkit.ExamplePlugin;
 import cloud.commandframework.examples.bukkit.annotations.AnnotationFeature;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.annotations.AnnotationParser;
+import org.incendo.cloud.annotations.Argument;
+import org.incendo.cloud.annotations.Command;
+import org.incendo.cloud.annotations.CommandDescription;
+import org.incendo.cloud.annotations.Regex;
+import org.incendo.cloud.caption.Caption;
+import org.incendo.cloud.caption.CaptionProvider;
 
 import static net.kyori.adventure.text.Component.text;
 

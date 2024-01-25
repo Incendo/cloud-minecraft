@@ -23,8 +23,6 @@
 //
 package cloud.commandframework.examples.bukkit.annotations;
 
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.examples.bukkit.ExamplePlugin;
 import cloud.commandframework.examples.bukkit.annotations.feature.BuilderModifierExample;
 import cloud.commandframework.examples.bukkit.annotations.feature.CommandContainerExample;
@@ -44,6 +42,8 @@ import java.util.Arrays;
 import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.annotations.AnnotationParser;
 
 /**
  * Main entrypoint for all annotation related examples. This class is responsible for creating and configuring

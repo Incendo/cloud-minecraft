@@ -23,18 +23,18 @@
 //
 package cloud.commandframework.examples.bukkit.builder.feature;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.CommandBean;
-import cloud.commandframework.CommandProperties;
 import cloud.commandframework.bukkit.BukkitCommandManager;
-import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.examples.bukkit.ExamplePlugin;
 import cloud.commandframework.examples.bukkit.builder.BuilderFeature;
-import cloud.commandframework.keys.CloudKey;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.bean.CommandBean;
+import org.incendo.cloud.bean.CommandProperties;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.key.CloudKey;
 
-import static cloud.commandframework.arguments.standard.IntegerParser.integerParser;
+import static org.incendo.cloud.parser.standard.IntegerParser.integerParser;
 
 /**
  * Example of using {@link CommandBean command beans} to register a command.

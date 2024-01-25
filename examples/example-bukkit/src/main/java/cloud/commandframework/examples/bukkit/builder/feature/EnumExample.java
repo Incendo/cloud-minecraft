@@ -32,7 +32,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import static cloud.commandframework.arguments.standard.EnumParser.enumParser;
+import static org.incendo.cloud.parser.standard.EnumParser.enumParser;
 
 /**
  * Example showcasing enums using the enum parser. These enums do not have

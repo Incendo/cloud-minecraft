@@ -23,18 +23,18 @@
 //
 package cloud.commandframework.examples.bukkit.feature;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.execution.postprocessor.CommandPostprocessingContext;
-import cloud.commandframework.execution.postprocessor.CommandPostprocessor;
-import cloud.commandframework.execution.preprocessor.CommandPreprocessingContext;
-import cloud.commandframework.execution.preprocessor.CommandPreprocessor;
-import cloud.commandframework.keys.CloudKey;
-import cloud.commandframework.services.types.ConsumerService;
 import java.util.logging.Logger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.execution.postprocessor.CommandPostprocessingContext;
+import org.incendo.cloud.execution.postprocessor.CommandPostprocessor;
+import org.incendo.cloud.execution.preprocessor.CommandPreprocessingContext;
+import org.incendo.cloud.execution.preprocessor.CommandPreprocessor;
+import org.incendo.cloud.key.CloudKey;
+import org.incendo.cloud.services.type.ConsumerService;
 
 /**
  * Example showcasing how to use the pre- &amp; post-processing systems.

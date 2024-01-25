@@ -23,16 +23,9 @@
 //
 package cloud.commandframework.examples.bukkit.builder.feature;
 
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.arguments.DefaultValue;
-import cloud.commandframework.arguments.aggregate.AggregateParser;
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
-import cloud.commandframework.arguments.suggestion.BlockingSuggestionProvider;
-import cloud.commandframework.arguments.suggestion.Suggestion;
 import cloud.commandframework.bukkit.BukkitCommandManager;
 import cloud.commandframework.examples.bukkit.ExamplePlugin;
 import cloud.commandframework.examples.bukkit.builder.BuilderFeature;
-import cloud.commandframework.types.tuples.Pair;
 import io.leangen.geantyref.TypeToken;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.IntStream;
@@ -44,11 +37,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.component.DefaultValue;
+import org.incendo.cloud.parser.ArgumentParseResult;
+import org.incendo.cloud.parser.aggregate.AggregateParser;
+import org.incendo.cloud.suggestion.BlockingSuggestionProvider;
+import org.incendo.cloud.suggestion.Suggestion;
+import org.incendo.cloud.type.tuple.Pair;
 
-import static cloud.commandframework.arguments.standard.BooleanParser.booleanParser;
-import static cloud.commandframework.arguments.standard.IntegerParser.integerParser;
-import static cloud.commandframework.arguments.standard.StringParser.stringParser;
 import static cloud.commandframework.bukkit.parser.WorldParser.worldParser;
+import static org.incendo.cloud.parser.standard.BooleanParser.booleanParser;
+import static org.incendo.cloud.parser.standard.IntegerParser.integerParser;
+import static org.incendo.cloud.parser.standard.StringParser.stringParser;
 
 /**
  * Example showcasing the aggregate command parser system.

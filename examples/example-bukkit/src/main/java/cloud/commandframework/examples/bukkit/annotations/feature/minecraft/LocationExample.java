@@ -23,10 +23,6 @@
 //
 package cloud.commandframework.examples.bukkit.annotations.feature.minecraft;
 
-import cloud.commandframework.annotations.AnnotationParser;
-import cloud.commandframework.annotations.Argument;
-import cloud.commandframework.annotations.Command;
-import cloud.commandframework.annotations.Default;
 import cloud.commandframework.bukkit.parser.location.Location2D;
 import cloud.commandframework.examples.bukkit.ExamplePlugin;
 import cloud.commandframework.examples.bukkit.annotations.AnnotationFeature;
@@ -35,6 +31,10 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.annotations.AnnotationParser;
+import org.incendo.cloud.annotations.Argument;
+import org.incendo.cloud.annotations.Command;
+import org.incendo.cloud.annotations.Default;
 
 /**
  * Example of the Bukkit location parsers.

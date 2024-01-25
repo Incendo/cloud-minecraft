@@ -24,13 +24,13 @@
 package cloud.commandframework.examples.bukkit.builder.feature;
 
 import cloud.commandframework.bukkit.BukkitCommandManager;
-import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.examples.bukkit.ExamplePlugin;
 import cloud.commandframework.examples.bukkit.builder.BuilderFeature;
-import cloud.commandframework.execution.CommandExecutionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.execution.CommandExecutionHandler;
 
 /**
  * Example of a command with a permission attached to it.

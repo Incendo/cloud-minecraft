@@ -26,11 +26,11 @@ package cloud.commandframework.examples.bukkit.builder.feature.minecraft;
 import cloud.commandframework.bukkit.BukkitCommandManager;
 import cloud.commandframework.bukkit.data.ItemStackPredicate;
 import cloud.commandframework.bukkit.data.ProtoItemStack;
-import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.examples.bukkit.ExamplePlugin;
 import cloud.commandframework.examples.bukkit.builder.BuilderFeature;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.context.CommandContext;
 
 import static cloud.commandframework.bukkit.parser.ItemStackParser.itemStackParser;
 import static cloud.commandframework.bukkit.parser.ItemStackPredicateParser.itemStackPredicateParser;

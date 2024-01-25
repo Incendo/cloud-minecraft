@@ -23,11 +23,8 @@
 //
 package cloud.commandframework.examples.bukkit.annotations.feature;
 
-import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.examples.bukkit.ExamplePlugin;
 import cloud.commandframework.examples.bukkit.annotations.AnnotationFeature;
-import cloud.commandframework.keys.CloudKey;
-import cloud.commandframework.permission.PredicatePermission;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -37,6 +34,9 @@ import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.annotations.AnnotationParser;
+import org.incendo.cloud.key.CloudKey;
+import org.incendo.cloud.permission.PredicatePermission;
 
 /**
  * Example of a command builder modifier that gets triggered on the `@GameModeRequirement` annotation

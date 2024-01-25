@@ -23,12 +23,12 @@
 //
 package cloud.commandframework.examples.bukkit.annotations;
 
-import cloud.commandframework.annotations.processing.CommandContainer;
-import cloud.commandframework.annotations.suggestions.Suggestions;
-import cloud.commandframework.context.CommandContext;
 import java.util.stream.Stream;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.annotations.processing.CommandContainer;
+import org.incendo.cloud.annotations.suggestion.Suggestions;
+import org.incendo.cloud.context.CommandContext;
 
 /**
  * Example of a command container with a higher-than-default priority.

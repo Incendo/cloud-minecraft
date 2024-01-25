@@ -23,18 +23,18 @@
 //
 package cloud.commandframework.examples.bukkit.builder.feature;
 
-import cloud.commandframework.arguments.DefaultValue;
-import cloud.commandframework.arguments.suggestion.Suggestion;
-import cloud.commandframework.arguments.suggestion.SuggestionProvider;
 import cloud.commandframework.bukkit.BukkitCommandManager;
 import cloud.commandframework.examples.bukkit.ExamplePlugin;
 import cloud.commandframework.examples.bukkit.builder.BuilderFeature;
-import cloud.commandframework.help.result.CommandEntry;
 import cloud.commandframework.minecraft.extras.MinecraftHelp;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.component.DefaultValue;
+import org.incendo.cloud.help.result.CommandEntry;
+import org.incendo.cloud.suggestion.Suggestion;
+import org.incendo.cloud.suggestion.SuggestionProvider;
 
-import static cloud.commandframework.arguments.standard.StringParser.greedyStringParser;
+import static org.incendo.cloud.parser.standard.StringParser.greedyStringParser;
 
 /**
  * Example that uses an annotated command to query commands.

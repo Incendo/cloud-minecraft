@@ -23,17 +23,17 @@
 //
 package cloud.commandframework.examples.bukkit.builder.feature.minecraft;
 
-import cloud.commandframework.Description;
 import cloud.commandframework.bukkit.BukkitCommandManager;
 import cloud.commandframework.bukkit.data.ProtoItemStack;
 import cloud.commandframework.examples.bukkit.ExamplePlugin;
 import cloud.commandframework.examples.bukkit.builder.BuilderFeature;
-import cloud.commandframework.types.tuples.Pair;
 import io.leangen.geantyref.TypeToken;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.description.Description;
+import org.incendo.cloud.type.tuple.Pair;
 
 /**
  * Example showcasing the use of the native item stack parser.

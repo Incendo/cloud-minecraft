@@ -37,10 +37,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import static cloud.commandframework.arguments.standard.EnumParser.enumParser;
-import static cloud.commandframework.arguments.standard.IntegerParser.integerParser;
 import static cloud.commandframework.bukkit.parser.EnchantmentParser.enchantmentParser;
 import static cloud.commandframework.bukkit.parser.MaterialParser.materialParser;
+import static org.incendo.cloud.parser.standard.EnumParser.enumParser;
+import static org.incendo.cloud.parser.standard.IntegerParser.integerParser;
 
 /**
  * Example that showcases command flags with values.

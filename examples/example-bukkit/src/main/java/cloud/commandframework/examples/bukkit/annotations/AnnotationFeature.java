@@ -23,10 +23,10 @@
 //
 package cloud.commandframework.examples.bukkit.annotations;
 
-import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.examples.bukkit.ExamplePlugin;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.annotations.AnnotationParser;
 
 /**
  * Some feature of the annotation system that we want to showcase.

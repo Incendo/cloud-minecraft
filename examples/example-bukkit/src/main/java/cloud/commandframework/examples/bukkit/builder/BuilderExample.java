@@ -23,8 +23,6 @@
 //
 package cloud.commandframework.examples.bukkit.builder;
 
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.Description;
 import cloud.commandframework.bukkit.BukkitCommandManager;
 import cloud.commandframework.bukkit.CloudBukkitCapabilities;
 import cloud.commandframework.examples.bukkit.ExamplePlugin;
@@ -49,6 +47,8 @@ import java.util.Arrays;
 import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.description.Description;
 
 /**
  * Main entrypoint for all builder-related examples. It registers a bunch of {@link #FEATURES features}

@@ -35,7 +35,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import static cloud.commandframework.CommandDescription.commandDescription;
+import static cloud.commandframework.minecraft.extras.RichDescription.richDescription;
 import static cloud.commandframework.minecraft.extras.parser.TextColorParser.textColorParser;
 import static net.kyori.adventure.text.Component.text;
 
@@ -52,12 +52,10 @@ public final class TextColorExample implements BuilderFeature {
         manager.command(
                 manager.commandBuilder("builder")
                         .commandDescription(
-                                commandDescription(
-                                        RichDescription.of(text(
-                                                "Sets the color scheme for '/example help'",
-                                                NamedTextColor.GREEN
-                                        ))
-                                )
+                            richDescription(text(
+                                "Sets the color scheme for '/example help'",
+                                NamedTextColor.GREEN
+                            ))
                         )
                         .literal("helpcolors")
                         .required(

@@ -23,7 +23,6 @@
 //
 package cloud.commandframework.examples.bukkit.builder.feature.minecraft;
 
-import cloud.commandframework.Description;
 import cloud.commandframework.bukkit.BukkitCommandManager;
 import cloud.commandframework.bukkit.data.SingleEntitySelector;
 import cloud.commandframework.examples.bukkit.ExamplePlugin;
@@ -32,6 +31,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.description.Description;
 
 import static cloud.commandframework.bukkit.parser.selector.SingleEntitySelectorParser.singleEntitySelectorParser;
 

@@ -23,14 +23,14 @@
 //
 package cloud.commandframework.examples.bukkit.builder.feature;
 
-import cloud.commandframework.Description;
 import cloud.commandframework.bukkit.BukkitCommandManager;
 import cloud.commandframework.examples.bukkit.ExamplePlugin;
 import cloud.commandframework.examples.bukkit.builder.BuilderFeature;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.description.Description;
 
-import static cloud.commandframework.arguments.standard.StringArrayParser.stringArrayParser;
+import static org.incendo.cloud.parser.standard.StringArrayParser.stringArrayParser;
 
 /**
  * Example of a command that consumes the entire input in the form of an array. This is useful when delegating to existing

@@ -23,22 +23,22 @@
 //
 package cloud.commandframework.examples.bukkit.annotations.feature;
 
-import cloud.commandframework.annotations.AnnotationParser;
-import cloud.commandframework.annotations.Command;
 import cloud.commandframework.examples.bukkit.ExamplePlugin;
 import cloud.commandframework.examples.bukkit.annotations.AnnotationFeature;
-import cloud.commandframework.types.Either;
 import java.util.UUID;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.annotations.AnnotationParser;
+import org.incendo.cloud.annotations.Command;
+import org.incendo.cloud.type.Either;
 
 import static net.kyori.adventure.text.Component.text;
 
 /**
- * Example of a command accepting {@link Either}.
+ * Example of a command accepting {@link org.incendo.cloud.type.Either}.
  */
 public final class EitherExample implements AnnotationFeature {
 

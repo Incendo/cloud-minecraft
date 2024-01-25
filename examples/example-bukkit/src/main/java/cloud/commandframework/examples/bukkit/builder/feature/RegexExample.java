@@ -23,16 +23,16 @@
 //
 package cloud.commandframework.examples.bukkit.builder.feature;
 
-import cloud.commandframework.arguments.preprocessor.RegexPreprocessor;
 import cloud.commandframework.bukkit.BukkitCommandManager;
-import cloud.commandframework.captions.Caption;
-import cloud.commandframework.captions.CaptionProvider;
 import cloud.commandframework.examples.bukkit.ExamplePlugin;
 import cloud.commandframework.examples.bukkit.builder.BuilderFeature;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.caption.Caption;
+import org.incendo.cloud.caption.CaptionProvider;
+import org.incendo.cloud.component.preprocessor.RegexPreprocessor;
 
 import static net.kyori.adventure.text.Component.text;
 
