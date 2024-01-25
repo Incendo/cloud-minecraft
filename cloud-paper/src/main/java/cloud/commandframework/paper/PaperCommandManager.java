@@ -23,16 +23,12 @@
 //
 package cloud.commandframework.paper;
 
-import cloud.commandframework.CloudCapability;
-import cloud.commandframework.SenderMapper;
 import cloud.commandframework.brigadier.BrigadierSetting;
 import cloud.commandframework.brigadier.CloudBrigadierManager;
 import cloud.commandframework.bukkit.BukkitCommandManager;
 import cloud.commandframework.bukkit.CloudBukkitCapabilities;
-import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.paper.suggestion.SuggestionListener;
 import cloud.commandframework.paper.suggestion.SuggestionListenerFactory;
-import cloud.commandframework.state.RegistrationState;
 import java.util.concurrent.Executor;
 import org.apiguardian.api.API;
 import org.bukkit.Bukkit;
@@ -41,6 +37,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.CloudCapability;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.state.RegistrationState;
 
 /**
  * Paper command manager that extends {@link BukkitCommandManager}

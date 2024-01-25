@@ -23,19 +23,19 @@
 //
 package cloud.commandframework.paper.suggestion;
 
-import cloud.commandframework.arguments.suggestion.SuggestionFactory;
-import cloud.commandframework.arguments.suggestion.Suggestions;
 import cloud.commandframework.brigadier.suggestion.TooltipSuggestion;
 import cloud.commandframework.paper.PaperCommandManager;
 import cloud.commandframework.paper.suggestion.tooltips.CompletionMapper;
 import cloud.commandframework.paper.suggestion.tooltips.CompletionMapperFactory;
-import cloud.commandframework.util.StringUtils;
 import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.bukkit.event.EventHandler;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.suggestion.SuggestionFactory;
+import org.incendo.cloud.suggestion.Suggestions;
+import org.incendo.cloud.util.StringUtils;
 
 class BrigadierAsyncCommandSuggestionListener<C> extends AsyncCommandSuggestionListener<C> {
 

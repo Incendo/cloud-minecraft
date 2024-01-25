@@ -23,16 +23,16 @@
 //
 package cloud.commandframework.paper.suggestion;
 
-import cloud.commandframework.arguments.suggestion.Suggestion;
-import cloud.commandframework.arguments.suggestion.Suggestions;
 import cloud.commandframework.bukkit.BukkitPluginRegistrationHandler;
 import cloud.commandframework.paper.PaperCommandManager;
-import cloud.commandframework.util.StringUtils;
 import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.bukkit.event.EventHandler;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.suggestion.Suggestion;
+import org.incendo.cloud.suggestion.Suggestions;
+import org.incendo.cloud.util.StringUtils;
 
 class AsyncCommandSuggestionListener<C> implements SuggestionListener<C> {
 

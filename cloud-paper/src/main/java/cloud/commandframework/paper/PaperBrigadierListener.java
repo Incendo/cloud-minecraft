@@ -23,16 +23,12 @@
 //
 package cloud.commandframework.paper;
 
-import cloud.commandframework.CommandTree;
-import cloud.commandframework.SenderMapper;
 import cloud.commandframework.brigadier.CloudBrigadierCommand;
 import cloud.commandframework.brigadier.CloudBrigadierManager;
 import cloud.commandframework.brigadier.node.LiteralBrigadierNodeFactory;
 import cloud.commandframework.brigadier.permission.BrigadierPermissionChecker;
 import cloud.commandframework.bukkit.internal.BukkitBackwardsBrigadierSenderMapper;
 import cloud.commandframework.bukkit.internal.BukkitBrigadierMapper;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.internal.CommandNode;
 import com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource;
 import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
@@ -40,6 +36,10 @@ import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.CommandTree;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.internal.CommandNode;
 
 @SuppressWarnings("UnstableApiUsage")
 class PaperBrigadierListener<C> implements Listener {
