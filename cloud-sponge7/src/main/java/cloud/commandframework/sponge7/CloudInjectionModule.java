@@ -23,13 +23,13 @@
 //
 package cloud.commandframework.sponge7;
 
-import cloud.commandframework.SenderMapper;
-import cloud.commandframework.execution.ExecutionCoordinator;
 import com.google.inject.AbstractModule;
 import com.google.inject.Key;
 import com.google.inject.util.Types;
 import java.lang.reflect.Type;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.spongepowered.api.command.CommandSource;
 
 /**

@@ -23,7 +23,7 @@
 //
 package cloud.commandframework.sponge7;
 
-import cloud.commandframework.keys.CloudKey;
+import org.incendo.cloud.key.CloudKey;
 import org.spongepowered.api.text.Text;
 
 /**

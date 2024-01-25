@@ -23,22 +23,22 @@
 //
 package cloud.commandframework.sponge7;
 
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.SenderMapper;
-import cloud.commandframework.SenderMapperHolder;
-import cloud.commandframework.exceptions.ArgumentParseException;
-import cloud.commandframework.exceptions.CommandExecutionException;
-import cloud.commandframework.exceptions.InvalidCommandSenderException;
-import cloud.commandframework.exceptions.InvalidSyntaxException;
-import cloud.commandframework.exceptions.NoPermissionException;
-import cloud.commandframework.exceptions.NoSuchCommandException;
-import cloud.commandframework.exceptions.handling.ExceptionContext;
-import cloud.commandframework.exceptions.handling.ExceptionHandler;
-import cloud.commandframework.execution.ExecutionCoordinator;
-import cloud.commandframework.keys.CloudKey;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.SenderMapperHolder;
+import org.incendo.cloud.exception.ArgumentParseException;
+import org.incendo.cloud.exception.CommandExecutionException;
+import org.incendo.cloud.exception.InvalidCommandSenderException;
+import org.incendo.cloud.exception.InvalidSyntaxException;
+import org.incendo.cloud.exception.NoPermissionException;
+import org.incendo.cloud.exception.NoSuchCommandException;
+import org.incendo.cloud.exception.handling.ExceptionContext;
+import org.incendo.cloud.exception.handling.ExceptionHandler;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.key.CloudKey;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.Text;

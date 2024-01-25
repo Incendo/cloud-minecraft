@@ -23,11 +23,6 @@
 //
 package cloud.commandframework.sponge7;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.arguments.suggestion.Suggestion;
-import cloud.commandframework.arguments.suggestion.Suggestions;
-import cloud.commandframework.util.StringUtils;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -35,6 +30,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.suggestion.Suggestion;
+import org.incendo.cloud.suggestion.Suggestions;
+import org.incendo.cloud.util.StringUtils;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;

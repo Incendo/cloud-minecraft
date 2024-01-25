@@ -23,14 +23,14 @@
 //
 package cloud.commandframework.sponge7;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.internal.CommandRegistrationHandler;
 import com.google.common.collect.ImmutableList;
 import java.util.HashMap;
 import java.util.Map;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.internal.CommandRegistrationHandler;
 import org.spongepowered.api.Sponge;
 
 final class SpongePluginRegistrationHandler<C> implements CommandRegistrationHandler<C> {
