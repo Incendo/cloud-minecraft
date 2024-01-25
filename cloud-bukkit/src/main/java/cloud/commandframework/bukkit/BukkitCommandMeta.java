@@ -23,8 +23,8 @@
 //
 package cloud.commandframework.bukkit;
 
-import cloud.commandframework.keys.CloudKey;
 import org.apiguardian.api.API;
+import org.incendo.cloud.key.CloudKey;
 
 @API(status = API.Status.STABLE, since = "2.0.0")
 public final class BukkitCommandMeta {
@@ -32,7 +32,7 @@ public final class BukkitCommandMeta {
     /**
      * The description to show for the Bukkit command.
      * <p>
-     * If this is not set then Bukkit will attempt to retrieve the {@link cloud.commandframework.CommandDescription}
+     * If this is not set then Bukkit will attempt to retrieve the {@link org.incendo.cloud.description.CommandDescription}
      * for the command.
      * <p>
      * If the command description is empty, then Bukkit will attempt to fall back on the argument description of

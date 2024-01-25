@@ -23,13 +23,8 @@
 //
 package cloud.commandframework.bukkit.parser.selector;
 
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
-import cloud.commandframework.arguments.parser.ParserDescriptor;
 import cloud.commandframework.bukkit.data.MultiplePlayerSelector;
 import cloud.commandframework.bukkit.parser.PlayerParser;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.context.CommandInput;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -39,6 +34,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.parser.ArgumentParseResult;
+import org.incendo.cloud.parser.ParserDescriptor;
 
 /**
  * Parser for {@link MultiplePlayerSelector}. On Minecraft 1.13+

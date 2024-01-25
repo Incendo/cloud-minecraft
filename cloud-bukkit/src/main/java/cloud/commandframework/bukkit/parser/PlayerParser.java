@@ -23,24 +23,24 @@
 //
 package cloud.commandframework.bukkit.parser;
 
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
-import cloud.commandframework.arguments.parser.ArgumentParser;
-import cloud.commandframework.arguments.parser.ParserDescriptor;
-import cloud.commandframework.arguments.suggestion.BlockingSuggestionProvider;
-import cloud.commandframework.arguments.suggestion.Suggestion;
 import cloud.commandframework.bukkit.BukkitCaptionKeys;
 import cloud.commandframework.bukkit.BukkitCommandContextKeys;
-import cloud.commandframework.captions.CaptionVariable;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.context.CommandInput;
-import cloud.commandframework.exceptions.parsing.ParserException;
 import java.util.stream.Collectors;
 import org.apiguardian.api.API;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.caption.CaptionVariable;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.exception.parsing.ParserException;
+import org.incendo.cloud.parser.ArgumentParseResult;
+import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.parser.ParserDescriptor;
+import org.incendo.cloud.suggestion.BlockingSuggestionProvider;
+import org.incendo.cloud.suggestion.Suggestion;
 
 public final class PlayerParser<C> implements ArgumentParser<C, Player>, BlockingSuggestionProvider<C> {
 

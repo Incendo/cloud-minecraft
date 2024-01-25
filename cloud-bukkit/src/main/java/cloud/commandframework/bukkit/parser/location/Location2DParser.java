@@ -23,14 +23,7 @@
 //
 package cloud.commandframework.bukkit.parser.location;
 
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
-import cloud.commandframework.arguments.parser.ArgumentParser;
-import cloud.commandframework.arguments.parser.ParserDescriptor;
-import cloud.commandframework.arguments.suggestion.BlockingSuggestionProvider;
 import cloud.commandframework.bukkit.BukkitCommandContextKeys;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.context.CommandInput;
 import org.apiguardian.api.API;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -39,6 +32,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.parser.ArgumentParseResult;
+import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.parser.ParserDescriptor;
+import org.incendo.cloud.suggestion.BlockingSuggestionProvider;
 
 /**
  * Parser that parses {@link Location2D} from two doubles. This will use the command

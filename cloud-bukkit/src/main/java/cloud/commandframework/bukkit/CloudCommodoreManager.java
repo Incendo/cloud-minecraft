@@ -23,12 +23,9 @@
 //
 package cloud.commandframework.bukkit;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.SenderMapper;
 import cloud.commandframework.brigadier.CloudBrigadierManager;
 import cloud.commandframework.bukkit.internal.BukkitBackwardsBrigadierSenderMapper;
 import cloud.commandframework.bukkit.internal.BukkitBrigadierMapper;
-import cloud.commandframework.context.CommandContext;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
@@ -43,6 +40,9 @@ import me.lucko.commodore.CommodoreProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.context.CommandContext;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 class CloudCommodoreManager<C> extends BukkitPluginRegistrationHandler<C> {

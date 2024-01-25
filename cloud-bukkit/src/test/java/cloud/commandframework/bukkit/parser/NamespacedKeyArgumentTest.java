@@ -23,12 +23,12 @@
 //
 package cloud.commandframework.bukkit.parser;
 
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
 import cloud.commandframework.bukkit.BukkitCommandManager;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.context.CommandInput;
-import cloud.commandframework.context.StandardCommandContextFactory;
 import org.bukkit.NamespacedKey;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.context.StandardCommandContextFactory;
+import org.incendo.cloud.parser.ArgumentParseResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

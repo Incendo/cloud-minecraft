@@ -23,9 +23,9 @@
 //
 package cloud.commandframework.brigadier.parser;
 
-import cloud.commandframework.context.CommandInput;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import org.incendo.cloud.context.CommandInput;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;

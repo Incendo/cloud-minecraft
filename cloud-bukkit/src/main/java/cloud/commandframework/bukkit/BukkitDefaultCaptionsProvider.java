@@ -23,9 +23,9 @@
 //
 package cloud.commandframework.bukkit;
 
-import cloud.commandframework.captions.CaptionProvider;
-import cloud.commandframework.captions.DelegatingCaptionProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.caption.CaptionProvider;
+import org.incendo.cloud.caption.DelegatingCaptionProvider;
 
 /**
  * Provides the default captions for messages in cloud-bukkit.

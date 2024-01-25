@@ -23,9 +23,7 @@
 //
 package cloud.commandframework.bukkit.parser;
 
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
 import cloud.commandframework.bukkit.util.ServerTest;
-import cloud.commandframework.context.CommandInput;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -34,6 +32,8 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.parser.ArgumentParseResult;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

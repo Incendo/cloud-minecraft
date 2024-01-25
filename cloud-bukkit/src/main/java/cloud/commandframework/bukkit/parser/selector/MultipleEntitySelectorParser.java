@@ -23,8 +23,6 @@
 //
 package cloud.commandframework.bukkit.parser.selector;
 
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.arguments.parser.ParserDescriptor;
 import cloud.commandframework.bukkit.data.MultipleEntitySelector;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,6 +30,8 @@ import java.util.List;
 import org.apiguardian.api.API;
 import org.bukkit.entity.Entity;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.parser.ParserDescriptor;
 
 /**
  * Parser for {@link MultipleEntitySelector}. On Minecraft 1.13+

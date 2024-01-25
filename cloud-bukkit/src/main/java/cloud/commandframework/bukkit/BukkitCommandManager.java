@@ -23,11 +23,6 @@
 //
 package cloud.commandframework.bukkit;
 
-import cloud.commandframework.CloudCapability;
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.SenderMapper;
-import cloud.commandframework.SenderMapperHolder;
-import cloud.commandframework.arguments.parser.ParserParameters;
 import cloud.commandframework.brigadier.BrigadierManagerHolder;
 import cloud.commandframework.brigadier.CloudBrigadierManager;
 import cloud.commandframework.bukkit.annotation.specifier.AllowEmptySelection;
@@ -51,14 +46,6 @@ import cloud.commandframework.bukkit.parser.selector.MultipleEntitySelectorParse
 import cloud.commandframework.bukkit.parser.selector.MultiplePlayerSelectorParser;
 import cloud.commandframework.bukkit.parser.selector.SingleEntitySelectorParser;
 import cloud.commandframework.bukkit.parser.selector.SinglePlayerSelectorParser;
-import cloud.commandframework.exceptions.ArgumentParseException;
-import cloud.commandframework.exceptions.CommandExecutionException;
-import cloud.commandframework.exceptions.InvalidCommandSenderException;
-import cloud.commandframework.exceptions.InvalidSyntaxException;
-import cloud.commandframework.exceptions.NoPermissionException;
-import cloud.commandframework.exceptions.NoSuchCommandException;
-import cloud.commandframework.execution.ExecutionCoordinator;
-import cloud.commandframework.state.RegistrationState;
 import io.leangen.geantyref.TypeToken;
 import java.lang.reflect.Method;
 import java.util.Locale;
@@ -70,6 +57,19 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.CloudCapability;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.SenderMapperHolder;
+import org.incendo.cloud.exception.ArgumentParseException;
+import org.incendo.cloud.exception.CommandExecutionException;
+import org.incendo.cloud.exception.InvalidCommandSenderException;
+import org.incendo.cloud.exception.InvalidSyntaxException;
+import org.incendo.cloud.exception.NoPermissionException;
+import org.incendo.cloud.exception.NoSuchCommandException;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.parser.ParserParameters;
+import org.incendo.cloud.state.RegistrationState;
 
 /**
  * Command manager for the Bukkit platform

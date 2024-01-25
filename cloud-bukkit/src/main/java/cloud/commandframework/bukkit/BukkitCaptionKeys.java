@@ -23,12 +23,12 @@
 //
 package cloud.commandframework.bukkit;
 
-import cloud.commandframework.captions.Caption;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.caption.Caption;
 
 /**
  * {@link Caption} instances for messages in cloud-bukkit

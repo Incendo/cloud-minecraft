@@ -23,8 +23,6 @@
 //
 package cloud.commandframework.bukkit.internal;
 
-import cloud.commandframework.arguments.parser.ArgumentParser;
-import cloud.commandframework.arguments.standard.UUIDParser;
 import cloud.commandframework.brigadier.CloudBrigadierManager;
 import cloud.commandframework.bukkit.BukkitCommandManager;
 import cloud.commandframework.bukkit.parser.BlockPredicateParser;
@@ -46,6 +44,8 @@ import java.util.logging.Level;
 import org.apiguardian.api.API;
 import org.bukkit.NamespacedKey;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.parser.standard.UUIDParser;
 
 /**
  * Helper for mapping argument types to their NMS Brigadier counterpart on CraftBukkit platforms.

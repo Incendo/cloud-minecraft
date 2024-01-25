@@ -23,18 +23,8 @@
 //
 package cloud.commandframework.brigadier.node;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.SenderMapper;
-import cloud.commandframework.arguments.aggregate.AggregateParser;
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
-import cloud.commandframework.arguments.suggestion.Suggestion;
 import cloud.commandframework.brigadier.CloudBrigadierManager;
 import cloud.commandframework.brigadier.suggestion.CloudDelegatingSuggestionProvider;
-import cloud.commandframework.context.StandardCommandContextFactory;
-import cloud.commandframework.execution.ExecutionCoordinator;
-import cloud.commandframework.internal.CommandRegistrationHandler;
-import cloud.commandframework.types.tuples.Pair;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -47,15 +37,25 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.leangen.geantyref.TypeToken;
 import java.util.Arrays;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.context.StandardCommandContextFactory;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.internal.CommandRegistrationHandler;
+import org.incendo.cloud.parser.ArgumentParseResult;
+import org.incendo.cloud.parser.aggregate.AggregateParser;
+import org.incendo.cloud.suggestion.Suggestion;
+import org.incendo.cloud.type.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static cloud.commandframework.arguments.standard.BooleanParser.booleanParser;
-import static cloud.commandframework.arguments.standard.IntegerParser.integerParser;
-import static cloud.commandframework.arguments.standard.StringParser.greedyStringParser;
 import static com.google.common.truth.Truth.assertThat;
+import static org.incendo.cloud.parser.standard.BooleanParser.booleanParser;
+import static org.incendo.cloud.parser.standard.IntegerParser.integerParser;
+import static org.incendo.cloud.parser.standard.StringParser.greedyStringParser;
 
 @SuppressWarnings("unchecked")
 @ExtendWith(MockitoExtension.class)
@@ -84,7 +84,7 @@ class LiteralBrigadierNodeFactoryTest {
                 .literal("literal")
                 .required("integer", integerParser(0, 10))
                 .optional("string", greedyStringParser(),
-                        cloud.commandframework.arguments.suggestion.SuggestionProvider.suggesting(Arrays.asList(
+                        org.incendo.cloud.suggestion.SuggestionProvider.suggesting(Arrays.asList(
                                 Suggestion.simple("some"),
                                 Suggestion.simple("suggestions")
                         ))

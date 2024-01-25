@@ -25,13 +25,13 @@ package cloud.commandframework.bukkit.util;
 
 import cloud.commandframework.bukkit.BukkitCommandContextKeys;
 import cloud.commandframework.bukkit.BukkitCommandManager;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.context.StandardCommandContextFactory;
 import java.lang.reflect.Field;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.StandardCommandContextFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

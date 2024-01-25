@@ -25,16 +25,17 @@ package cloud.commandframework.bukkit;
 
 import cloud.commandframework.brigadier.parser.WrappedBrigadierParser;
 import cloud.commandframework.bukkit.internal.BukkitBackwardsBrigadierSenderMapper;
-import cloud.commandframework.execution.preprocessor.CommandPreprocessingContext;
-import cloud.commandframework.execution.preprocessor.CommandPreprocessor;
 import java.util.concurrent.Executor;
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.execution.preprocessor.CommandPreprocessingContext;
+import org.incendo.cloud.execution.preprocessor.CommandPreprocessor;
 
 /**
- * Command preprocessor which decorates incoming {@link cloud.commandframework.context.CommandContext}
+ * Command preprocessor which decorates incoming {@link CommandContext}
  * with Bukkit specific objects
  *
  * @param <C> command sender type

@@ -23,14 +23,6 @@
 //
 package cloud.commandframework.bukkit;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.CommandDescription;
-import cloud.commandframework.arguments.suggestion.Suggestion;
-import cloud.commandframework.arguments.suggestion.Suggestions;
-import cloud.commandframework.internal.CommandNode;
-import cloud.commandframework.permission.Permission;
-import cloud.commandframework.util.StringUtils;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -42,6 +34,14 @@ import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.description.CommandDescription;
+import org.incendo.cloud.internal.CommandNode;
+import org.incendo.cloud.permission.Permission;
+import org.incendo.cloud.suggestion.Suggestion;
+import org.incendo.cloud.suggestion.Suggestions;
+import org.incendo.cloud.util.StringUtils;
 
 final class BukkitCommand<C> extends org.bukkit.command.Command implements PluginIdentifiableCommand {
 

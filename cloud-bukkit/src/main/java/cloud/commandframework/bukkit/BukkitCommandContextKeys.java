@@ -23,21 +23,22 @@
 //
 package cloud.commandframework.bukkit;
 
-import cloud.commandframework.keys.CloudKey;
 import io.leangen.geantyref.TypeToken;
 import java.util.concurrent.Executor;
 import org.apiguardian.api.API;
 import org.bukkit.command.CommandSender;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.key.CloudKey;
 
 /**
- * Bukkit related {@link cloud.commandframework.context.CommandContext} keys.
+ * Bukkit related {@link CommandContext} keys.
  *
  * @since 1.5.0
  */
 public final class BukkitCommandContextKeys {
 
     /**
-     * Key used to store the Bukkit native {@link CommandSender} in the {@link cloud.commandframework.context.CommandContext}.
+     * Key used to store the Bukkit native {@link CommandSender} in the {@link CommandContext}.
      *
      * @since 1.5.0
      */

@@ -23,12 +23,12 @@
 //
 package cloud.commandframework.bukkit.parser.selector;
 
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.arguments.parser.ParserDescriptor;
 import cloud.commandframework.bukkit.data.SingleEntitySelector;
 import org.apiguardian.api.API;
 import org.bukkit.entity.Entity;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.parser.ParserDescriptor;
 
 /**
  * Parser for {@link SingleEntitySelector}. On Minecraft 1.13+

@@ -23,11 +23,11 @@
 //
 package cloud.commandframework.bukkit.parser;
 
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
 import cloud.commandframework.bukkit.util.ServerTest;
-import cloud.commandframework.context.CommandInput;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.parser.ArgumentParseResult;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 

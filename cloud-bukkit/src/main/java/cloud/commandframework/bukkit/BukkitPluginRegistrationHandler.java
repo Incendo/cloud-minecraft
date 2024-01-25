@@ -23,10 +23,6 @@
 //
 package cloud.commandframework.bukkit;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.internal.CommandRegistrationHandler;
-import cloud.commandframework.setting.ManagerSetting;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -45,6 +41,10 @@ import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.entity.Player;
 import org.bukkit.help.GenericCommandHelpTopic;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.internal.CommandRegistrationHandler;
+import org.incendo.cloud.setting.ManagerSetting;
 
 public class BukkitPluginRegistrationHandler<C> implements CommandRegistrationHandler<C> {
 

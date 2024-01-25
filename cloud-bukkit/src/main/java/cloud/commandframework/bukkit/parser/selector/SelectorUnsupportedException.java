@@ -24,10 +24,10 @@
 package cloud.commandframework.bukkit.parser.selector;
 
 import cloud.commandframework.bukkit.BukkitCaptionKeys;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.exceptions.parsing.ParserException;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.exception.parsing.ParserException;
 
 /**
  * Selector parsers may fail with this exception when they are not able to work

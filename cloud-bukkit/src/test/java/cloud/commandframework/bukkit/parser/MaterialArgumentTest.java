@@ -23,13 +23,13 @@
 //
 package cloud.commandframework.bukkit.parser;
 
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
 import cloud.commandframework.bukkit.util.ServerTest;
-import cloud.commandframework.context.CommandInput;
 import java.util.Locale;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.parser.ArgumentParseResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;

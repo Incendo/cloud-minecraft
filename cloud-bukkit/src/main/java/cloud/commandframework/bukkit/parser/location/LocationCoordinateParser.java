@@ -23,12 +23,12 @@
 //
 package cloud.commandframework.bukkit.parser.location;
 
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
-import cloud.commandframework.arguments.parser.ArgumentParser;
-import cloud.commandframework.arguments.standard.DoubleParser;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.context.CommandInput;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.parser.ArgumentParseResult;
+import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.parser.standard.DoubleParser;
 
 /**
  * A single coordinate, meant to be used as an element in a position vector
