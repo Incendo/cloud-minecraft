@@ -1,0 +1,77 @@
+//
+// MIT License
+//
+// Copyright (c) 2024 Incendo
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//
+package org.incendo.cloud.bukkit;
+
+import io.leangen.geantyref.TypeToken;
+import org.apiguardian.api.API;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.parser.ParserParameter;
+
+/**
+ * {@link ParserParameter} keys for cloud-bukkit.
+ *
+ * @since 1.7.0
+ */
+@API(status = API.Status.STABLE, since = "1.7.0")
+public final class BukkitParserParameters {
+
+    private BukkitParserParameters() {
+    }
+
+    /**
+     * Used to specify if an empty result is allowed for
+     * {@link org.incendo.cloud.bukkit.parser.selector.MultiplePlayerSelectorParser} and
+     * {@link org.incendo.cloud.bukkit.parser.selector.MultipleEntitySelectorParser}.
+     *
+     * @since 1.8.0
+     */
+    @API(status = API.Status.STABLE, since = "1.8.0")
+    public static final ParserParameter<Boolean> ALLOW_EMPTY_SELECTOR_RESULT =
+            create("allow_empty_selector_result", TypeToken.get(Boolean.class));
+
+    /**
+     * Sets to require explicit namespaces for {@link org.incendo.cloud.bukkit.parser.NamespacedKeyParser}
+     * (i.e. 'test' will be rejected but 'test:test' will pass).
+     *
+     * @since 1.7.0
+     */
+    public static final ParserParameter<Boolean> REQUIRE_EXPLICIT_NAMESPACE =
+            create("require_explicit_namespace", TypeToken.get(Boolean.class));
+
+    /**
+     * Sets a custom default namespace for {@link org.incendo.cloud.bukkit.parser.NamespacedKeyParser}.
+     * Without this annotation the default is {@link org.bukkit.NamespacedKey#MINECRAFT}.
+     *
+     * @since 1.7.0
+     */
+    public static final ParserParameter<String> DEFAULT_NAMESPACE =
+            create("default_namespace", TypeToken.get(String.class));
+
+    private static <T> @NonNull ParserParameter<T> create(
+            final @NonNull String key,
+            final @NonNull TypeToken<T> expectedType
+    ) {
+        return new ParserParameter<>(key, expectedType);
+    }
+}
