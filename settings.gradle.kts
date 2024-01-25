@@ -45,6 +45,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "cloud-minecraft"
 
+include("cloud-minecraft-bom")
+
 include("cloud-brigadier")
 include("cloud-bukkit")
 include("cloud-bungee")
