@@ -21,8 +21,8 @@ dependencies {
 
 tasks {
     shadowJar {
-        relocate("net.kyori", "cloud.commandframework.example.kyori")
-        relocate("io.leangen.geantyref", "cloud.commandframework.example.geantyref")
+        relocate("net.kyori", "org.incendo.cloud.example.kyori")
+        relocate("io.leangen.geantyref", "org.incendo.cloud.example.geantyref")
     }
     assemble {
         dependsOn(shadowJar)
