@@ -72,11 +72,11 @@ import org.incendo.cloud.parser.ParserParameters;
 import org.incendo.cloud.state.RegistrationState;
 
 /**
- * Command manager for the Bukkit platform
+ * Base {@link CommandManager} implementation for Bukkit-based platforms.
  *
  * @param <C> command sender type
  */
-public class BukkitCommandManager<C> extends CommandManager<C>
+public abstract class BukkitCommandManager<C> extends CommandManager<C>
         implements BrigadierManagerHolder<C, Object>, SenderMapperHolder<CommandSender, C> {
 
     private static final String MESSAGE_INTERNAL_ERROR = ChatColor.RED
@@ -92,7 +92,9 @@ public class BukkitCommandManager<C> extends CommandManager<C>
     private boolean splitAliases = false;
 
     /**
-     * Create a new Bukkit command manager.
+     * Create a new Bukkit command manager. {@link BukkitCommandManager} is not intended to be created and used directly.
+     * Instead, use {@code PaperCommandManager} from {@code cloud-paper} which extends {@link BukkitCommandManager} with specific
+     * support for Paper-based platforms, but does not lose support for non Paper-based Bukkit platforms.
      *
      * @param owningPlugin                Plugin constructing the manager. Used when registering commands to the command map,
      *                                    registering event listeners, etc.
@@ -108,8 +110,8 @@ public class BukkitCommandManager<C> extends CommandManager<C>
      * @see #registerBrigadier()
      * @throws InitializationException if construction of the manager fails
      */
-    @API(status = API.Status.STABLE, since = "2.0.0")
-    public BukkitCommandManager(
+    @API(status = API.Status.INTERNAL, since = "2.0.0")
+    protected BukkitCommandManager(
             final @NonNull Plugin owningPlugin,
             final @NonNull ExecutionCoordinator<C> commandExecutionCoordinator,
             final @NonNull SenderMapper<CommandSender, C> senderMapper
