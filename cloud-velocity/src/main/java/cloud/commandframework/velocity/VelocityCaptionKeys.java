@@ -23,11 +23,11 @@
 //
 package cloud.commandframework.velocity;
 
-import cloud.commandframework.captions.Caption;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.caption.Caption;
 
 /**
  * Velocity specific {@link Caption caption keys}

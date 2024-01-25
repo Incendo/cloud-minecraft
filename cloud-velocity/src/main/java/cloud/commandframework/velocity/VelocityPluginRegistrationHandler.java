@@ -23,17 +23,17 @@
 //
 package cloud.commandframework.velocity;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.CommandComponent;
 import cloud.commandframework.brigadier.CloudBrigadierCommand;
 import cloud.commandframework.brigadier.CloudBrigadierManager;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.internal.CommandRegistrationHandler;
 import com.velocitypowered.api.command.BrigadierCommand;
 import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
 import java.util.Collection;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.internal.CommandRegistrationHandler;
 
 final class VelocityPluginRegistrationHandler<C> implements CommandRegistrationHandler<C> {
 

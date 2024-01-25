@@ -23,19 +23,19 @@
 //
 package cloud.commandframework.velocity;
 
-import cloud.commandframework.keys.CloudKey;
 import com.velocitypowered.api.proxy.ProxyServer;
 import io.leangen.geantyref.TypeToken;
+import org.incendo.cloud.key.CloudKey;
 
 /**
- * Velocity related {@link cloud.commandframework.context.CommandContext} keys
+ * Velocity related {@link org.incendo.cloud.context.CommandContext} keys
  *
  * @since 1.4.0
  */
 public final class VelocityContextKeys {
 
     /**
-     * The {@link ProxyServer} instance is stored in the {@link cloud.commandframework.context.CommandContext}
+     * The {@link ProxyServer} instance is stored in the {@link org.incendo.cloud.context.CommandContext}
      * in {@link VelocityCommandPreprocessor}
      */
     public static final CloudKey<ProxyServer> PROXY_SERVER_KEY = CloudKey.of(

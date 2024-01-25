@@ -23,22 +23,21 @@
 //
 package cloud.commandframework.velocity.parser;
 
-import cloud.commandframework.CommandComponent;
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
-import cloud.commandframework.arguments.parser.ArgumentParser;
-import cloud.commandframework.arguments.parser.ParserDescriptor;
-import cloud.commandframework.arguments.suggestion.BlockingSuggestionProvider;
-import cloud.commandframework.captions.CaptionVariable;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.context.CommandInput;
-import cloud.commandframework.exceptions.parsing.ParserException;
 import cloud.commandframework.velocity.VelocityCaptionKeys;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
-import com.velocitypowered.api.proxy.server.RegisteredServer;
 import java.util.stream.Collectors;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.caption.CaptionVariable;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.exception.parsing.ParserException;
+import org.incendo.cloud.parser.ArgumentParseResult;
+import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.parser.ParserDescriptor;
+import org.incendo.cloud.suggestion.BlockingSuggestionProvider;
 
 /**
  * Argument parser for {@link Player players}
@@ -56,8 +55,8 @@ public final class PlayerParser<C> implements ArgumentParser<C, Player>, Blockin
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C> @NonNull ParserDescriptor<C, RegisteredServer> playerParser() {
-        return ParserDescriptor.of(new ServerParser<>(), RegisteredServer.class);
+    public static <C> @NonNull ParserDescriptor<C, Player> playerParser() {
+        return ParserDescriptor.of(new PlayerParser<>(), Player.class);
     }
 
     /**
@@ -68,8 +67,8 @@ public final class PlayerParser<C> implements ArgumentParser<C, Player>, Blockin
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C> CommandComponent.@NonNull Builder<C, RegisteredServer> playerComponent() {
-        return CommandComponent.<C, RegisteredServer>builder().parser(playerParser());
+    public static <C> CommandComponent.@NonNull Builder<C, Player> playerComponent() {
+        return CommandComponent.<C, Player>builder().parser(playerParser());
     }
 
     @Override
