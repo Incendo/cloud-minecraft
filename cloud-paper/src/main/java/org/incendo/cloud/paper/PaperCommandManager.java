@@ -32,6 +32,7 @@ import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.CloudCapability;
+import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.brigadier.BrigadierSetting;
 import org.incendo.cloud.brigadier.CloudBrigadierManager;
@@ -43,9 +44,13 @@ import org.incendo.cloud.paper.suggestion.SuggestionListenerFactory;
 import org.incendo.cloud.state.RegistrationState;
 
 /**
- * Paper command manager that extends {@link BukkitCommandManager}
+ * {@link CommandManager} implementation for Bukkit-based platforms (i.e. Spigot, Paper),
+ * with specific support for Paper features (gated behind {@link CloudBukkitCapabilities} for
+ * "backwards-compatibility").
  *
  * @param <C> command sender type
+ * @see PaperCommandManager#PaperCommandManager(Plugin, ExecutionCoordinator, SenderMapper)
+ * @see #createNative(Plugin, ExecutionCoordinator)
  */
 public class PaperCommandManager<C> extends BukkitCommandManager<C> {
 
