@@ -17,7 +17,7 @@
 ## modules
 
 - cloud-brigadier: integration with [Mojang Brigadier](https://github.com/Mojang/brigadier)
-- cloud-paper: integration for [Paper API](https://papermc.io/software/paper)
+- cloud-paper: integration for Bukkit-based platforms with specific support for [Paper API](https://papermc.io/software/paper)
 - cloud-bukkit: integration for Bukkit-based platforms, dependency of cloud-paper
 - cloud-velocity: integration for [Velocity API](https://papermc.io/software/velocity)
 - cloud-sponge7: integration for [Sponge API](https://spongepowered.org) v7
