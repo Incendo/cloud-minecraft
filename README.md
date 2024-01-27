@@ -4,6 +4,7 @@
 <h1>cloud-minecraft</h1>
 
 ![license](https://img.shields.io/github/license/incendo/cloud.svg)
+[![central](https://img.shields.io/maven-central/v/org.incendo/cloud-paper)](https://search.maven.org/search?q=org.incendo)
 ![build](https://img.shields.io/github/actions/workflow/status/incendo/cloud-minecraft/build.yml?logo=github)
 [![docs](https://img.shields.io/readthedocs/incendocloud?logo=readthedocs)](https://cloud.incendo.org)
 </div>
