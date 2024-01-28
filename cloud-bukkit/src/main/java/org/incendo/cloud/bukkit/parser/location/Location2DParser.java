@@ -69,7 +69,7 @@ public final class Location2DParser<C> implements ArgumentParser<C, Location2D>,
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C> CommandComponent.@NonNull Builder<C, Location2D> locationComponent() {
+    public static <C> CommandComponent.@NonNull Builder<C, Location2D> location2DComponent() {
         return CommandComponent.<C, Location2D>builder().parser(location2DParser());
     }
 

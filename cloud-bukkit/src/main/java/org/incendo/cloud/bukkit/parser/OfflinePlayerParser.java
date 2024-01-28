@@ -72,7 +72,7 @@ public final class OfflinePlayerParser<C> implements ArgumentParser<C, OfflinePl
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C> CommandComponent.@NonNull Builder<C, OfflinePlayer> playerComponent() {
+    public static <C> CommandComponent.@NonNull Builder<C, OfflinePlayer> offlinePlayerComponent() {
         return CommandComponent.<C, OfflinePlayer>builder().parser(offlinePlayerParser());
     }
 

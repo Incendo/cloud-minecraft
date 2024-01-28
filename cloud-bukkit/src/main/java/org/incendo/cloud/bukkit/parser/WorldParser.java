@@ -61,7 +61,7 @@ public final class WorldParser<C> implements ArgumentParser<C, World>, BlockingS
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C> CommandComponent.@NonNull Builder<C, World> characterComponent() {
+    public static <C> CommandComponent.@NonNull Builder<C, World> worldComponent() {
         return CommandComponent.<C, World>builder().parser(worldParser());
     }
 
