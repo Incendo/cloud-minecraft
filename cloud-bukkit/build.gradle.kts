@@ -9,6 +9,9 @@ dependencies {
     compileOnly(libs.bukkit)
     compileOnly(libs.commodore)
     testImplementation(libs.bukkit)
+    javadocLinks(libs.paperApi) {
+        isTransitive = false
+    }
 }
 
 spotless {
