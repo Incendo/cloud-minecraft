@@ -29,17 +29,10 @@ import org.cloudburstmc.server.event.EventPriority;
 import org.cloudburstmc.server.event.Listener;
 import org.cloudburstmc.server.event.server.RegistriesClosedEvent;
 import org.cloudburstmc.server.plugin.Plugin;
+import org.cloudburstmc.server.utils.TextFormat;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.SenderMapperHolder;
-import org.incendo.cloud.exception.ArgumentParseException;
-import org.incendo.cloud.exception.CommandExecutionException;
-import org.incendo.cloud.exception.InvalidCommandSenderException;
-import org.incendo.cloud.exception.InvalidSyntaxException;
-import org.incendo.cloud.exception.NoPermissionException;
-import org.incendo.cloud.exception.NoSuchCommandException;
-import org.incendo.cloud.exception.handling.ExceptionContext;
-import org.incendo.cloud.exception.handling.ExceptionHandler;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.state.RegistrationState;
 
@@ -49,12 +42,6 @@ import org.incendo.cloud.state.RegistrationState;
  * @param <C> Command sender type
  */
 public class CloudburstCommandManager<C> extends CommandManager<C> implements SenderMapperHolder<CommandSender, C> {
-
-    private static final String MESSAGE_INTERNAL_ERROR = "An internal error occurred while attempting to perform this command.";
-    private static final String MESSAGE_NO_PERMS =
-            "I'm sorry, but you do not have permission to perform this command. "
-                    + "Please contact the server administrators if you believe that this is in error.";
-    private static final String MESSAGE_UNKNOWN_COMMAND = "Unknown command. Type \"/help\" for help.";
 
     private final SenderMapper<CommandSender, C> senderMapper;
 
@@ -117,42 +104,15 @@ public class CloudburstCommandManager<C> extends CommandManager<C> implements Se
     }
 
     private void registerDefaultExceptionHandlers() {
-        this.registerHandler(Throwable.class, (commandSender, throwable) -> {
-            commandSender.sendMessage(MESSAGE_INTERNAL_ERROR);
-            this.owningPlugin().getLogger().error(
-                    "An unhandled exception was thrown during command execution",
-                    throwable
-            );
-        });
-        this.registerHandler(CommandExecutionException.class, (commandSender, throwable) -> {
-            commandSender.sendMessage(MESSAGE_INTERNAL_ERROR);
-            this.owningPlugin().getLogger().error(
-                    "Exception executing command handler",
-                    throwable.getCause()
-            );
-        });
-        this.registerHandler(ArgumentParseException.class, (commandSender, throwable) ->
-                commandSender.sendMessage("Invalid Command Argument: " + throwable.getCause().getMessage())
+        this.registerDefaultExceptionHandlers(
+            triplet -> {
+                final CommandSender commandSender = triplet.first().inject(CommandSender.class)
+                    .orElseThrow(NullPointerException::new);
+                final String message = triplet.first().formatCaption(triplet.second(), triplet.third());
+                commandSender.sendMessage(TextFormat.RED + message);
+            },
+            pair -> this.owningPlugin().getLogger().error(pair.first(), pair.second())
         );
-        this.registerHandler(NoSuchCommandException.class, (commandSender, throwable) ->
-                commandSender.sendMessage(MESSAGE_UNKNOWN_COMMAND)
-        );
-        this.registerHandler(NoPermissionException.class, (commandSender, throwable) ->
-                commandSender.sendMessage(MESSAGE_NO_PERMS)
-        );
-        this.registerHandler(InvalidCommandSenderException.class, (commandSender, throwable) ->
-                commandSender.sendMessage(throwable.getMessage())
-        );
-        this.registerHandler(InvalidSyntaxException.class, (commandSender, throwable) ->
-                commandSender.sendMessage("Invalid Command Syntax. Correct command syntax is: /" + throwable.correctSyntax())
-        );
-    }
-
-    private <T extends Throwable> void registerHandler(
-            final @NonNull Class<T> exceptionClass,
-            final @NonNull CloudburstExceptionHandler<C, T> handler
-    ) {
-        this.exceptionController().registerHandler(exceptionClass, handler);
     }
 
     @Override
@@ -167,18 +127,5 @@ public class CloudburstCommandManager<C> extends CommandManager<C> implements Se
 
         private CloudListener() {
         }
-    }
-
-
-    private interface CloudburstExceptionHandler<C, T extends Throwable> extends ExceptionHandler<C, T> {
-
-        @Override
-        default void handle(final @NonNull ExceptionContext<C, T> context) throws Throwable {
-            final CommandSender commandSender = context.context().inject(CommandSender.class)
-                    .orElseThrow(NullPointerException::new);
-            this.handle(commandSender, context.exception());
-        }
-
-        void handle(@NonNull CommandSender commandSender, @NonNull T throwable);
     }
 }

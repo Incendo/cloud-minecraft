@@ -48,6 +48,7 @@ import org.incendo.cloud.exception.InvalidCommandSenderException;
 import org.incendo.cloud.exception.InvalidSyntaxException;
 import org.incendo.cloud.exception.NoPermissionException;
 import org.incendo.cloud.exception.handling.ExceptionContext;
+import org.incendo.cloud.util.TypeUtils;
 
 import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.text;
@@ -94,7 +95,7 @@ public final class MinecraftExceptionHandler<C> {
     public static <C> Function<ExceptionContext<C, InvalidCommandSenderException>, Component> createDefaultInvalidSenderHandler() {
         return ctx -> text("Invalid command sender. You must be of type ", NamedTextColor.RED)
                 .append(text(
-                        ctx.exception().requiredSender().getSimpleName(),
+                        TypeUtils.simpleName(ctx.exception().requiredSender()),
                         NamedTextColor.GRAY
                 ));
     }

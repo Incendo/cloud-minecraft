@@ -61,12 +61,6 @@ import org.incendo.cloud.bukkit.parser.selector.MultipleEntitySelectorParser;
 import org.incendo.cloud.bukkit.parser.selector.MultiplePlayerSelectorParser;
 import org.incendo.cloud.bukkit.parser.selector.SingleEntitySelectorParser;
 import org.incendo.cloud.bukkit.parser.selector.SinglePlayerSelectorParser;
-import org.incendo.cloud.exception.ArgumentParseException;
-import org.incendo.cloud.exception.CommandExecutionException;
-import org.incendo.cloud.exception.InvalidCommandSenderException;
-import org.incendo.cloud.exception.InvalidSyntaxException;
-import org.incendo.cloud.exception.NoPermissionException;
-import org.incendo.cloud.exception.NoSuchCommandException;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.parser.ParserParameters;
 import org.incendo.cloud.state.RegistrationState;
@@ -78,13 +72,6 @@ import org.incendo.cloud.state.RegistrationState;
  */
 public abstract class BukkitCommandManager<C> extends CommandManager<C>
         implements BrigadierManagerHolder<C, Object>, SenderMapperHolder<CommandSender, C> {
-
-    private static final String MESSAGE_INTERNAL_ERROR = ChatColor.RED
-            + "An internal error occurred while attempting to perform this command.";
-    private static final String MESSAGE_NO_PERMS = ChatColor.RED
-            + "I'm sorry, but you do not have permission to perform this command. "
-            + "Please contact the server administrators if you believe that this is in error.";
-    private static final String MESSAGE_UNKNOWN_COMMAND = "Unknown command. Type \"/help\" for help.";
 
     private final Plugin owningPlugin;
     private final SenderMapper<CommandSender, C> senderMapper;
@@ -351,38 +338,11 @@ public abstract class BukkitCommandManager<C> extends CommandManager<C>
     }
 
     private void registerDefaultExceptionHandlers() {
-        this.exceptionController().registerHandler(Throwable.class, context -> {
-            this.senderMapper.reverse(context.context().sender()).sendMessage(MESSAGE_INTERNAL_ERROR);
-            this.owningPlugin.getLogger().log(
-                    Level.SEVERE,
-                    "An unhandled exception was thrown during command execution",
-                    context.exception()
-            );
-        }).registerHandler(CommandExecutionException.class, context -> {
-            this.senderMapper.reverse(context.context().sender()).sendMessage(MESSAGE_INTERNAL_ERROR);
-            this.owningPlugin.getLogger().log(
-                    Level.SEVERE,
-                    "Exception executing command handler",
-                    context.exception().getCause()
-            );
-        }).registerHandler(ArgumentParseException.class, context -> {
-            this.senderMapper.reverse(context.context().sender()).sendMessage(
-                    ChatColor.RED + "Invalid Command Argument: " + ChatColor.GRAY + context.exception().getCause().getMessage()
-            );
-        }).registerHandler(NoSuchCommandException.class, context -> {
-            this.senderMapper.reverse(context.context().sender()).sendMessage(MESSAGE_UNKNOWN_COMMAND);
-        }).registerHandler(NoPermissionException.class, context -> {
-            this.senderMapper.reverse(context.context().sender()).sendMessage(MESSAGE_NO_PERMS);
-        }).registerHandler(InvalidCommandSenderException.class, context -> {
-            this.senderMapper.reverse(context.context().sender()).sendMessage(
-                    ChatColor.RED + context.exception().getMessage()
-            );
-        }).registerHandler(InvalidSyntaxException.class, context -> {
-            this.senderMapper.reverse(context.context().sender()).sendMessage(
-                    ChatColor.RED + "Invalid Command Syntax. Correct command syntax is: "
-                            + ChatColor.GRAY + context.exception().correctSyntax()
-            );
-        });
+        this.registerDefaultExceptionHandlers(
+            triplet -> this.senderMapper().reverse(triplet.first().sender())
+                .sendMessage(ChatColor.RED + triplet.first().formatCaption(triplet.second(), triplet.third())),
+            pair -> this.owningPlugin().getLogger().log(Level.SEVERE, pair.first(), pair.second())
+        );
     }
 
     final void lockIfBrigadierCapable() {

@@ -30,7 +30,6 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.proxy.ProxyServer;
-import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.apiguardian.api.API;
@@ -42,14 +41,6 @@ import org.incendo.cloud.brigadier.BrigadierManagerHolder;
 import org.incendo.cloud.brigadier.CloudBrigadierManager;
 import org.incendo.cloud.brigadier.suggestion.TooltipSuggestion;
 import org.incendo.cloud.caption.CaptionProvider;
-import org.incendo.cloud.exception.ArgumentParseException;
-import org.incendo.cloud.exception.CommandExecutionException;
-import org.incendo.cloud.exception.InvalidCommandSenderException;
-import org.incendo.cloud.exception.InvalidSyntaxException;
-import org.incendo.cloud.exception.NoPermissionException;
-import org.incendo.cloud.exception.NoSuchCommandException;
-import org.incendo.cloud.exception.handling.ExceptionContext;
-import org.incendo.cloud.exception.handling.ExceptionHandler;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.suggestion.SuggestionFactory;
 import org.incendo.cloud.velocity.parser.PlayerParser;
@@ -71,12 +62,6 @@ import org.incendo.cloud.velocity.parser.ServerParser;
 @Singleton
 public class VelocityCommandManager<C> extends CommandManager<C>
         implements BrigadierManagerHolder<C, CommandSource>, SenderMapperHolder<CommandSource, C> {
-
-    private static final String MESSAGE_INTERNAL_ERROR = "An internal error occurred while attempting to perform this command.";
-    private static final String MESSAGE_NO_PERMS =
-            "I'm sorry, but you do not have permission to perform this command. "
-                    + "Please contact the server administrators if you believe that this is in error.";
-    private static final String MESSAGE_UNKNOWN_COMMAND = "Unknown command. Type \"/help\" for help.";
 
     /**
      * Default caption for {@link VelocityCaptionKeys#ARGUMENT_PARSE_FAILURE_PLAYER}
@@ -184,75 +169,18 @@ public class VelocityCommandManager<C> extends CommandManager<C>
     }
 
     private void registerDefaultExceptionHandlers() {
-        this.registerHandler(Throwable.class, (source, exception) -> {
-                source.sendMessage(
-                        Identity.nil(),
-                        Component.text(MESSAGE_INTERNAL_ERROR, NamedTextColor.RED)
-                );
-                exception.printStackTrace();
-        });
-        this.registerHandler(CommandExecutionException.class, (source, exception) -> {
-                source.sendMessage(
-                        Identity.nil(),
-                        Component.text(
-                                MESSAGE_INTERNAL_ERROR,
-                                NamedTextColor.RED
-                        )
-                );
-                exception.getCause().printStackTrace();
-        });
-        this.registerHandler(ArgumentParseException.class, (source, exception) ->
-                source.sendMessage(
-                        Identity.nil(),
-                        Component.text()
-                                .append(Component.text("Invalid Command Argument: ", NamedTextColor.RED))
-                                .append(Component.text(exception.getCause().getMessage(), NamedTextColor.GRAY))
-                                .build()
-                )
+        this.registerDefaultExceptionHandlers(
+            triplet -> {
+                final CommandSource source = triplet.first().inject(CommandSource.class).orElseThrow(NullPointerException::new);
+                final String message = triplet.first().formatCaption(triplet.second(), triplet.third());
+                source.sendMessage(Component.text(message, NamedTextColor.RED));
+            },
+            pair -> pair.second().printStackTrace()
         );
-        this.registerHandler(NoSuchCommandException.class, (source, exception) ->
-                source.sendMessage(Identity.nil(), Component.text(MESSAGE_UNKNOWN_COMMAND))
-        );
-        this.registerHandler(NoPermissionException.class, (source, exception) ->
-                source.sendMessage(Identity.nil(), Component.text(MESSAGE_NO_PERMS))
-        );
-        this.registerHandler(InvalidCommandSenderException.class, (source, exception) ->
-                source.sendMessage(Identity.nil(), Component.text(exception.getMessage(), NamedTextColor.RED))
-        );
-        this.registerHandler(InvalidSyntaxException.class, (source, exception) ->
-                source.sendMessage(
-                        Identity.nil(),
-                        Component.text()
-                                .append(Component.text("Invalid Command Syntax. Correct command syntax is: ", NamedTextColor.RED))
-                                .append(Component.text(exception.correctSyntax(), NamedTextColor.GRAY))
-                                .build()
-                )
-        );
-    }
-
-    private <T extends Throwable> void registerHandler(
-            final @NonNull Class<T> exceptionType,
-            final @NonNull VelocityExceptionHandler<C, T> handler
-    ) {
-        this.exceptionController().registerHandler(exceptionType, handler);
     }
 
     @Override
     public final @NonNull SenderMapper<CommandSource, C> senderMapper() {
         return this.senderMapper;
-    }
-
-
-    @FunctionalInterface
-    @SuppressWarnings("FunctionalInterfaceMethodChanged")
-    private interface VelocityExceptionHandler<C, T extends Throwable> extends ExceptionHandler<C, T> {
-
-        @Override
-        default void handle(@NonNull ExceptionContext<C, T> context) throws Throwable {
-            final CommandSource source = context.context().inject(CommandSource.class).orElseThrow(NullPointerException::new);
-            this.handle(source, context.exception());
-        }
-
-        void handle(@NonNull CommandSource source, @NonNull T exception) throws Throwable;
     }
 }
