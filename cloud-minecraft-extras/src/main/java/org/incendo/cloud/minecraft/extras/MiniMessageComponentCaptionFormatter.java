@@ -60,7 +60,11 @@ final class MiniMessageComponentCaptionFormatter<C> implements ComponentCaptionF
         builder.resolvers(this.extraResolvers);
         for (final CaptionVariable variable : variables) {
             @Subst("key") final String key = variable.key();
-            builder.resolver(Placeholder.parsed(key, variable.value()));
+            if (variable instanceof RichVariable) {
+                builder.resolver(Placeholder.component(key, ((RichVariable) variable).component()));
+            } else {
+                builder.resolver(Placeholder.parsed(key, variable.value()));
+            }
         }
         return this.miniMessage.deserialize(caption, builder.build());
     }

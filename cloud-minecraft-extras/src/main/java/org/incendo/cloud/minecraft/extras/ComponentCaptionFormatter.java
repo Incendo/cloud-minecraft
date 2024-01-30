@@ -203,15 +203,18 @@ public interface ComponentCaptionFormatter<C> extends CaptionFormatter<C, Compon
                 final @NonNull String caption,
                 final @NonNull Collection<@NonNull CaptionVariable> variables
         ) {
-            final Map<String, String> replacements = new HashMap<>();
+            final Map<String, Component> replacements = new HashMap<>();
             for (final CaptionVariable variable : variables) {
-                replacements.put(variable.key(), variable.value());
+                if (variable instanceof RichVariable) {
+                    replacements.put(variable.key(), ((RichVariable) variable).component());
+                } else {
+                    replacements.put(variable.key(), Component.text(variable.value()));
+                }
             }
 
             final TextReplacementConfig replacementConfig = TextReplacementConfig.builder()
                     .match(this.pattern)
-                    .replacement((matcher, builder) ->
-                            builder.content(replacements.getOrDefault(matcher.group(1), matcher.group())))
+                    .replacement((matcher, builder) -> replacements.getOrDefault(matcher.group(1), Component.text(matcher.group())))
                     .build();
             return this.mapper.mapComponent(captionKey, caption, recipient).replaceText(replacementConfig);
         }
