@@ -1,4 +1,4 @@
-import org.incendo.cloudbuildlogic.ciBuild
+import org.incendo.cloudbuildlogic.util.ciBuild
 
 plugins {
     id("org.incendo.cloud-build-logic")
