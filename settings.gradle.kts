@@ -1,6 +1,13 @@
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven("https://oss.sonatype.org/content/repositories/snapshots/") {
+            name = "sonatypeOssSnapshots"
+            mavenContent { snapshotsOnly() }
+        }
+    }
     includeBuild("gradle/build-logic")
 }
 

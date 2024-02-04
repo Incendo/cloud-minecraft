@@ -1,5 +1,3 @@
-import org.incendo.cloudbuildlogic.JavadocLinksExtension
-
 plugins {
     id("conventions.base")
     id("conventions.publishing")
@@ -17,9 +15,3 @@ dependencies {
         isTransitive = false
     }
 }
-
-javadocLinks.filter = JavadocLinksExtension.DependencyFilter.NoSnapshots(
-    exceptFor = setOf(
-        "io.papermc.paper:paper-api"
-    )
-)
