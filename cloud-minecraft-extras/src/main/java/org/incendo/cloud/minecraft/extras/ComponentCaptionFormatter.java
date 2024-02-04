@@ -24,6 +24,7 @@
 package org.incendo.cloud.minecraft.extras;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -200,7 +201,7 @@ public interface ComponentCaptionFormatter<C> extends CaptionFormatter<C, Compon
                 final @NonNull Caption captionKey,
                 final @NonNull C recipient,
                 final @NonNull String caption,
-                final @NonNull CaptionVariable @NonNull... variables
+                final @NonNull Collection<@NonNull CaptionVariable> variables
         ) {
             final Map<String, String> replacements = new HashMap<>();
             for (final CaptionVariable variable : variables) {
@@ -229,7 +230,7 @@ public interface ComponentCaptionFormatter<C> extends CaptionFormatter<C, Compon
                 final @NonNull Caption captionKey,
                 final @NonNull C recipient,
                 final @NonNull String caption,
-                final @NonNull CaptionVariable @NonNull... variables
+                final @NonNull Collection<@NonNull CaptionVariable> variables
         ) {
             return this.mapper.mapComponent(captionKey, caption, recipient);
         }

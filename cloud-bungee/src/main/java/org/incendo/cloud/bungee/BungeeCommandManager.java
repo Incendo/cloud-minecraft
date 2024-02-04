@@ -35,21 +35,9 @@ import org.incendo.cloud.SenderMapperHolder;
 import org.incendo.cloud.bungee.parser.PlayerParser;
 import org.incendo.cloud.bungee.parser.ServerParser;
 import org.incendo.cloud.caption.CaptionProvider;
-import org.incendo.cloud.exception.ArgumentParseException;
-import org.incendo.cloud.exception.CommandExecutionException;
-import org.incendo.cloud.exception.InvalidCommandSenderException;
-import org.incendo.cloud.exception.InvalidSyntaxException;
-import org.incendo.cloud.exception.NoPermissionException;
-import org.incendo.cloud.exception.NoSuchCommandException;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 
 public class BungeeCommandManager<C> extends CommandManager<C> implements SenderMapperHolder<CommandSender, C> {
-
-    private static final String MESSAGE_INTERNAL_ERROR = "An internal error occurred while attempting to perform this command.";
-    private static final String MESSAGE_NO_PERMS =
-            "I'm sorry, but you do not have permission to perform this command. "
-                    + "Please contact the server administrators if you believe that this is in error.";
-    private static final String MESSAGE_UNKNOWN_COMMAND = "Unknown command. Type \"/help\" for help.";
 
     /**
      * Default caption for {@link BungeeCaptionKeys#ARGUMENT_PARSE_FAILURE_PLAYER}
@@ -71,7 +59,6 @@ public class BungeeCommandManager<C> extends CommandManager<C> implements Sender
      * @param commandExecutionCoordinator  Coordinator provider
      * @param senderMapper                 Function that maps {@link CommandSender} to the command sender type
      */
-    @SuppressWarnings("unchecked")
     public BungeeCommandManager(
             final @NonNull Plugin owningPlugin,
             final @NonNull ExecutionCoordinator<C> commandExecutionCoordinator,
@@ -121,40 +108,14 @@ public class BungeeCommandManager<C> extends CommandManager<C> implements Sender
     }
 
     private void registerDefaultExceptionHandlers() {
-        this.exceptionController().registerHandler(Throwable.class, context -> {
-            this.senderMapper.reverse(context.context().sender())
-                    .sendMessage(new ComponentBuilder(MESSAGE_INTERNAL_ERROR).color(ChatColor.RED).create());
-            this.owningPlugin.getLogger().log(
-                    Level.SEVERE,
-                    "An unhandled exception was thrown during command execution",
-                    context.exception());
-        }).registerHandler(CommandExecutionException.class, context -> {
-            this.senderMapper.reverse(context.context().sender())
-                    .sendMessage(new ComponentBuilder(MESSAGE_INTERNAL_ERROR)
-                    .color(ChatColor.RED)
-                    .create());
-            this.owningPlugin.getLogger().log(
-                    Level.SEVERE,
-                    "Exception executing command handler",
-                    context.exception().getCause()
-            );
-        }).registerHandler(ArgumentParseException.class, context -> this.senderMapper.reverse(
-                context.context().sender()).sendMessage(new ComponentBuilder("Invalid Command Argument: ")
-                .color(ChatColor.GRAY).append(context.exception().getCause().getMessage()).create())
-        ).registerHandler(NoSuchCommandException.class, context -> this.senderMapper.reverse(
-                context.context().sender()).sendMessage(new ComponentBuilder(MESSAGE_UNKNOWN_COMMAND)
-                .color(ChatColor.WHITE).create())
-        ).registerHandler(NoPermissionException.class, context -> this.senderMapper.reverse(
-                context.context().sender()).sendMessage(new ComponentBuilder(MESSAGE_NO_PERMS)
-                .color(ChatColor.WHITE).create())
-        ).registerHandler(InvalidCommandSenderException.class, context -> this.senderMapper.reverse(
-                context.context().sender()).sendMessage(new ComponentBuilder(context.exception().getMessage())
-                .color(ChatColor.RED).create())
-        ).registerHandler(InvalidSyntaxException.class, context -> this.senderMapper.reverse(
-                context.context().sender()).sendMessage(new ComponentBuilder(
-                        "Invalid Command Syntax. Correct command syntax is: ").color(ChatColor.RED).append("/")
-                        .color(ChatColor.GRAY).append(context.exception().correctSyntax()).color(ChatColor.GRAY).create()
-        ));
+        this.registerDefaultExceptionHandlers(
+            triplet -> {
+                final CommandSender commandSender = this.senderMapper.reverse(triplet.first().sender());
+                final String message = triplet.first().formatCaption(triplet.second(), triplet.third());
+                commandSender.sendMessage(new ComponentBuilder(message).color(ChatColor.RED).create());
+            },
+            pair -> this.owningPlugin.getLogger().log(Level.SEVERE, pair.first(), pair.second())
+        );
     }
 
     @Override

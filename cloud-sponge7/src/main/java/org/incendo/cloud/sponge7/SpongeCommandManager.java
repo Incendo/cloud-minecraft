@@ -29,21 +29,12 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.SenderMapperHolder;
-import org.incendo.cloud.exception.ArgumentParseException;
-import org.incendo.cloud.exception.CommandExecutionException;
-import org.incendo.cloud.exception.InvalidCommandSenderException;
-import org.incendo.cloud.exception.InvalidSyntaxException;
-import org.incendo.cloud.exception.NoPermissionException;
-import org.incendo.cloud.exception.NoSuchCommandException;
-import org.incendo.cloud.exception.handling.ExceptionContext;
-import org.incendo.cloud.exception.handling.ExceptionHandler;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.key.CloudKey;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.util.TextMessageException;
 
 import static java.util.Objects.requireNonNull;
 
@@ -55,17 +46,6 @@ import static java.util.Objects.requireNonNull;
  */
 @Singleton
 public class SpongeCommandManager<C> extends CommandManager<C> implements SenderMapperHolder<CommandSource, C> {
-
-    private static final Text MESSAGE_INTERNAL_ERROR = Text.of(
-            TextColors.RED,
-            "An internal error occurred while attempting to perform this command."
-    );
-    private static final Text MESSAGE_NO_PERMS = Text.of(
-            TextColors.RED,
-            "I'm sorry, but you do not have permission to perform this command. "
-                    + "Please contact the server administrators if you believe that this is in error."
-    );
-    private static final Text MESSAGE_UNKNOWN_COMMAND = Text.of("Unknown command. Type \"/help\" for help.");
 
     public static final CloudKey<CommandSource> SPONGE_COMMAND_SOURCE_KEY = CloudKey.of(
             "__internal_commandsource__",
@@ -113,79 +93,18 @@ public class SpongeCommandManager<C> extends CommandManager<C> implements Sender
     }
 
     private void registerDefaultExceptionHandlers() {
-        this.registerHandler(Throwable.class, (source, throwable) -> {
-            source.sendMessage(MESSAGE_INTERNAL_ERROR);
-            this.owningPlugin().getLogger().error(
-                    "An unhandled exception was thrown during command execution",
-                    throwable
-            );
-        });
-        this.registerHandler(CommandExecutionException.class, (source, throwable) -> {
-            source.sendMessage(MESSAGE_INTERNAL_ERROR);
-            this.owningPlugin().getLogger().error(
-                    "Exception executing command handler",
-                    throwable.getCause()
-            );
-        });
-        this.registerHandler(ArgumentParseException.class, (source, throwable) ->
-                source.sendMessage(Text.of("Invalid Command Argument: ", this.formatMessage(throwable.getCause())))
+        this.registerDefaultExceptionHandlers(
+            triplet -> {
+                final CommandSource source = triplet.first().get(SPONGE_COMMAND_SOURCE_KEY);
+                final String message = triplet.first().formatCaption(triplet.second(), triplet.third());
+                source.sendMessage(Text.of(message, TextColors.RED));
+            },
+            pair -> this.owningPlugin().getLogger().error(pair.first(), pair.second())
         );
-        this.registerHandler(NoSuchCommandException.class, (source, throwable) ->
-                source.sendMessage(MESSAGE_UNKNOWN_COMMAND)
-        );
-        this.registerHandler(NoPermissionException.class, (source, throwable) ->
-                source.sendMessage(MESSAGE_NO_PERMS)
-        );
-        this.registerHandler(InvalidCommandSenderException.class, (source, throwable) ->
-                source.sendMessage(Text.of(TextColors.RED, throwable.getMessage()))
-        );
-        this.registerHandler(InvalidSyntaxException.class, (source, throwable) ->
-                source.sendMessage(Text.of(
-                        TextColors.RED,
-                        "Invalid Command Syntax. Correct command syntax is: ",
-                        Text.of(TextColors.GRAY, throwable.correctSyntax())
-                ))
-        );
-    }
-
-    private <T extends Throwable> void registerHandler(
-            final @NonNull Class<T> exceptionClass,
-            final @NonNull SpongeExceptionHandler<C, T> handler
-    ) {
-        this.exceptionController().registerHandler(exceptionClass, handler);
-    }
-
-    private @NonNull Text formatMessage(final @NonNull Throwable exc) {
-        if (exc instanceof TextMessageException) {
-            final Text response = ((TextMessageException) exc).getText();
-            if (response == null) {
-                return Text.of(TextColors.GRAY, "null");
-            } else if (response.getColor() == TextColors.NONE) {
-                return response.toBuilder().color(TextColors.GRAY).build();
-            } else {
-                return response;
-            }
-        } else {
-            return Text.of(TextColors.GRAY, exc.getMessage());
-        }
     }
 
     @Override
     public final @NonNull SenderMapper<CommandSource, C> senderMapper() {
         return this.senderMapper;
-    }
-
-
-    @FunctionalInterface
-    @SuppressWarnings("FunctionalInterfaceMethodChanged")
-    private interface SpongeExceptionHandler<C, T extends Throwable> extends ExceptionHandler<C, T> {
-
-        @Override
-        default void handle(final @NonNull ExceptionContext<C, T> context) throws Throwable {
-            final CommandSource source = context.context().get(SPONGE_COMMAND_SOURCE_KEY);
-            this.handle(source, context.exception());
-        }
-
-        void handle(@NonNull CommandSource source, @NonNull T throwable);
     }
 }
