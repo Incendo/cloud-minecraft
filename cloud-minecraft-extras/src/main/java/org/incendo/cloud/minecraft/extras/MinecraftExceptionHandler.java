@@ -78,7 +78,7 @@ public final class MinecraftExceptionHandler<C> {
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C> ExceptionFormatter<C, InvalidSyntaxException> createDefaultInvalidSyntaxHandler() {
+    public static <C> MessageFactory<C, InvalidSyntaxException> createDefaultInvalidSyntaxHandler() {
         return (formatter, ctx) -> text()
             .color(NamedTextColor.RED)
             .append(ctx.context().formatCaption(
@@ -98,7 +98,7 @@ public final class MinecraftExceptionHandler<C> {
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C> ExceptionFormatter<C, InvalidCommandSenderException> createDefaultInvalidSenderHandler() {
+    public static <C> MessageFactory<C, InvalidCommandSenderException> createDefaultInvalidSenderHandler() {
         return (formatter, ctx) -> text()
             .color(NamedTextColor.RED)
             .append(ctx.context().formatCaption(
@@ -118,7 +118,7 @@ public final class MinecraftExceptionHandler<C> {
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C> ExceptionFormatter<C, NoPermissionException> createDefaultNoPermissionHandler() {
+    public static <C> MessageFactory<C, NoPermissionException> createDefaultNoPermissionHandler() {
         return (formatter, ctx) -> text()
             .color(NamedTextColor.RED)
             .append(ctx.context().formatCaption(
@@ -137,7 +137,7 @@ public final class MinecraftExceptionHandler<C> {
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C> ExceptionFormatter<C, ArgumentParseException> createDefaultArgumentParsingHandler() {
+    public static <C> MessageFactory<C, ArgumentParseException> createDefaultArgumentParsingHandler() {
         return (formatter, ctx) -> text()
             .color(NamedTextColor.RED)
             .append(ctx.context().formatCaption(
@@ -169,7 +169,7 @@ public final class MinecraftExceptionHandler<C> {
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C> ExceptionFormatter<C, CommandExecutionException> createDefaultCommandExecutionHandler() {
+    public static <C> MessageFactory<C, CommandExecutionException> createDefaultCommandExecutionHandler() {
         return createDefaultCommandExecutionHandler(createDefaultCommandExecutionLogger());
     }
 
@@ -183,7 +183,7 @@ public final class MinecraftExceptionHandler<C> {
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C> ExceptionFormatter<C, CommandExecutionException> createDefaultCommandExecutionHandler(
+    public static <C> MessageFactory<C, CommandExecutionException> createDefaultCommandExecutionHandler(
         final Consumer<ExceptionContext<C, CommandExecutionException>> logger
     ) {
         return (formatter, ctx) -> {
@@ -214,7 +214,7 @@ public final class MinecraftExceptionHandler<C> {
         };
     }
 
-    private final Map<Class<? extends Throwable>, ExceptionFormatter<C, ?>> componentBuilders = new HashMap<>();
+    private final Map<Class<? extends Throwable>, MessageFactory<C, ?>> componentBuilders = new HashMap<>();
     private final AudienceProvider<C> audienceProvider;
     private Decorator<C> decorator = (formatter, ctx, msg) -> msg;
     private ComponentCaptionFormatter<C> captionFormatter = ComponentCaptionFormatter.placeholderReplacing();
@@ -353,7 +353,7 @@ public final class MinecraftExceptionHandler<C> {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public <T extends Throwable> @This @NonNull MinecraftExceptionHandler<C> handler(
         final @NonNull Class<T> type,
-        final @NonNull ExceptionFormatter<C, T> componentFactory
+        final @NonNull MessageFactory<C, T> componentFactory
     ) {
         this.componentBuilders.put(type, componentFactory);
         return this;
@@ -410,7 +410,7 @@ public final class MinecraftExceptionHandler<C> {
     public void registerTo(final @NonNull CommandManager<C> manager) {
         this.componentBuilders.forEach((type, formatter) -> {
             manager.exceptionController().registerHandler(type, ctx -> {
-                final @Nullable ComponentLike message = formatter.format(this.captionFormatter, (ExceptionContext) ctx);
+                final @Nullable ComponentLike message = formatter.message(this.captionFormatter, (ExceptionContext) ctx);
                 if (message != null) {
                     this.audienceProvider.apply(ctx.context().sender()).sendMessage(
                         this.decorator.decorate(this.captionFormatter, ctx, message.asComponent()));
@@ -429,7 +429,7 @@ public final class MinecraftExceptionHandler<C> {
 
 
     @FunctionalInterface
-    public interface ExceptionFormatter<C, T extends Throwable> {
+    public interface MessageFactory<C, T extends Throwable> {
 
         /**
          * Formats the exception info into a {@link Component} message, or {@code null} to send no message.
@@ -438,7 +438,7 @@ public final class MinecraftExceptionHandler<C> {
          * @param exceptionContext exception context
          * @return message or {@code null}
          */
-        @Nullable ComponentLike format(@NonNull ComponentCaptionFormatter<C> formatter, @NonNull ExceptionContext<C, T> exceptionContext);
+        @Nullable ComponentLike message(@NonNull ComponentCaptionFormatter<C> formatter, @NonNull ExceptionContext<C, T> exceptionContext);
     }
 
     @FunctionalInterface
