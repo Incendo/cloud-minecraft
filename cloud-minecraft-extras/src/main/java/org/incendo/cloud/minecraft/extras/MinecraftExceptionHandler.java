@@ -27,11 +27,12 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiFunction;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -42,12 +43,17 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.common.returnsreceiver.qual.This;
 import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.caption.CaptionVariable;
+import org.incendo.cloud.caption.StandardCaptionKeys;
 import org.incendo.cloud.exception.ArgumentParseException;
 import org.incendo.cloud.exception.CommandExecutionException;
 import org.incendo.cloud.exception.InvalidCommandSenderException;
 import org.incendo.cloud.exception.InvalidSyntaxException;
 import org.incendo.cloud.exception.NoPermissionException;
 import org.incendo.cloud.exception.handling.ExceptionContext;
+import org.incendo.cloud.exception.parsing.ParserException;
+import org.incendo.cloud.minecraft.extras.caption.ComponentCaptionFormatter;
+import org.incendo.cloud.minecraft.extras.caption.RichVariable;
 import org.incendo.cloud.util.TypeUtils;
 
 import static net.kyori.adventure.text.Component.newline;
@@ -72,15 +78,15 @@ public final class MinecraftExceptionHandler<C> {
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C> Function<ExceptionContext<C, InvalidSyntaxException>, Component> createDefaultInvalidSyntaxHandler() {
-        return ctx -> text("Invalid command syntax. Correct command syntax is: ", NamedTextColor.RED)
-                .append(ComponentHelper.highlight(
-                        text(
-                                String.format("/%s", ctx.exception().correctSyntax()),
-                                NamedTextColor.GRAY
-                        ),
-                        NamedTextColor.WHITE
-                ));
+    public static <C> MessageFactory<C, InvalidSyntaxException> createDefaultInvalidSyntaxHandler() {
+        return (formatter, ctx) -> text()
+            .color(NamedTextColor.RED)
+            .append(ctx.context().formatCaption(
+                formatter,
+                StandardCaptionKeys.EXCEPTION_INVALID_SYNTAX,
+                RichVariable.of("syntax", ComponentHelper.highlight(text(String.format("/%s", ctx.exception().correctSyntax()),
+                    NamedTextColor.GRAY), NamedTextColor.WHITE))
+            ));
     }
 
     /**
@@ -92,12 +98,15 @@ public final class MinecraftExceptionHandler<C> {
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C> Function<ExceptionContext<C, InvalidCommandSenderException>, Component> createDefaultInvalidSenderHandler() {
-        return ctx -> text("Invalid command sender. You must be of type ", NamedTextColor.RED)
-                .append(text(
-                        TypeUtils.simpleName(ctx.exception().requiredSender()),
-                        NamedTextColor.GRAY
-                ));
+    public static <C> MessageFactory<C, InvalidCommandSenderException> createDefaultInvalidSenderHandler() {
+        return (formatter, ctx) -> text()
+            .color(NamedTextColor.RED)
+            .append(ctx.context().formatCaption(
+                formatter,
+                StandardCaptionKeys.EXCEPTION_INVALID_SENDER,
+                RichVariable.of("actual", text(TypeUtils.simpleName(ctx.context().sender().getClass()), NamedTextColor.GRAY)),
+                RichVariable.of("expected", text(TypeUtils.simpleName(ctx.exception().requiredSender()), NamedTextColor.GRAY))
+            ));
     }
 
     /**
@@ -109,12 +118,14 @@ public final class MinecraftExceptionHandler<C> {
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C> Function<ExceptionContext<C, NoPermissionException>, Component> createDefaultNoPermissionHandler() {
-        return ctx -> text(
-                "I'm sorry, but you do not have permission to perform this command. \n"
-                        + "Please contact the server administrators if you believe that this is in error.",
-                NamedTextColor.RED
-        );
+    public static <C> MessageFactory<C, NoPermissionException> createDefaultNoPermissionHandler() {
+        return (formatter, ctx) -> text()
+            .color(NamedTextColor.RED)
+            .append(ctx.context().formatCaption(
+                formatter,
+                StandardCaptionKeys.EXCEPTION_NO_PERMISSION,
+                CaptionVariable.of("permission", ctx.exception().permissionResult().permission().permissionString())
+            ));
     }
 
     /**
@@ -126,9 +137,14 @@ public final class MinecraftExceptionHandler<C> {
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C> Function<ExceptionContext<C, ArgumentParseException>, Component> createDefaultArgumentParsingHandler() {
-        return ctx -> text("Invalid command argument: ", NamedTextColor.RED)
-                .append(getMessage(ctx.exception().getCause()).colorIfAbsent(NamedTextColor.GRAY));
+    public static <C> MessageFactory<C, ArgumentParseException> createDefaultArgumentParsingHandler() {
+        return (formatter, ctx) -> text()
+            .color(NamedTextColor.RED)
+            .append(ctx.context().formatCaption(
+                formatter,
+                StandardCaptionKeys.EXCEPTION_INVALID_ARGUMENT,
+                RichVariable.of("cause", getMessage(formatter, ctx.exception().getCause()).colorIfAbsent(NamedTextColor.GRAY))
+            ));
     }
 
     /**
@@ -153,7 +169,7 @@ public final class MinecraftExceptionHandler<C> {
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C> Function<ExceptionContext<C, CommandExecutionException>, Component> createDefaultCommandExecutionHandler() {
+    public static <C> MessageFactory<C, CommandExecutionException> createDefaultCommandExecutionHandler() {
         return createDefaultCommandExecutionHandler(createDefaultCommandExecutionLogger());
     }
 
@@ -167,10 +183,10 @@ public final class MinecraftExceptionHandler<C> {
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C> Function<ExceptionContext<C, CommandExecutionException>, Component> createDefaultCommandExecutionHandler(
-            final Consumer<ExceptionContext<C, CommandExecutionException>> logger
+    public static <C> MessageFactory<C, CommandExecutionException> createDefaultCommandExecutionHandler(
+        final Consumer<ExceptionContext<C, CommandExecutionException>> logger
     ) {
-        return ctx -> {
+        return (formatter, ctx) -> {
             logger.accept(ctx);
             final Throwable cause = ctx.exception().getCause();
 
@@ -178,31 +194,30 @@ public final class MinecraftExceptionHandler<C> {
             cause.printStackTrace(new PrintWriter(writer));
             final String stackTrace = writer.toString().replaceAll("\t", "    ");
             final HoverEvent<Component> hover = HoverEvent.showText(
-                    text()
-                            .append(getMessage(cause))
-                            .append(newline())
-                            .append(text(stackTrace))
-                            .append(newline())
-                            .append(text(
-                                    "    Click to copy",
-                                    NamedTextColor.GRAY,
-                                    TextDecoration.ITALIC
-                            ))
+                text()
+                    .append(getMessage(formatter, cause))
+                    .append(newline())
+                    .append(text(stackTrace))
+                    .append(newline())
+                    .append(text(
+                        "    Click to copy",
+                        NamedTextColor.GRAY,
+                        TextDecoration.ITALIC
+                    ))
             );
             final ClickEvent click = ClickEvent.copyToClipboard(stackTrace);
             return text()
-                    .content("An internal error occurred while attempting to perform this command.")
-                    .color(NamedTextColor.RED)
-                    .hoverEvent(hover)
-                    .clickEvent(click)
-                    .build();
+                .append(ctx.context().formatCaption(formatter, StandardCaptionKeys.EXCEPTION_UNEXPECTED))
+                .color(NamedTextColor.RED)
+                .hoverEvent(hover)
+                .clickEvent(click);
         };
     }
 
-    private final Map<Class<? extends Throwable>, Function<ExceptionContext<C, ?>, @Nullable Component>> componentBuilders =
-            new HashMap<>();
-    private BiFunction<ExceptionContext<C, ?>, Component, Component> decorator = (ctx, msg) -> msg;
+    private final Map<Class<? extends Throwable>, MessageFactory<C, ?>> componentBuilders = new HashMap<>();
     private final AudienceProvider<C> audienceProvider;
+    private Decorator<C> decorator = (formatter, ctx, msg) -> msg;
+    private ComponentCaptionFormatter<C> captionFormatter = ComponentCaptionFormatter.placeholderReplacing();
 
     private MinecraftExceptionHandler(final AudienceProvider<C> audienceProvider) {
         this.audienceProvider = audienceProvider;
@@ -298,7 +313,7 @@ public final class MinecraftExceptionHandler<C> {
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
     public @This @NonNull MinecraftExceptionHandler<C> defaultCommandExecutionHandler(
-            final @NonNull Consumer<ExceptionContext<C, CommandExecutionException>> logger
+        final @NonNull Consumer<ExceptionContext<C, CommandExecutionException>> logger
     ) {
         return this.handler(CommandExecutionException.class, createDefaultCommandExecutionHandler(logger));
     }
@@ -317,11 +332,11 @@ public final class MinecraftExceptionHandler<C> {
     @API(status = API.Status.STABLE, since = "2.0.0")
     public @This @NonNull MinecraftExceptionHandler<C> defaultHandlers() {
         return this
-                .defaultArgumentParsingHandler()
-                .defaultInvalidSenderHandler()
-                .defaultInvalidSyntaxHandler()
-                .defaultNoPermissionHandler()
-                .defaultCommandExecutionHandler();
+            .defaultArgumentParsingHandler()
+            .defaultInvalidSenderHandler()
+            .defaultInvalidSyntaxHandler()
+            .defaultNoPermissionHandler()
+            .defaultCommandExecutionHandler();
     }
 
     /**
@@ -337,10 +352,10 @@ public final class MinecraftExceptionHandler<C> {
     @API(status = API.Status.STABLE, since = "2.0.0")
     @SuppressWarnings({"unchecked", "rawtypes"})
     public <T extends Throwable> @This @NonNull MinecraftExceptionHandler<C> handler(
-            final @NonNull Class<T> type,
-            final @NonNull Function<@NonNull ExceptionContext<@NonNull C, @NonNull T>, @Nullable Component> componentFactory
+        final @NonNull Class<T> type,
+        final @NonNull MessageFactory<C, T> componentFactory
     ) {
-        this.componentBuilders.put(type, (Function) componentFactory);
+        this.componentBuilders.put(type, componentFactory);
         return this;
     }
 
@@ -353,13 +368,24 @@ public final class MinecraftExceptionHandler<C> {
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
     public @This @NonNull MinecraftExceptionHandler<C> decorator(
-            final @NonNull BiFunction<@NonNull ExceptionContext<@NonNull C, ?>, @NonNull Component, @NonNull Component> decorator
+        final @NonNull Decorator<C> decorator
     ) {
         this.decorator = decorator;
         return this;
     }
 
     /**
+     * Sets the caption formatter that is responsible for turning {@link org.incendo.cloud.caption.Caption captions} into Adventure {@link Component components}.
+     *
+     * @param captionFormatter caption formatter
+     * @return {@code this}
+     */
+    public @This @NonNull MinecraftExceptionHandler<C> captionFormatter(final @NonNull ComponentCaptionFormatter<C> captionFormatter) {
+        this.captionFormatter = Objects.requireNonNull(captionFormatter, "captionFormatter");
+        return this;
+    }
+
+    /**
      * Sets the decorator that acts on a component before it's sent to the sender.
      *
      * @param decorator the component decorator
@@ -368,9 +394,9 @@ public final class MinecraftExceptionHandler<C> {
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
     public @This @NonNull MinecraftExceptionHandler<C> decorator(
-            final @NonNull Function<@NonNull Component, @NonNull Component> decorator
+        final @NonNull Function<@NonNull Component, @NonNull ComponentLike> decorator
     ) {
-        return this.decorator((ctx, message) -> decorator.apply(message));
+        return this.decorator((formatter, ctx, message) -> decorator.apply(message));
     }
 
     /**
@@ -379,20 +405,57 @@ public final class MinecraftExceptionHandler<C> {
      * @param manager the manager instance
      * @since 2.0.0
      */
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @API(status = API.Status.STABLE, since = "2.0.0")
     public void registerTo(final @NonNull CommandManager<C> manager) {
-        this.componentBuilders.forEach((type, handler) -> {
+        this.componentBuilders.forEach((type, formatter) -> {
             manager.exceptionController().registerHandler(type, ctx -> {
-                final @Nullable Component message = handler.apply(ctx);
+                final @Nullable ComponentLike message = formatter.message(this.captionFormatter, (ExceptionContext) ctx);
                 if (message != null) {
-                    this.audienceProvider.apply(ctx.context().sender()).sendMessage(this.decorator.apply(ctx, message));
+                    this.audienceProvider.apply(ctx.context().sender()).sendMessage(
+                        this.decorator.decorate(this.captionFormatter, ctx, message.asComponent()));
                 }
             });
         });
     }
 
-    private static Component getMessage(final Throwable throwable) {
+    private static <C> Component getMessage(final ComponentCaptionFormatter<C> formatter, final Throwable throwable) {
+        if (throwable instanceof ParserException) {
+            return ((ParserException) throwable).formatCaption(formatter);
+        }
         final Component msg = ComponentMessageThrowable.getOrConvertMessage(throwable);
         return msg == null ? NULL : msg;
+    }
+
+
+    @FunctionalInterface
+    public interface MessageFactory<C, T extends Throwable> {
+
+        /**
+         * Formats the exception info into a {@link Component} message, or {@code null} to send no message.
+         *
+         * @param formatter        formatter to create components with
+         * @param exceptionContext exception context
+         * @return message or {@code null}
+         */
+        @Nullable ComponentLike message(@NonNull ComponentCaptionFormatter<C> formatter, @NonNull ExceptionContext<C, T> exceptionContext);
+    }
+
+    @FunctionalInterface
+    public interface Decorator<C> {
+
+        /**
+         * Decorates a message before sending.
+         *
+         * @param formatter        caption formatter
+         * @param exceptionContext exception context
+         * @param message          message
+         * @return decorated message
+         */
+        @NonNull ComponentLike decorate(
+            @NonNull ComponentCaptionFormatter<C> formatter,
+            @NonNull ExceptionContext<C, ?> exceptionContext,
+            @NonNull Component message
+        );
     }
 }
