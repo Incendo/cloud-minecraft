@@ -24,7 +24,7 @@
 package org.incendo.cloud.minecraft.extras.caption;
 
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
@@ -99,7 +99,7 @@ public interface ComponentCaptionFormatter<C> extends CaptionFormatter<C, Compon
                 final @NonNull Caption captionKey,
                 final @NonNull C recipient,
                 final @NonNull String caption,
-                final @NonNull Collection<@NonNull CaptionVariable> variables
+                final @NonNull List<@NonNull CaptionVariable> variables
             ) {
                 return Component.translatable(captionKey.key(), variables.stream().map(variable -> {
                     if (variable instanceof RichVariable) {

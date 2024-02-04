@@ -23,8 +23,8 @@
 //
 package org.incendo.cloud.minecraft.extras.caption;
 
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import net.kyori.adventure.text.Component;
@@ -48,7 +48,7 @@ final class PatternReplacingComponentCaptionFormatter<C> implements ComponentCap
         final @NonNull Caption captionKey,
         final @NonNull C recipient,
         final @NonNull String caption,
-        final @NonNull Collection<@NonNull CaptionVariable> variables
+        final @NonNull List<@NonNull CaptionVariable> variables
     ) {
         final Map<String, Component> replacements = new HashMap<>();
         for (final CaptionVariable variable : variables) {

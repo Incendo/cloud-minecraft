@@ -23,7 +23,6 @@
 //
 package org.incendo.cloud.minecraft.extras.caption;
 
-import java.util.Collection;
 import java.util.List;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -54,7 +53,7 @@ final class MiniMessageComponentCaptionFormatter<C> implements ComponentCaptionF
         final @NonNull Caption captionKey,
         final @NonNull C recipient,
         final @NonNull String caption,
-        final @NonNull Collection<@NonNull CaptionVariable> variables
+        final @NonNull List<@NonNull CaptionVariable> variables
     ) {
         final TagResolver.Builder builder = TagResolver.builder();
         builder.resolvers(this.extraResolvers);
