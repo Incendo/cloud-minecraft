@@ -30,6 +30,12 @@ import org.incendo.cloud.caption.CaptionProvider;
 public final class TranslatableCaption implements Caption {
     private final String key;
 
+    /**
+     * Creates a new {@link TranslatableCaption}.
+     *
+     * @param key caption key
+     * @return caption
+     */
     public static Caption translatableCaption(final String key) {
         return new TranslatableCaption(key);
     }
@@ -52,7 +58,7 @@ public final class TranslatableCaption implements Caption {
         };
     }
 
-    public TranslatableCaption(final String key) {
+    private TranslatableCaption(final String key) {
         this.key = key;
     }
 
