@@ -28,11 +28,11 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -52,6 +52,8 @@ import org.incendo.cloud.exception.InvalidSyntaxException;
 import org.incendo.cloud.exception.NoPermissionException;
 import org.incendo.cloud.exception.handling.ExceptionContext;
 import org.incendo.cloud.exception.parsing.ParserException;
+import org.incendo.cloud.minecraft.extras.caption.ComponentCaptionFormatter;
+import org.incendo.cloud.minecraft.extras.caption.RichVariable;
 import org.incendo.cloud.util.TypeUtils;
 
 import static net.kyori.adventure.text.Component.newline;
@@ -83,8 +85,8 @@ public final class MinecraftExceptionHandler<C> {
                 formatter,
                 StandardCaptionKeys.EXCEPTION_INVALID_SYNTAX,
                 RichVariable.of("syntax", ComponentHelper.highlight(text(String.format("/%s", ctx.exception().correctSyntax()),
-                    NamedTextColor.GRAY), NamedTextColor.WHITE))))
-            .build();
+                    NamedTextColor.GRAY), NamedTextColor.WHITE))
+            ));
     }
 
     /**
@@ -103,8 +105,8 @@ public final class MinecraftExceptionHandler<C> {
                 formatter,
                 StandardCaptionKeys.EXCEPTION_INVALID_SENDER,
                 RichVariable.of("actual", text(TypeUtils.simpleName(ctx.context().sender().getClass()), NamedTextColor.GRAY)),
-                RichVariable.of("expected", text(TypeUtils.simpleName(ctx.exception().requiredSender()), NamedTextColor.GRAY))))
-            .build();
+                RichVariable.of("expected", text(TypeUtils.simpleName(ctx.exception().requiredSender()), NamedTextColor.GRAY))
+            ));
     }
 
     /**
@@ -122,8 +124,8 @@ public final class MinecraftExceptionHandler<C> {
             .append(ctx.context().formatCaption(
                 formatter,
                 StandardCaptionKeys.EXCEPTION_NO_PERMISSION,
-                CaptionVariable.of("permission", ctx.exception().permissionResult().permission().permissionString())))
-            .build();
+                CaptionVariable.of("permission", ctx.exception().permissionResult().permission().permissionString())
+            ));
     }
 
     /**
@@ -141,8 +143,8 @@ public final class MinecraftExceptionHandler<C> {
             .append(ctx.context().formatCaption(
                 formatter,
                 StandardCaptionKeys.EXCEPTION_INVALID_ARGUMENT,
-                RichVariable.of("cause", getMessage(formatter, ctx.exception().getCause()).colorIfAbsent(NamedTextColor.GRAY))))
-            .build();
+                RichVariable.of("cause", getMessage(formatter, ctx.exception().getCause()).colorIfAbsent(NamedTextColor.GRAY))
+            ));
     }
 
     /**
@@ -182,7 +184,7 @@ public final class MinecraftExceptionHandler<C> {
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
     public static <C> ExceptionFormatter<C, CommandExecutionException> createDefaultCommandExecutionHandler(
-            final Consumer<ExceptionContext<C, CommandExecutionException>> logger
+        final Consumer<ExceptionContext<C, CommandExecutionException>> logger
     ) {
         return (formatter, ctx) -> {
             logger.accept(ctx);
@@ -192,32 +194,30 @@ public final class MinecraftExceptionHandler<C> {
             cause.printStackTrace(new PrintWriter(writer));
             final String stackTrace = writer.toString().replaceAll("\t", "    ");
             final HoverEvent<Component> hover = HoverEvent.showText(
-                    text()
-                            .append(getMessage(formatter, cause))
-                            .append(newline())
-                            .append(text(stackTrace))
-                            .append(newline())
-                            .append(text(
-                                    "    Click to copy",
-                                    NamedTextColor.GRAY,
-                                    TextDecoration.ITALIC
-                            ))
+                text()
+                    .append(getMessage(formatter, cause))
+                    .append(newline())
+                    .append(text(stackTrace))
+                    .append(newline())
+                    .append(text(
+                        "    Click to copy",
+                        NamedTextColor.GRAY,
+                        TextDecoration.ITALIC
+                    ))
             );
             final ClickEvent click = ClickEvent.copyToClipboard(stackTrace);
             return text()
-                    .append(ctx.context().formatCaption(formatter, StandardCaptionKeys.EXCEPTION_UNEXPECTED))
-                    .color(NamedTextColor.RED)
-                    .hoverEvent(hover)
-                    .clickEvent(click)
-                    .build();
+                .append(ctx.context().formatCaption(formatter, StandardCaptionKeys.EXCEPTION_UNEXPECTED))
+                .color(NamedTextColor.RED)
+                .hoverEvent(hover)
+                .clickEvent(click);
         };
     }
 
     private final Map<Class<? extends Throwable>, ExceptionFormatter<C, ?>> componentBuilders = new HashMap<>();
     private final AudienceProvider<C> audienceProvider;
-    private BiFunction<ExceptionContext<C, ?>, Component, Component> decorator = (ctx, msg) -> msg;
-    private ComponentCaptionFormatter<C> captionFormatter = ComponentCaptionFormatter
-        .placeholderReplacing(ComponentCaptionFormatter.ComponentMapper.text());
+    private Decorator<C> decorator = (formatter, ctx, msg) -> msg;
+    private ComponentCaptionFormatter<C> captionFormatter = ComponentCaptionFormatter.placeholderReplacing();
 
     private MinecraftExceptionHandler(final AudienceProvider<C> audienceProvider) {
         this.audienceProvider = audienceProvider;
@@ -313,7 +313,7 @@ public final class MinecraftExceptionHandler<C> {
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
     public @This @NonNull MinecraftExceptionHandler<C> defaultCommandExecutionHandler(
-            final @NonNull Consumer<ExceptionContext<C, CommandExecutionException>> logger
+        final @NonNull Consumer<ExceptionContext<C, CommandExecutionException>> logger
     ) {
         return this.handler(CommandExecutionException.class, createDefaultCommandExecutionHandler(logger));
     }
@@ -332,11 +332,11 @@ public final class MinecraftExceptionHandler<C> {
     @API(status = API.Status.STABLE, since = "2.0.0")
     public @This @NonNull MinecraftExceptionHandler<C> defaultHandlers() {
         return this
-                .defaultArgumentParsingHandler()
-                .defaultInvalidSenderHandler()
-                .defaultInvalidSyntaxHandler()
-                .defaultNoPermissionHandler()
-                .defaultCommandExecutionHandler();
+            .defaultArgumentParsingHandler()
+            .defaultInvalidSenderHandler()
+            .defaultInvalidSyntaxHandler()
+            .defaultNoPermissionHandler()
+            .defaultCommandExecutionHandler();
     }
 
     /**
@@ -352,8 +352,8 @@ public final class MinecraftExceptionHandler<C> {
     @API(status = API.Status.STABLE, since = "2.0.0")
     @SuppressWarnings({"unchecked", "rawtypes"})
     public <T extends Throwable> @This @NonNull MinecraftExceptionHandler<C> handler(
-            final @NonNull Class<T> type,
-            final @NonNull ExceptionFormatter<C, T> componentFactory
+        final @NonNull Class<T> type,
+        final @NonNull ExceptionFormatter<C, T> componentFactory
     ) {
         this.componentBuilders.put(type, componentFactory);
         return this;
@@ -368,7 +368,7 @@ public final class MinecraftExceptionHandler<C> {
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
     public @This @NonNull MinecraftExceptionHandler<C> decorator(
-            final @NonNull BiFunction<@NonNull ExceptionContext<@NonNull C, ?>, @NonNull Component, @NonNull Component> decorator
+        final @NonNull Decorator<C> decorator
     ) {
         this.decorator = decorator;
         return this;
@@ -394,9 +394,9 @@ public final class MinecraftExceptionHandler<C> {
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
     public @This @NonNull MinecraftExceptionHandler<C> decorator(
-            final @NonNull Function<@NonNull Component, @NonNull Component> decorator
+        final @NonNull Function<@NonNull Component, @NonNull ComponentLike> decorator
     ) {
-        return this.decorator((ctx, message) -> decorator.apply(message));
+        return this.decorator((formatter, ctx, message) -> decorator.apply(message));
     }
 
     /**
@@ -410,9 +410,10 @@ public final class MinecraftExceptionHandler<C> {
     public void registerTo(final @NonNull CommandManager<C> manager) {
         this.componentBuilders.forEach((type, formatter) -> {
             manager.exceptionController().registerHandler(type, ctx -> {
-                final @Nullable Component message = formatter.format(this.captionFormatter, (ExceptionContext) ctx);
+                final @Nullable ComponentLike message = formatter.format(this.captionFormatter, (ExceptionContext) ctx);
                 if (message != null) {
-                    this.audienceProvider.apply(ctx.context().sender()).sendMessage(this.decorator.apply(ctx, message));
+                    this.audienceProvider.apply(ctx.context().sender()).sendMessage(
+                        this.decorator.decorate(this.captionFormatter, ctx, message.asComponent()));
                 }
             });
         });
@@ -427,15 +428,34 @@ public final class MinecraftExceptionHandler<C> {
     }
 
 
+    @FunctionalInterface
     public interface ExceptionFormatter<C, T extends Throwable> {
 
         /**
-         * Formats the exception info into a {@link Component}.
+         * Formats the exception info into a {@link Component} message, or {@code null} to send no message.
          *
          * @param formatter        formatter to create components with
          * @param exceptionContext exception context
-         * @return the created component
+         * @return message or {@code null}
          */
-        @Nullable Component format(ComponentCaptionFormatter<C> formatter, ExceptionContext<C, T> exceptionContext);
+        @Nullable ComponentLike format(@NonNull ComponentCaptionFormatter<C> formatter, @NonNull ExceptionContext<C, T> exceptionContext);
+    }
+
+    @FunctionalInterface
+    public interface Decorator<C> {
+
+        /**
+         * Decorates a message before sending.
+         *
+         * @param formatter        caption formatter
+         * @param exceptionContext exception context
+         * @param message          message
+         * @return decorated message
+         */
+        @NonNull ComponentLike decorate(
+            @NonNull ComponentCaptionFormatter<C> formatter,
+            @NonNull ExceptionContext<C, ?> exceptionContext,
+            @NonNull Component message
+        );
     }
 }

@@ -21,16 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package org.incendo.cloud.minecraft.extras;
+package org.incendo.cloud.minecraft.extras.caption;
 
 import java.util.Locale;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.translation.GlobalTranslator;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.immutables.value.Value;
 import org.incendo.cloud.caption.CaptionVariable;
 import org.incendo.cloud.internal.ImmutableImpl;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A {@link CaptionVariable} implementation that uses Adventure components.
@@ -39,7 +41,7 @@ import org.incendo.cloud.internal.ImmutableImpl;
 @Value.Immutable
 @SuppressWarnings("immutables:subtype")
 @API(status = API.Status.STABLE)
-public interface RichVariable extends CaptionVariable {
+public interface RichVariable extends CaptionVariable, ComponentLike {
 
     /**
      * Creates a new rich variable.
@@ -63,8 +65,14 @@ public interface RichVariable extends CaptionVariable {
     @NonNull Component component();
 
     @Override
+    default @NotNull Component asComponent() {
+        return this.component();
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
     default @NonNull String value() {
-        return net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText()
+        return net.kyori.adventure.text.serializer.plain.PlainComponentSerializer.plain()
             .serialize(GlobalTranslator.render(this.component(), Locale.getDefault()));
     }
 }

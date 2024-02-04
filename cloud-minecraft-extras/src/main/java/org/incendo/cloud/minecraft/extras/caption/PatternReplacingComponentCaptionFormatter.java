@@ -21,32 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package org.incendo.cloud.minecraft.extras;
+package org.incendo.cloud.minecraft.extras.caption;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.TextReplacementConfig;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.caption.Caption;
 import org.incendo.cloud.caption.CaptionVariable;
-import org.intellij.lang.annotations.Subst;
 
 @API(status = API.Status.INTERNAL)
-final class MiniMessageComponentCaptionFormatter<C> implements ComponentCaptionFormatter<C> {
+final class PatternReplacingComponentCaptionFormatter<C> implements ComponentCaptionFormatter<C> {
 
-    private final MiniMessage miniMessage;
-    private final List<TagResolver> extraResolvers;
+    private final Pattern pattern;
 
-    MiniMessageComponentCaptionFormatter(
-        final @NonNull MiniMessage miniMessage,
-        final @NonNull List<TagResolver> extraResolvers
-    ) {
-        this.miniMessage = miniMessage;
-        this.extraResolvers = extraResolvers;
+    PatternReplacingComponentCaptionFormatter(final @NonNull Pattern pattern) {
+        this.pattern = pattern;
     }
 
     @Override
@@ -56,16 +50,19 @@ final class MiniMessageComponentCaptionFormatter<C> implements ComponentCaptionF
         final @NonNull String caption,
         final @NonNull Collection<@NonNull CaptionVariable> variables
     ) {
-        final TagResolver.Builder builder = TagResolver.builder();
-        builder.resolvers(this.extraResolvers);
+        final Map<String, Component> replacements = new HashMap<>();
         for (final CaptionVariable variable : variables) {
-            @Subst("key") final String key = variable.key();
             if (variable instanceof RichVariable) {
-                builder.resolver(Placeholder.component(key, ((RichVariable) variable).component()));
+                replacements.put(variable.key(), ((RichVariable) variable).component());
             } else {
-                builder.resolver(Placeholder.parsed(key, variable.value()));
+                replacements.put(variable.key(), Component.text(variable.value()));
             }
         }
-        return this.miniMessage.deserialize(caption, builder.build());
+
+        final TextReplacementConfig replacementConfig = TextReplacementConfig.builder()
+            .match(this.pattern)
+            .replacement((matcher, builder) -> replacements.getOrDefault(matcher.group(1), Component.text(matcher.group())))
+            .build();
+        return Component.text(caption).replaceText(replacementConfig);
     }
 }
