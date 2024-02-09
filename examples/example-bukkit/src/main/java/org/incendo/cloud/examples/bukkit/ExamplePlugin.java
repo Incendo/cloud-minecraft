@@ -35,6 +35,7 @@ import org.incendo.cloud.examples.bukkit.builder.BuilderExample;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler;
 import org.incendo.cloud.minecraft.extras.MinecraftHelp;
+import org.incendo.cloud.minecraft.extras.caption.ComponentCaptionFormatter;
 import org.incendo.cloud.paper.PaperCommandManager;
 
 import static net.kyori.adventure.text.Component.text;
@@ -98,14 +99,16 @@ public final class ExamplePlugin extends JavaPlugin {
         //
         // Create a help instance which is used in TextColorExample and HelpExample.
         //
-        this.minecraftHelp = MinecraftHelp.create(
-                // The help command. This gets prefixed onto all the clickable queries.
-                "/builder help",
-                // The command manager instance that is used to look up the commands.
-                manager,
-                // Tells the help manager how to map command senders to adventure audiences.
-                this.bukkitAudiences()::sender
-        );
+        this.minecraftHelp = MinecraftHelp.<CommandSender>builder()
+            .commandManager(manager)
+            .audienceProvider(this.bukkitAudiences()::sender)
+            .commandPrefix("/builder help")
+            .messageProvider(MinecraftHelp.MessageProvider.caption(
+                manager.captionRegistry(),
+                ComponentCaptionFormatter.miniMessage()
+            ))
+            .build();
+        manager.captionRegistry().registerProvider(MinecraftHelp.defaultCaptionsProvider());
         //
         // Create the annotation examples.
         //
