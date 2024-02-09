@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":cloud-minecraft-extras"))
     /* Extras */
     implementation(libs.adventurePlatformBukkit)
+    implementation(libs.minimessage)
     /* Bukkit */
     compileOnly(libs.bukkit)
     /* Annotation processing */
