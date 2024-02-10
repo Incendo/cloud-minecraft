@@ -103,7 +103,7 @@ public final class ExamplePlugin extends JavaPlugin {
             .commandManager(manager)
             .audienceProvider(this.bukkitAudiences()::sender)
             .commandPrefix("/builder help")
-            .messageProvider(MinecraftHelp.MessageProvider.caption(
+            .messageProvider(MinecraftHelp.captionMessageProvider(
                 manager.captionRegistry(),
                 ComponentCaptionFormatter.miniMessage()
             ))

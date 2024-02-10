@@ -132,10 +132,25 @@ public abstract class MinecraftHelp<C> {
         DEFAULT_MESSAGES.put(MESSAGE_CLICK_FOR_PREVIOUS_PAGE, "Click for previous page");
     }
 
+    /**
+     * Returns a {@link CaptionProvider} for the default messages, using the default prefix ({@code help.minecraft.}).
+     *
+     * @param <C>    command sender type
+     * @return default captions provider
+     * @see #captionMessageProvider(CaptionRegistry, ComponentCaptionFormatter)
+     */
     public static <C> CaptionProvider<C> defaultCaptionsProvider() {
         return defaultCaptionsProvider("help.minecraft.");
     }
 
+    /**
+     * Returns a {@link CaptionProvider} for the default messages, using the provided {@code prefix}.
+     *
+     * @param prefix prefix for transforming message keys into {@link Caption captions}
+     * @param <C>    command sender type
+     * @return default captions provider
+     * @see #captionMessageProvider(String, CaptionRegistry, ComponentCaptionFormatter)
+     */
     public static <C> CaptionProvider<C> defaultCaptionsProvider(final String prefix) {
         return CaptionProvider.<C>constantProvider()
             .putAllCaptions(
@@ -756,6 +771,77 @@ public abstract class MinecraftHelp<C> {
         );
     }
 
+    /**
+     * Creates a {@link MessageProvider} that delegates to the provided {@link CaptionRegistry} and
+     * {@link ComponentCaptionFormatter}. Transforms message keys into {@link Caption captions} using
+     * {@link Caption#of(String)} and the default prefix ({@code help.minecraft.}).
+     *
+     * @param registry  caption registry
+     * @param formatter caption formatter
+     * @param <C>       command sender type
+     * @return message provider
+     * @see #defaultCaptionsProvider()
+     * @see #captionMessageProvider(String, CaptionRegistry, ComponentCaptionFormatter)
+     * @see #captionMessageProvider(Function, CaptionRegistry, ComponentCaptionFormatter)
+     */
+    public static <C> MessageProvider<C> captionMessageProvider(
+        final CaptionRegistry<C> registry,
+        final ComponentCaptionFormatter<C> formatter
+    ) {
+        return captionMessageProvider("help.minecraft.", registry, formatter);
+    }
+
+    /**
+     * Creates a {@link MessageProvider} that delegates to the provided {@link CaptionRegistry} and
+     * {@link ComponentCaptionFormatter}. Transforms message keys into {@link Caption captions} using
+     * {@link Caption#of(String)} and the provided prefix.
+     *
+     * @param prefix    prefix for transforming message keys into {@link Caption captions}
+     * @param registry  caption registry
+     * @param formatter caption formatter
+     * @param <C>       command sender type
+     * @return message provider
+     * @see #defaultCaptionsProvider(String)
+     * @see #captionMessageProvider(CaptionRegistry, ComponentCaptionFormatter)
+     * @see #captionMessageProvider(Function, CaptionRegistry, ComponentCaptionFormatter)
+     */
+    public static <C> MessageProvider<C> captionMessageProvider(
+        final String prefix,
+        final CaptionRegistry<C> registry,
+        final ComponentCaptionFormatter<C> formatter
+    ) {
+        return captionMessageProvider(s -> Caption.of(prefix + s), registry, formatter);
+    }
+
+    /**
+     * Creates a {@link MessageProvider} that delegates to the provided {@link CaptionRegistry} and
+     * {@link ComponentCaptionFormatter}. Transforms message keys into {@link Caption captions} using
+     * {@code keyFunction}.
+     *
+     * @param keyFunction function mapping message keys to captions
+     * @param registry    caption registry
+     * @param formatter   caption formatter
+     * @param <C>         command sender type
+     * @return message provider
+     * @see #captionMessageProvider(String, CaptionRegistry, ComponentCaptionFormatter)
+     * @see #captionMessageProvider(CaptionRegistry, ComponentCaptionFormatter)
+     */
+    public static <C> MessageProvider<C> captionMessageProvider(
+        final Function<String, Caption> keyFunction,
+        final CaptionRegistry<C> registry,
+        final ComponentCaptionFormatter<C> formatter
+    ) {
+        return (sender, key, args) -> {
+            final Caption caption = keyFunction.apply(key);
+            final String resolved = registry.caption(caption, sender);
+            return formatter.formatCaption(
+                caption,
+                sender,
+                resolved,
+                args.entrySet().stream().map(e -> CaptionVariable.of(e.getKey(), e.getValue())).collect(Collectors.toList())
+            );
+        };
+    }
 
     @FunctionalInterface
     @API(status = API.Status.STABLE, since = "2.0.0")
@@ -784,38 +870,6 @@ public abstract class MinecraftHelp<C> {
          */
         default @NonNull Component provide(final @NonNull C sender, final @NonNull String key) {
             return this.provide(sender, key, Collections.emptyMap());
-        }
-
-        static <C> MessageProvider<C> caption(
-            final CaptionRegistry<C> registry,
-            final ComponentCaptionFormatter<C> formatter
-        ) {
-            return caption("help.minecraft.", registry, formatter);
-        }
-
-        static <C> MessageProvider<C> caption(
-            final String prefix,
-            final CaptionRegistry<C> registry,
-            final ComponentCaptionFormatter<C> formatter
-        ) {
-            return caption(s -> Caption.of(prefix + s), registry, formatter);
-        }
-
-        static <C> MessageProvider<C> caption(
-            final Function<String, Caption> keyFunction,
-            final CaptionRegistry<C> registry,
-            final ComponentCaptionFormatter<C> formatter
-        ) {
-            return (sender, key, args) -> {
-                final Caption caption = keyFunction.apply(key);
-                final String resolved = registry.caption(caption, sender);
-                return formatter.formatCaption(
-                    caption,
-                    sender,
-                    resolved,
-                    args.entrySet().stream().map(e -> CaptionVariable.of(e.getKey(), e.getValue())).collect(Collectors.toList())
-                );
-            };
         }
     }
 
