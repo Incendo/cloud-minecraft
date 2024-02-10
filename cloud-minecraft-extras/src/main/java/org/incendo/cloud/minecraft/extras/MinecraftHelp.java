@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -747,7 +748,7 @@ public abstract class MinecraftHelp<C> {
         final int attemptedPage,
         final int maxPages
     ) {
-        final Map<String, String> args = new HashMap<>();
+        final Map<String, String> args = new LinkedHashMap<>();
         args.put("page", String.valueOf(attemptedPage));
         args.put("max_pages", String.valueOf(maxPages));
         return this.highlight(
