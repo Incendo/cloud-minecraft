@@ -133,29 +133,17 @@ public abstract class MinecraftHelp<C> {
     }
 
     /**
-     * Returns a {@link CaptionProvider} for the default messages, using the default prefix ({@code help.minecraft.}).
+     * Returns a {@link CaptionProvider} for the default messages.
      *
-     * @param <C>    command sender type
+     * @param <C> command sender type
      * @return default captions provider
      * @see #captionMessageProvider(CaptionRegistry, ComponentCaptionFormatter)
      */
     public static <C> CaptionProvider<C> defaultCaptionsProvider() {
-        return defaultCaptionsProvider("help.minecraft.");
-    }
-
-    /**
-     * Returns a {@link CaptionProvider} for the default messages, using the provided {@code prefix}.
-     *
-     * @param prefix prefix for transforming message keys into {@link Caption captions}
-     * @param <C>    command sender type
-     * @return default captions provider
-     * @see #captionMessageProvider(String, CaptionRegistry, ComponentCaptionFormatter)
-     */
-    public static <C> CaptionProvider<C> defaultCaptionsProvider(final String prefix) {
         return CaptionProvider.<C>constantProvider()
             .putAllCaptions(
                 DEFAULT_MESSAGES.entrySet().stream()
-                    .map(e -> Pair.of(Caption.of(prefix + e.getKey()), e.getValue()))
+                    .map(e -> Pair.of(Caption.of("help.minecraft." + e.getKey()), e.getValue()))
                     .collect(Collectors.toMap(Pair::first, Pair::second))
             )
             .build();
@@ -774,65 +762,20 @@ public abstract class MinecraftHelp<C> {
     /**
      * Creates a {@link MessageProvider} that delegates to the provided {@link CaptionRegistry} and
      * {@link ComponentCaptionFormatter}. Transforms message keys into {@link Caption captions} using
-     * {@link Caption#of(String)} and the default prefix ({@code help.minecraft.}).
+     * {@link Caption#of(String)} and the prefix {@code help.minecraft.}.
      *
      * @param registry  caption registry
      * @param formatter caption formatter
      * @param <C>       command sender type
      * @return message provider
      * @see #defaultCaptionsProvider()
-     * @see #captionMessageProvider(String, CaptionRegistry, ComponentCaptionFormatter)
-     * @see #captionMessageProvider(Function, CaptionRegistry, ComponentCaptionFormatter)
      */
     public static <C> MessageProvider<C> captionMessageProvider(
-        final CaptionRegistry<C> registry,
-        final ComponentCaptionFormatter<C> formatter
-    ) {
-        return captionMessageProvider("help.minecraft.", registry, formatter);
-    }
-
-    /**
-     * Creates a {@link MessageProvider} that delegates to the provided {@link CaptionRegistry} and
-     * {@link ComponentCaptionFormatter}. Transforms message keys into {@link Caption captions} using
-     * {@link Caption#of(String)} and the provided prefix.
-     *
-     * @param prefix    prefix for transforming message keys into {@link Caption captions}
-     * @param registry  caption registry
-     * @param formatter caption formatter
-     * @param <C>       command sender type
-     * @return message provider
-     * @see #defaultCaptionsProvider(String)
-     * @see #captionMessageProvider(CaptionRegistry, ComponentCaptionFormatter)
-     * @see #captionMessageProvider(Function, CaptionRegistry, ComponentCaptionFormatter)
-     */
-    public static <C> MessageProvider<C> captionMessageProvider(
-        final String prefix,
-        final CaptionRegistry<C> registry,
-        final ComponentCaptionFormatter<C> formatter
-    ) {
-        return captionMessageProvider(s -> Caption.of(prefix + s), registry, formatter);
-    }
-
-    /**
-     * Creates a {@link MessageProvider} that delegates to the provided {@link CaptionRegistry} and
-     * {@link ComponentCaptionFormatter}. Transforms message keys into {@link Caption captions} using
-     * {@code keyFunction}.
-     *
-     * @param keyFunction function mapping message keys to captions
-     * @param registry    caption registry
-     * @param formatter   caption formatter
-     * @param <C>         command sender type
-     * @return message provider
-     * @see #captionMessageProvider(String, CaptionRegistry, ComponentCaptionFormatter)
-     * @see #captionMessageProvider(CaptionRegistry, ComponentCaptionFormatter)
-     */
-    public static <C> MessageProvider<C> captionMessageProvider(
-        final Function<String, Caption> keyFunction,
         final CaptionRegistry<C> registry,
         final ComponentCaptionFormatter<C> formatter
     ) {
         return (sender, key, args) -> {
-            final Caption caption = keyFunction.apply(key);
+            final Caption caption = Caption.of("help.minecraft." + key);
             final String resolved = registry.caption(caption, sender);
             return formatter.formatCaption(
                 caption,
