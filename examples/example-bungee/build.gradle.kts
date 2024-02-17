@@ -5,11 +5,6 @@ plugins {
 }
 
 tasks {
-    shadowJar {
-        dependencies {
-            exclude(dependency("net.md-5:bungeecord-api:1.8-SNAPSHOT"))
-        }
-    }
     assemble {
         dependsOn(shadowJar)
     }
@@ -26,5 +21,5 @@ dependencies {
     /* Extras */
     implementation(libs.adventurePlatformBungeecord)
     /* Bungee*/
-    compileOnly("net.md-5", "bungeecord-api", "1.8-SNAPSHOT")
+    compileOnly(libs.bungeecord)
 }
