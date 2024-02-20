@@ -195,7 +195,7 @@ final class SelectorUtils {
         }
 
         @Override
-        public CompletableFuture<Iterable<@NonNull Suggestion>> suggestionsFuture(
+        public CompletableFuture<? extends @NonNull Iterable<? extends @NonNull Suggestion>> suggestionsFuture(
                 final @NonNull CommandContext<C> commandContext,
                 final @NonNull CommandInput input
         ) {
@@ -306,7 +306,7 @@ final class SelectorUtils {
         }
 
         @Override
-        public CompletableFuture<Iterable<@NonNull Suggestion>> suggestionsFuture(
+        public CompletableFuture<? extends @NonNull Iterable<? extends @NonNull Suggestion>> suggestionsFuture(
                 final @NonNull CommandContext<C> commandContext,
                 final @NonNull CommandInput input
         ) {
