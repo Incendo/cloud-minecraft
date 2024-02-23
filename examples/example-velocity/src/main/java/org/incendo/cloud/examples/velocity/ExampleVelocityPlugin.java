@@ -39,6 +39,7 @@ import net.kyori.adventure.text.format.TextColor;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.brigadier.suggestion.TooltipSuggestion;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler;
 import org.incendo.cloud.minecraft.extras.suggestion.ComponentTooltipSuggestion;
@@ -48,7 +49,6 @@ import org.incendo.cloud.velocity.parser.PlayerParser;
 import org.incendo.cloud.velocity.parser.ServerParser;
 
 import static com.velocitypowered.api.command.VelocityBrigadierMessage.tooltip;
-import static org.incendo.cloud.brigadier.suggestion.TooltipSuggestion.tooltipSuggestion;
 
 @Plugin(
         id = "example-plugin",
@@ -83,9 +83,9 @@ public final class ExampleVelocityPlugin {
             if (suggestion instanceof ComponentTooltipSuggestion tooltip) {
                 final @Nullable Component component = tooltip.tooltip();
                 if (component == null) {
-                    return tooltipSuggestion(tooltip.suggestion(), null);
+                    return TooltipSuggestion.suggestion(tooltip.suggestion(), null);
                 }
-                return tooltipSuggestion(tooltip.suggestion(), tooltip(component));
+                return TooltipSuggestion.suggestion(tooltip.suggestion(), tooltip(component));
             }
             return suggestion;
         });

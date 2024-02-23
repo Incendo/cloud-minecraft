@@ -38,6 +38,7 @@ import org.incendo.cloud.parser.ArgumentParser;
 import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.suggestion.BlockingSuggestionProvider;
 import org.incendo.cloud.velocity.VelocityCaptionKeys;
+import org.incendo.cloud.velocity.VelocityContextKeys;
 
 /**
  * Argument parser for {@link RegisteredServer servers}
@@ -78,7 +79,7 @@ public final class ServerParser<C> implements ArgumentParser<C, RegisteredServer
             final @NonNull CommandInput commandInput
     ) {
         final String input = commandInput.readString();
-        final RegisteredServer server = commandContext.<ProxyServer>get("ProxyServer")
+        final RegisteredServer server = commandContext.get(VelocityContextKeys.PROXY_SERVER_KEY)
                 .getServer(input)
                 .orElse(null);
         if (server == null) {
@@ -97,7 +98,7 @@ public final class ServerParser<C> implements ArgumentParser<C, RegisteredServer
             final @NonNull CommandContext<C> commandContext,
             final @NonNull CommandInput input
     ) {
-        return commandContext.<ProxyServer>get("ProxyServer")
+        return commandContext.get(VelocityContextKeys.PROXY_SERVER_KEY)
                 .getAllServers()
                 .stream()
                 .map(s -> s.getServerInfo().getName())

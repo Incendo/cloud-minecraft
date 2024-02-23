@@ -24,11 +24,11 @@
 package org.incendo.cloud.velocity.parser;
 
 import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.ProxyServer;
 import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.brigadier.suggestion.TooltipSuggestion;
 import org.incendo.cloud.caption.CaptionVariable;
 import org.incendo.cloud.component.CommandComponent;
 import org.incendo.cloud.context.CommandContext;
@@ -40,9 +40,9 @@ import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.suggestion.BlockingSuggestionProvider;
 import org.incendo.cloud.suggestion.Suggestion;
 import org.incendo.cloud.velocity.VelocityCaptionKeys;
+import org.incendo.cloud.velocity.VelocityContextKeys;
 
 import static com.velocitypowered.api.command.VelocityBrigadierMessage.tooltip;
-import static org.incendo.cloud.brigadier.suggestion.TooltipSuggestion.tooltipSuggestion;
 
 /**
  * Argument parser for {@link Player players}
@@ -82,7 +82,7 @@ public final class PlayerParser<C> implements ArgumentParser<C, Player>, Blockin
         final @NonNull CommandInput commandInput
     ) {
         final String input = commandInput.readString();
-        final Player player = commandContext.<ProxyServer>get("ProxyServer")
+        final Player player = commandContext.get(VelocityContextKeys.PROXY_SERVER_KEY)
             .getPlayer(input)
             .orElse(null);
         if (player == null) {
@@ -101,8 +101,8 @@ public final class PlayerParser<C> implements ArgumentParser<C, Player>, Blockin
         final @NonNull CommandContext<C> commandContext,
         final @NonNull CommandInput input
     ) {
-        return commandContext.<ProxyServer>get("ProxyServer").getAllPlayers().stream()
-            .map(player -> tooltipSuggestion(player.getUsername(), tooltip(Component.text(player.getUniqueId().toString()))))
+        return commandContext.get(VelocityContextKeys.PROXY_SERVER_KEY).getAllPlayers().stream()
+            .map(player -> TooltipSuggestion.suggestion(player.getUsername(), tooltip(Component.text(player.getUniqueId().toString()))))
             .collect(Collectors.toList());
     }
 

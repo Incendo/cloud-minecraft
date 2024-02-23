@@ -27,6 +27,8 @@ import com.mojang.brigadier.Message;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.immutables.value.Value;
+import org.incendo.cloud.internal.ImmutableImpl;
 import org.incendo.cloud.suggestion.Suggestion;
 
 /**
@@ -35,6 +37,8 @@ import org.incendo.cloud.suggestion.Suggestion;
  * @since 2.0.0
  */
 @API(status = API.Status.STABLE, since = "2.0.0")
+@Value.Immutable
+@ImmutableImpl
 public interface TooltipSuggestion extends Suggestion {
 
     /**
@@ -44,11 +48,11 @@ public interface TooltipSuggestion extends Suggestion {
      * @param tooltip    the optional tooltip that is displayed when hovering over the suggestion
      * @return the suggestion instance
      */
-    static @NonNull TooltipSuggestion tooltipSuggestion(
-            final @NonNull String suggestion,
-            final @Nullable Message tooltip
+    static @NonNull TooltipSuggestion suggestion(
+        final @NonNull String suggestion,
+        final @Nullable Message tooltip
     ) {
-        return new TooltipSuggestionImpl(suggestion, tooltip);
+        return TooltipSuggestionImpl.of(suggestion, tooltip);
     }
 
     /**
@@ -58,13 +62,16 @@ public interface TooltipSuggestion extends Suggestion {
      * @return the suggestion instance
      */
     static @NonNull TooltipSuggestion tooltipSuggestion(
-            final @NonNull Suggestion suggestion
+        final @NonNull Suggestion suggestion
     ) {
         if (suggestion instanceof TooltipSuggestion) {
             return (TooltipSuggestion) suggestion;
         }
-        return tooltipSuggestion(suggestion.suggestion(), null /* tooltip */);
+        return suggestion(suggestion.suggestion(), null /* tooltip */);
     }
+
+    @Override
+    @NonNull String suggestion();
 
     /**
      * Returns the tooltip.
@@ -74,42 +81,5 @@ public interface TooltipSuggestion extends Suggestion {
     @Nullable Message tooltip();
 
     @Override
-    default @NonNull TooltipSuggestion withSuggestion(@NonNull String string) {
-        return tooltipSuggestion(string, this.tooltip());
-    }
-
-    /**
-     * Returns a copy of this suggestion instance using the given {@code tooltip}
-     *
-     * @param tooltip the new tooltip
-     * @return the new suggestion
-     */
-    default @NonNull TooltipSuggestion withTooltip(@NonNull Message tooltip) {
-        return tooltipSuggestion(this.suggestion(), tooltip);
-    }
-
-
-    final class TooltipSuggestionImpl implements TooltipSuggestion {
-
-        private final String suggestion;
-        private final Message tooltip;
-
-        private TooltipSuggestionImpl(
-                final @NonNull String suggestion,
-                final @Nullable Message tooltip
-        ) {
-            this.suggestion = suggestion;
-            this.tooltip = tooltip;
-        }
-
-        @Override
-        public @NonNull String suggestion() {
-            return this.suggestion;
-        }
-
-        @Override
-        public @Nullable Message tooltip() {
-            return this.tooltip;
-        }
-    }
+    @NonNull TooltipSuggestion withSuggestion(@NonNull String suggestion);
 }

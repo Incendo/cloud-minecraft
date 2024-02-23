@@ -38,6 +38,9 @@ public interface ComponentTooltipSuggestion extends Suggestion {
 
     @Nullable Component tooltip();
 
+    @Override
+    @NonNull ComponentTooltipSuggestion withSuggestion(@NonNull String suggestion);
+
     static @NonNull ComponentTooltipSuggestion suggestion(final @NonNull String suggestion) {
         return ComponentTooltipSuggestionImpl.of(suggestion, null);
     }

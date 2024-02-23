@@ -89,7 +89,7 @@ public final class MaterialParser<C> implements ArgumentParser<C, Material>, Blo
         return Arrays.stream(Material.values())
                 .map(Material::name)
                 .map(String::toLowerCase)
-                .map(Suggestion::simple)
+                .map(Suggestion::suggestion)
                 .collect(Collectors.toList());
     }
 

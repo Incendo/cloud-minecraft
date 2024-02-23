@@ -129,9 +129,9 @@ public final class KeyedWorldParser<C> implements ArgumentParser<C, World>, Sugg
         for (final World world : worlds) {
             final NamespacedKey key = world.getKey();
             if (input.hasRemainingInput() && key.getNamespace().equals(NamespacedKey.MINECRAFT_NAMESPACE)) {
-                completions.add(Suggestion.simple(key.getKey()));
+                completions.add(Suggestion.suggestion(key.getKey()));
             }
-            completions.add(Suggestion.simple(key.getNamespace() + ':' + key.getKey()));
+            completions.add(Suggestion.suggestion(key.getNamespace() + ':' + key.getKey()));
         }
         return CompletableFuture.completedFuture(completions);
     }
