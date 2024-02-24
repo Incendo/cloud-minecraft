@@ -24,10 +24,11 @@
 package org.incendo.cloud.velocity.parser;
 
 import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.ProxyServer;
 import java.util.stream.Collectors;
+import net.kyori.adventure.text.Component;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.brigadier.suggestion.TooltipSuggestion;
 import org.incendo.cloud.caption.CaptionVariable;
 import org.incendo.cloud.component.CommandComponent;
 import org.incendo.cloud.context.CommandContext;
@@ -37,7 +38,11 @@ import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ArgumentParser;
 import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.suggestion.BlockingSuggestionProvider;
+import org.incendo.cloud.suggestion.Suggestion;
 import org.incendo.cloud.velocity.VelocityCaptionKeys;
+import org.incendo.cloud.velocity.VelocityContextKeys;
+
+import static com.velocitypowered.api.command.VelocityBrigadierMessage.tooltip;
 
 /**
  * Argument parser for {@link Player players}
@@ -45,7 +50,7 @@ import org.incendo.cloud.velocity.VelocityCaptionKeys;
  * @param <C> Command sender type
  * @since 2.0.0
  */
-public final class PlayerParser<C> implements ArgumentParser<C, Player>, BlockingSuggestionProvider.Strings<C> {
+public final class PlayerParser<C> implements ArgumentParser<C, Player>, BlockingSuggestionProvider<C> {
 
     /**
      * Creates a new player parser.
@@ -73,45 +78,46 @@ public final class PlayerParser<C> implements ArgumentParser<C, Player>, Blockin
 
     @Override
     public @NonNull ArgumentParseResult<@NonNull Player> parse(
-            final @NonNull CommandContext<@NonNull C> commandContext,
-            final @NonNull CommandInput commandInput
+        final @NonNull CommandContext<@NonNull C> commandContext,
+        final @NonNull CommandInput commandInput
     ) {
         final String input = commandInput.readString();
-        final Player player = commandContext.<ProxyServer>get("ProxyServer")
-                .getPlayer(input)
-                .orElse(null);
+        final Player player = commandContext.get(VelocityContextKeys.PROXY_SERVER_KEY)
+            .getPlayer(input)
+            .orElse(null);
         if (player == null) {
             return ArgumentParseResult.failure(
-                    new PlayerParseException(
-                            input,
-                            commandContext
-                    )
+                new PlayerParseException(
+                    input,
+                    commandContext
+                )
             );
         }
         return ArgumentParseResult.success(player);
     }
 
     @Override
-    public @NonNull Iterable<@NonNull String> stringSuggestions(
-            final @NonNull CommandContext<C> commandContext,
-            final @NonNull CommandInput input
+    public @NonNull Iterable<? extends @NonNull Suggestion> suggestions(
+        final @NonNull CommandContext<C> commandContext,
+        final @NonNull CommandInput input
     ) {
-        return commandContext.<ProxyServer>get("ProxyServer").getAllPlayers()
-                .stream().map(Player::getUsername).collect(Collectors.toList());
+        return commandContext.get(VelocityContextKeys.PROXY_SERVER_KEY).getAllPlayers().stream()
+            .map(player -> TooltipSuggestion.suggestion(player.getUsername(), tooltip(Component.text(player.getUniqueId().toString()))))
+            .collect(Collectors.toList());
     }
 
     public static final class PlayerParseException extends ParserException {
 
 
         private PlayerParseException(
-                final @NonNull String input,
-                final @NonNull CommandContext<?> context
+            final @NonNull String input,
+            final @NonNull CommandContext<?> context
         ) {
             super(
-                    PlayerParser.class,
-                    context,
-                    VelocityCaptionKeys.ARGUMENT_PARSE_FAILURE_PLAYER,
-                    CaptionVariable.of("input", input)
+                PlayerParser.class,
+                context,
+                VelocityCaptionKeys.ARGUMENT_PARSE_FAILURE_PLAYER,
+                CaptionVariable.of("input", input)
             );
         }
     }

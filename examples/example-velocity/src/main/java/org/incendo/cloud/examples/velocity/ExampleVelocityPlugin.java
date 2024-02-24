@@ -33,17 +33,22 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
+import java.util.Objects;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.brigadier.suggestion.TooltipSuggestion;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler;
+import org.incendo.cloud.minecraft.extras.suggestion.ComponentTooltipSuggestion;
 import org.incendo.cloud.velocity.CloudInjectionModule;
 import org.incendo.cloud.velocity.VelocityCommandManager;
 import org.incendo.cloud.velocity.parser.PlayerParser;
 import org.incendo.cloud.velocity.parser.ServerParser;
+
+import static com.velocitypowered.api.command.VelocityBrigadierMessage.tooltip;
 
 @Plugin(
         id = "example-plugin",
@@ -112,5 +117,13 @@ public final class ExampleVelocityPlugin {
                             );
                         })
         );
+
+        // Add support for ComponentTooltipSuggestion
+        commandManager.appendSuggestionMapper(suggestion -> {
+            if (suggestion instanceof ComponentTooltipSuggestion tooltip && tooltip.tooltip() != null) {
+                return TooltipSuggestion.suggestion(tooltip.suggestion(), tooltip(Objects.requireNonNull(tooltip.tooltip())));
+            }
+            return suggestion;
+        });
     }
 }

@@ -60,7 +60,7 @@ public final class HelpExample implements BuilderFeature {
                                         .entries()
                                         .stream()
                                         .map(CommandEntry::syntax)
-                                        .map(Suggestion::simple)
+                                        .map(Suggestion::suggestion)
                                         .toList())
                         )
                         .handler(context -> {

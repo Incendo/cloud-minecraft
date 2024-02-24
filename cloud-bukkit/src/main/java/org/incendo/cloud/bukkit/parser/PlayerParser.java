@@ -94,7 +94,7 @@ public final class PlayerParser<C> implements ArgumentParser<C, Player>, Blockin
         return Bukkit.getOnlinePlayers().stream()
                 .filter(player -> !(bukkit instanceof Player && !((Player) bukkit).canSee(player)))
                 .map(Player::getName)
-                .map(Suggestion::simple)
+                .map(Suggestion::suggestion)
                 .collect(Collectors.toList());
     }
 

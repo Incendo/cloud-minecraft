@@ -85,8 +85,8 @@ class LiteralBrigadierNodeFactoryTest {
                 .required("integer", integerParser(0, 10))
                 .optional("string", greedyStringParser(),
                         org.incendo.cloud.suggestion.SuggestionProvider.suggesting(Arrays.asList(
-                                Suggestion.simple("some"),
-                                Suggestion.simple("suggestions")
+                                Suggestion.suggestion("some"),
+                                Suggestion.suggestion("suggestions")
                         ))
                 ).build();
         this.commandManager.command(command);

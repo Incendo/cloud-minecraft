@@ -36,6 +36,7 @@ import java.util.function.Supplier;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.brigadier.suggestion.TooltipSuggestion;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
 import org.incendo.cloud.parser.ArgumentParseResult;
@@ -44,7 +45,6 @@ import org.incendo.cloud.suggestion.Suggestion;
 import org.incendo.cloud.suggestion.SuggestionProvider;
 
 import static java.util.Objects.requireNonNull;
-import static org.incendo.cloud.brigadier.suggestion.TooltipSuggestion.tooltipSuggestion;
 
 /**
  * A wrapped {@link ArgumentParser argument parser} adapting Brigadier {@link ArgumentType argument types}.
@@ -158,12 +158,12 @@ public class WrappedBrigadierParser<C, T> implements ArgumentParser<C, T>, Sugge
                 final String beforeSuggestion = input.input().substring(input.cursor(), suggestion.getRange().getStart());
                 final String afterSuggestion = input.input().substring(suggestion.getRange().getEnd());
                 if (beforeSuggestion.isEmpty() && afterSuggestion.isEmpty()) {
-                    cloud.add(tooltipSuggestion(
+                    cloud.add(TooltipSuggestion.suggestion(
                             suggestion.getText(),
                             suggestion.getTooltip()
                     ));
                 } else {
-                    cloud.add(tooltipSuggestion(
+                    cloud.add(TooltipSuggestion.suggestion(
                             beforeSuggestion + suggestion.getText() + afterSuggestion,
                             suggestion.getTooltip()
                     ));
