@@ -33,11 +33,11 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
+import java.util.Objects;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.brigadier.suggestion.TooltipSuggestion;
 import org.incendo.cloud.execution.ExecutionCoordinator;
@@ -79,16 +79,6 @@ public final class ExampleVelocityPlugin {
                 Key.get(new TypeLiteral<VelocityCommandManager<CommandSource>>() {
                 })
         );
-        commandManager.appendSuggestionMapper(suggestion -> {
-            if (suggestion instanceof ComponentTooltipSuggestion tooltip) {
-                final @Nullable Component component = tooltip.tooltip();
-                if (component == null) {
-                    return TooltipSuggestion.suggestion(tooltip.suggestion(), null);
-                }
-                return TooltipSuggestion.suggestion(tooltip.suggestion(), tooltip(component));
-            }
-            return suggestion;
-        });
         MinecraftExceptionHandler.<CommandSource>createNative()
                 .defaultHandlers()
                 .decorator(component -> Component.text()
@@ -127,5 +117,13 @@ public final class ExampleVelocityPlugin {
                             );
                         })
         );
+
+        // Add support for ComponentTooltipSuggestion
+        commandManager.appendSuggestionMapper(suggestion -> {
+            if (suggestion instanceof ComponentTooltipSuggestion tooltip && tooltip.tooltip() != null) {
+                return TooltipSuggestion.suggestion(tooltip.suggestion(), tooltip(Objects.requireNonNull(tooltip.tooltip())));
+            }
+            return suggestion;
+        });
     }
 }
