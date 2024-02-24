@@ -23,7 +23,6 @@
 //
 package org.incendo.cloud.velocity.parser;
 
-import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import java.util.stream.Collectors;
 import org.apiguardian.api.API;

@@ -36,15 +36,33 @@ public interface ComponentTooltipSuggestion extends Suggestion {
     @Override
     @NonNull String suggestion();
 
+    /**
+     * Returns the {@link Component} tooltip or {@code null} if there is no tooltip.
+     *
+     * @return the tooltip
+     */
     @Nullable Component tooltip();
 
     @Override
     @NonNull ComponentTooltipSuggestion withSuggestion(@NonNull String suggestion);
 
+    /**
+     * Returns a new {@link ComponentTooltipSuggestion} with no tooltip.
+     *
+     * @param suggestion suggestion
+     * @return suggestion
+     */
     static @NonNull ComponentTooltipSuggestion suggestion(final @NonNull String suggestion) {
         return ComponentTooltipSuggestionImpl.of(suggestion, null);
     }
 
+    /**
+     * Returns a new {@link ComponentTooltipSuggestion} with the provided tooltip.
+     *
+     * @param suggestion suggestion
+     * @param tooltip    tooltip
+     * @return suggestion
+     */
     static @NonNull ComponentTooltipSuggestion suggestion(
         final @NonNull String suggestion,
         final @Nullable Component tooltip
