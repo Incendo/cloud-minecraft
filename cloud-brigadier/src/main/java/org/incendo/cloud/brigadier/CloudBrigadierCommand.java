@@ -25,6 +25,7 @@ package org.incendo.cloud.brigadier;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
+import java.util.function.Function;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.CommandManager;
@@ -41,6 +42,7 @@ public final class CloudBrigadierCommand<C, S> implements Command<S> {
 
     private final CommandManager<C> commandManager;
     private final CloudBrigadierManager<C, S> brigadierManager;
+    private final Function<String, String> inputMapper;
 
     /**
      * Creates a new {@link CloudBrigadierCommand}.
@@ -49,11 +51,29 @@ public final class CloudBrigadierCommand<C, S> implements Command<S> {
      * @param brigadierManager brigadier manager
      */
     public CloudBrigadierCommand(
-            final @NonNull CommandManager<C> commandManager,
-            final @NonNull CloudBrigadierManager<C, S> brigadierManager
+        final @NonNull CommandManager<C> commandManager,
+        final @NonNull CloudBrigadierManager<C, S> brigadierManager
     ) {
         this.commandManager = commandManager;
         this.brigadierManager = brigadierManager;
+        this.inputMapper = Function.identity();
+    }
+
+    /**
+     * Creates a new {@link CloudBrigadierCommand}.
+     *
+     * @param commandManager   command manager
+     * @param brigadierManager brigadier manager
+     * @param inputMapper      input mapper
+     */
+    public CloudBrigadierCommand(
+        final @NonNull CommandManager<C> commandManager,
+        final @NonNull CloudBrigadierManager<C, S> brigadierManager,
+        final @NonNull Function<String, String> inputMapper
+    ) {
+        this.commandManager = commandManager;
+        this.brigadierManager = brigadierManager;
+        this.inputMapper = inputMapper;
     }
 
     @Override
@@ -64,7 +84,7 @@ public final class CloudBrigadierCommand<C, S> implements Command<S> {
 
         this.commandManager.commandExecutor().executeCommand(
             sender,
-            input,
+            this.inputMapper.apply(input),
             cloudContext -> cloudContext.store(WrappedBrigadierParser.COMMAND_CONTEXT_BRIGADIER_NATIVE_SENDER, source)
         );
         return com.mojang.brigadier.Command.SINGLE_SUCCESS;

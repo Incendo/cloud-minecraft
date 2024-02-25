@@ -36,6 +36,7 @@ import org.incendo.cloud.brigadier.CloudBrigadierCommand;
 import org.incendo.cloud.brigadier.CloudBrigadierManager;
 import org.incendo.cloud.brigadier.node.LiteralBrigadierNodeFactory;
 import org.incendo.cloud.brigadier.permission.BrigadierPermissionChecker;
+import org.incendo.cloud.bukkit.BukkitPluginRegistrationHandler;
 import org.incendo.cloud.bukkit.internal.BukkitBackwardsBrigadierSenderMapper;
 import org.incendo.cloud.bukkit.internal.BukkitBrigadierMapper;
 import org.incendo.cloud.context.CommandContext;
@@ -46,20 +47,22 @@ class PaperBrigadierListener<C> implements Listener {
 
     private final CloudBrigadierManager<C, BukkitBrigadierCommandSource> brigadierManager;
     private final PaperCommandManager<C> paperCommandManager;
+    private final BukkitPluginRegistrationHandler<C> registrationHandler;
 
     PaperBrigadierListener(final @NonNull PaperCommandManager<C> paperCommandManager) {
         this.paperCommandManager = paperCommandManager;
         this.brigadierManager = new CloudBrigadierManager<>(
-                this.paperCommandManager,
-                () -> new CommandContext<>(
-                        this.paperCommandManager.senderMapper().map(Bukkit.getConsoleSender()),
-                        this.paperCommandManager
-                ),
-                SenderMapper.create(
-                        sender -> this.paperCommandManager.senderMapper().map(sender.getBukkitSender()),
-                        new BukkitBackwardsBrigadierSenderMapper<>(this.paperCommandManager)
-                )
+            this.paperCommandManager,
+            () -> new CommandContext<>(
+                this.paperCommandManager.senderMapper().map(Bukkit.getConsoleSender()),
+                this.paperCommandManager
+            ),
+            SenderMapper.create(
+                sender -> this.paperCommandManager.senderMapper().map(sender.getBukkitSender()),
+                new BukkitBackwardsBrigadierSenderMapper<>(this.paperCommandManager)
+            )
         );
+        this.registrationHandler = (BukkitPluginRegistrationHandler<C>) paperCommandManager.commandRegistrationHandler();
 
         final BukkitBrigadierMapper<C> mapper =
             new BukkitBrigadierMapper<>(this.paperCommandManager, this.brigadierManager);
@@ -73,13 +76,13 @@ class PaperBrigadierListener<C> implements Listener {
 
     @EventHandler
     public void onCommandRegister(
-            final com.destroystokyo.paper.event.brigadier.
-            @NonNull CommandRegisteredEvent<BukkitBrigadierCommandSource> event
+        final com.destroystokyo.paper.event.brigadier.
+        @NonNull CommandRegisteredEvent<BukkitBrigadierCommandSource> event
     ) {
         if (!(event.getCommand() instanceof PluginIdentifiableCommand)) {
             return;
         } else if (!((PluginIdentifiableCommand) event.getCommand())
-                .getPlugin().equals(this.paperCommandManager.owningPlugin())) {
+            .getPlugin().equals(this.paperCommandManager.owningPlugin())) {
             return;
         }
 
@@ -106,12 +109,26 @@ class PaperBrigadierListener<C> implements Listener {
             return this.paperCommandManager.testPermission(sender, permission).allowed();
         };
         final LiteralBrigadierNodeFactory<C, BukkitBrigadierCommandSource> literalFactory =
-                this.brigadierManager.literalBrigadierNodeFactory();
+            this.brigadierManager.literalBrigadierNodeFactory();
         event.setLiteral(literalFactory.createNode(
-                event.getLiteral().getLiteral(),
-                node,
-                new CloudBrigadierCommand<>(this.paperCommandManager, this.brigadierManager),
-                permissionChecker
+            event.getLiteral().getLiteral(),
+            node,
+            new CloudBrigadierCommand<>(this.paperCommandManager, this.brigadierManager, this::stripNamespace),
+            permissionChecker
         ));
+    }
+
+    private String stripNamespace(final String command) {
+        final String[] split = command.split(" ");
+        if (!split[0].contains(":")) {
+            return command;
+        }
+        final String token = split[0];
+        final String[] splitToken = token.split(":");
+        if (this.registrationHandler.getNamespacedLabel(splitToken[1]).equals(token)) {
+            split[0] = splitToken[1];
+            return String.join(" ", split);
+        }
+        return command;
     }
 }

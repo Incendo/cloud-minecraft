@@ -46,6 +46,7 @@ import org.incendo.cloud.component.CommandComponent;
 import org.incendo.cloud.internal.CommandRegistrationHandler;
 import org.incendo.cloud.setting.ManagerSetting;
 
+@API(status = API.Status.INTERNAL)
 public class BukkitPluginRegistrationHandler<C> implements CommandRegistrationHandler<C> {
 
     private final Map<CommandComponent<C>, org.bukkit.command.Command> registeredCommands = new HashMap<>();
@@ -169,7 +170,13 @@ public class BukkitPluginRegistrationHandler<C> implements CommandRegistrationHa
         }
     }
 
-    private @NonNull String getNamespacedLabel(final @NonNull String label) {
+    /**
+     * Returns the namespaced version of a label.
+     *
+     * @param label label
+     * @return namespaced label
+     */
+    public @NonNull String getNamespacedLabel(final @NonNull String label) {
         return String.format("%s:%s", this.bukkitCommandManager.owningPlugin().getName(), label).toLowerCase(Locale.ROOT);
     }
 
