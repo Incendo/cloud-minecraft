@@ -139,7 +139,11 @@ public final class BrigadierSuggestionFactory<C, S> {
             final SuggestionsBuilder suggestionsBuilder = builder.createOffset(rawOffset + trimmed);
 
             for (final TooltipSuggestion suggestion : suggestions) {
-                suggestionsBuilder.suggest(suggestion.suggestion(), suggestion.tooltip());
+                try {
+                    suggestionsBuilder.suggest(Integer.parseInt(suggestion.suggestion()), suggestion.tooltip());
+                } catch (final NumberFormatException e) {
+                    suggestionsBuilder.suggest(suggestion.suggestion(), suggestion.tooltip());
+                }
             }
 
             return suggestionsBuilder.build();
