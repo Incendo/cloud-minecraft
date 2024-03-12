@@ -19,7 +19,7 @@ cloudburst = "1.0.0-SNAPSHOT"
 adventureApi = "4.15.0"
 adventurePlatform = "4.3.2"
 paperApi = "1.20.4-R0.1-SNAPSHOT"
-velocityApi = "3.1.1"
+velocityApi = "3.3.0-SNAPSHOT"
 spongeApi7 = "7.3.0"
 
 # testing

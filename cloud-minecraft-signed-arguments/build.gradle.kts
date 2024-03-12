@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     api(libs.cloud.core)
-    compileOnly(libs.bungeecord)
-    api(projects.cloudMinecraftSignedArguments)
+    compileOnly(libs.brigadier)
+    compileOnly(libs.adventureApi)
+    compileOnly(projects.cloudBrigadier)
 }

@@ -9,7 +9,7 @@ tasks {
         dependsOn(shadowJar)
     }
     runWaterfall {
-        waterfallVersion("1.19")
+        waterfallVersion("1.20")
     }
 }
 
@@ -19,6 +19,7 @@ dependencies {
     implementation(libs.cloud.annotations)
     implementation(project(":cloud-minecraft-extras"))
     /* Extras */
+    implementation(libs.adventureApi) // bump version from platform's
     implementation(libs.adventurePlatformBungeecord)
     /* Bungee*/
     compileOnly(libs.bungeecord)

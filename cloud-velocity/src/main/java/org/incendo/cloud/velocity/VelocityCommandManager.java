@@ -42,6 +42,7 @@ import org.incendo.cloud.brigadier.CloudBrigadierManager;
 import org.incendo.cloud.brigadier.suggestion.TooltipSuggestion;
 import org.incendo.cloud.caption.CaptionProvider;
 import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.minecraft.signed.SignedArguments;
 import org.incendo.cloud.suggestion.SuggestionFactory;
 import org.incendo.cloud.velocity.parser.PlayerParser;
 import org.incendo.cloud.velocity.parser.ServerParser;
@@ -107,6 +108,8 @@ public class VelocityCommandManager<C> extends CommandManager<C>
         this.parserRegistry()
                 .registerParser(PlayerParser.playerParser())
                 .registerParser(ServerParser.serverParser());
+
+        SignedArguments.registerParser(this);
 
         /* Register default captions */
         this.captionRegistry()

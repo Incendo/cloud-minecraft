@@ -8,4 +8,5 @@ dependencies {
     compileOnly(libs.spongeApi7) {
         exclude("com.flowpowered")
     }
+    api(projects.cloudMinecraftSignedArguments)
 }
