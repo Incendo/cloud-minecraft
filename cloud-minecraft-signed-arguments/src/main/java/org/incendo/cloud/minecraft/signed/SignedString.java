@@ -57,7 +57,20 @@ public interface SignedString {
      * @param chatType chat type, for if the message is signed
      * @param unsigned unsigned content
      */
-    void sendMessage(Audience audience, ChatType chatType, Component unsigned);
+    void sendMessage(Audience audience, ChatType.Bound chatType, Component unsigned);
+
+    /**
+     * Sends the signed message with the provided unsigned content.
+     *
+     * <p>If the message is not signed, it will be sent as a system message.</p>
+     *
+     * @param audience audience
+     * @param chatType chat type, for if the message is signed
+     * @param unsigned unsigned content
+     */
+    default void sendMessage(final Audience audience, final ChatType chatType, final Component unsigned) {
+        this.sendMessage(audience, chatType.bind(unsigned), unsigned);
+    }
 
     /**
      * Creates a new unsigned string wrapping {@code message}.
@@ -82,7 +95,7 @@ public interface SignedString {
         }
 
         @Override
-        public void sendMessage(final Audience audience, final ChatType chatType, final Component unsigned) {
+        public void sendMessage(final Audience audience, final ChatType.Bound chatType, final Component unsigned) {
             audience.sendMessage(unsigned);
         }
 

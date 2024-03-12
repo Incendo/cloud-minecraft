@@ -43,6 +43,7 @@ immutablesAnnotate = { group = "org.immutables", name = "annotate", version.ref 
 
 brigadier = { group = "com.mojang", name = "brigadier", version.ref = "brigadier" }
 bukkit = { group = "org.bukkit", name = "bukkit", version.ref = "bukkit" }
+reflectionRemapper = "xyz.jpenilla:reflection-remapper:0.1.1"
 commodore = { group = "me.lucko", name = "commodore", version.ref = "commodore" }
 bungeecord = { group = "net.md-5", name = "bungeecord-api", version.ref = "bungeecord" }
 cloudburst = { group = "org.cloudburstmc", name = "cloudburst-server", version.ref = "cloudburst" }

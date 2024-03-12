@@ -14,4 +14,5 @@ dependencies {
     javadocLinks(libs.paperApi) {
         isTransitive = false
     }
+    implementation(libs.reflectionRemapper)
 }
