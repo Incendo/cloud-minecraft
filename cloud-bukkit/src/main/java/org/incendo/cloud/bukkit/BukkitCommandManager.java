@@ -176,7 +176,7 @@ public abstract class BukkitCommandManager<C> extends CommandManager<C>
         try {
             SignedArguments.registerParser(this);
         } catch (final BrigadierManagerNotPresent ignore) {
-            // Mappings registered in BukkitBrigadierMapper
+            // Mappings registered in #registerBrigadier
         }
 
         /* Register suggestion and state listener */
