@@ -50,18 +50,27 @@ public final class SignedGreedyStringParser<C> implements
     /**
      * Creates a {@link SignedGreedyStringParser} with the specified {@link SignedStringMapper mapper}.
      *
+     * @param <C>    command sender type
      * @param mapper signed string mapper
+     * @return parser
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public SignedGreedyStringParser(final SignedStringMapper mapper) {
-        this.wrapped = StringParser.<C>greedyStringParser().parser().flatMapSuccess((BiFunction) mapper);
+    public static <C> SignedGreedyStringParser<C> signedGreedyStringParser(final SignedStringMapper mapper) {
+        return new SignedGreedyStringParser<>(mapper);
     }
 
     /**
      * Creates a {@link SignedGreedyStringParser} with the default {@link SignedStringMapper mapper}.
+     *
+     * @param <C> command sender type
+     * @return parser
      */
-    public SignedGreedyStringParser() {
-        this(SignedStringMapper.get());
+    public static <C> SignedGreedyStringParser<C> signedGreedyStringParser() {
+        return signedGreedyStringParser(SignedStringMapper.get());
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private SignedGreedyStringParser(final SignedStringMapper mapper) {
+        this.wrapped = StringParser.<C>greedyStringParser().parser().flatMapSuccess((BiFunction) mapper);
     }
 
     @Override

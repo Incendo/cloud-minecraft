@@ -33,6 +33,8 @@ import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ParserRegistry;
 
+import static org.incendo.cloud.minecraft.signed.SignedGreedyStringParser.signedGreedyStringParser;
+
 @DefaultQualifier(NonNull.class)
 public interface SignedStringMapper extends BiFunction<CommandContext<?>,
     String, CompletableFuture<ArgumentParseResult<SignedString>>> {
@@ -75,7 +77,7 @@ public interface SignedStringMapper extends BiFunction<CommandContext<?>,
      * @param registry parser registry
      */
     default void registerParser(final ParserRegistry<?> registry) {
-        registry.registerParser(new SignedGreedyStringParser<>());
+        registry.registerParser(signedGreedyStringParser());
     }
 
     final class Unsigned implements SignedStringMapper, Services.Fallback {
