@@ -23,6 +23,7 @@
 //
 package org.incendo.cloud.brigadier.argument;
 
+import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.brigadier.CloudBrigadierManager;
 
 /**
@@ -33,9 +34,10 @@ public interface BrigadierMappingContributor {
     /**
      * Contributes to the manager.
      *
-     * @param manager brigadier manager
-     * @param <C>     command sender type
-     * @param <S>     brigadier command source type
+     * @param manager          command manager
+     * @param brigadierManager brigadier manager
+     * @param <C>              command sender type
+     * @param <S>              brigadier command source type
      */
-    <C, S> void contribute(CloudBrigadierManager<C, S> manager);
+    <C, S> void contribute(CommandManager<C> manager, CloudBrigadierManager<C, S> brigadierManager);
 }
