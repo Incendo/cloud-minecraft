@@ -41,7 +41,9 @@ import org.incendo.cloud.context.CommandInput;
 import org.incendo.cloud.exception.parsing.ParserException;
 import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.parser.ParserContributor;
 import org.incendo.cloud.parser.ParserDescriptor;
+import org.incendo.cloud.parser.ParserRegistry;
 import org.incendo.cloud.suggestion.BlockingSuggestionProvider;
 import org.incendo.cloud.type.tuple.Pair;
 
@@ -180,6 +182,18 @@ public final class TextColorParser<C> implements ArgumentParser<C, TextColor>, B
                     StandardCaptionKeys.ARGUMENT_PARSE_FAILURE_COLOR,
                     CaptionVariable.of("input", input)
             );
+        }
+    }
+
+    @API(status = API.Status.INTERNAL)
+    public static final class Contributor implements ParserContributor {
+        @Override
+        public <C> void contribute(final ParserRegistry<C> registry) {
+            try {
+                registry.registerParser(textColorParser());
+            } catch (final Exception | LinkageError ignore) {
+                // ignore
+            }
         }
     }
 }
