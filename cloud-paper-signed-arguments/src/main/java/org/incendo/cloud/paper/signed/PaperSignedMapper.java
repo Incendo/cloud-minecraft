@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package org.incendo.cloud.paper;
+package org.incendo.cloud.paper.signed;
 
 import com.google.gson.JsonElement;
 import io.leangen.geantyref.TypeToken;

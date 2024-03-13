@@ -61,6 +61,7 @@ include("cloud-cloudburst")
 include("cloud-minecraft-extras")
 include("cloud-minecraft-signed-arguments")
 include("cloud-paper")
+include("cloud-paper-signed-arguments")
 include("cloud-sponge7")
 include("cloud-velocity")
 

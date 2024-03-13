@@ -11,7 +11,7 @@ dependencies {
     implementation(project(":cloud-paper"))
     implementation(libs.cloud.annotations)
     implementation(project(":cloud-minecraft-extras"))
-    implementation(projects.cloudMinecraftSignedArguments)
+    implementation(projects.cloudPaperSignedArguments)
     /* Extras */
     implementation(libs.adventurePlatformBukkit)
     implementation(libs.minimessage)

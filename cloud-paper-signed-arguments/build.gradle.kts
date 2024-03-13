@@ -8,10 +8,8 @@ java {
 }
 
 dependencies {
-    api(projects.cloudBukkit)
     compileOnly(libs.paperApi)
-    compileOnly(libs.paperMojangApi)
-    javadocLinks(libs.paperApi) {
-        isTransitive = false
-    }
+    api(projects.cloudBukkit)
+    implementation(libs.reflectionRemapper)
+    api(projects.cloudMinecraftSignedArguments)
 }
