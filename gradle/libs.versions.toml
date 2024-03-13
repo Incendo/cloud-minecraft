@@ -19,7 +19,7 @@ cloudburst = "1.0.0-SNAPSHOT"
 adventureApi = "4.15.0"
 adventurePlatform = "4.3.2"
 paperApi = "1.20.4-R0.1-SNAPSHOT"
-velocityApi = "3.1.1"
+velocityApi = "3.3.0-SNAPSHOT"
 spongeApi7 = "7.3.0"
 
 # testing
@@ -43,6 +43,7 @@ immutablesAnnotate = { group = "org.immutables", name = "annotate", version.ref 
 
 brigadier = { group = "com.mojang", name = "brigadier", version.ref = "brigadier" }
 bukkit = { group = "org.bukkit", name = "bukkit", version.ref = "bukkit" }
+reflectionRemapper = "xyz.jpenilla:reflection-remapper:0.1.1"
 commodore = { group = "me.lucko", name = "commodore", version.ref = "commodore" }
 bungeecord = { group = "net.md-5", name = "bungeecord-api", version.ref = "bungeecord" }
 cloudburst = { group = "org.cloudburstmc", name = "cloudburst-server", version.ref = "cloudburst" }

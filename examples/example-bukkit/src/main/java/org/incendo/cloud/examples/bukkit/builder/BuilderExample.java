@@ -48,6 +48,7 @@ import org.incendo.cloud.examples.bukkit.builder.feature.minecraft.ItemStackExam
 import org.incendo.cloud.examples.bukkit.builder.feature.minecraft.ItemStackPredicateExample;
 import org.incendo.cloud.examples.bukkit.builder.feature.minecraft.NamespacedKeyExample;
 import org.incendo.cloud.examples.bukkit.builder.feature.minecraft.SelectorExample;
+import org.incendo.cloud.examples.bukkit.builder.feature.minecraft.SignedArgument;
 import org.incendo.cloud.examples.bukkit.builder.feature.minecraft.TextColorExample;
 
 /**
@@ -70,7 +71,8 @@ public final class BuilderExample {
             // Minecraft-specific features
             new ItemStackExample(),
             new SelectorExample(),
-            new TextColorExample()
+            new TextColorExample(),
+            new SignedArgument()
     );
 
     private static @NonNull List<@NonNull BuilderFeature> conditionalFeatures(final @NonNull CommandManager<CommandSender> manager) {

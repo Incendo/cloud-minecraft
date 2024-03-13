@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":cloud-paper"))
     implementation(libs.cloud.annotations)
     implementation(project(":cloud-minecraft-extras"))
+    implementation(projects.cloudPaperSignedArguments)
     /* Extras */
     implementation(libs.adventurePlatformBukkit)
     implementation(libs.minimessage)
@@ -22,8 +23,20 @@ dependencies {
 
 tasks {
     shadowJar {
+        // adventure-platform
         relocate("net.kyori", "org.incendo.cloud.example.kyori")
+
+        // cloud
+        // relocate("org.incendo.cloud", "my.package.cloud") // We don't relocate cloud itself in this example, but you still should
+
+        // cloud dependency
         relocate("io.leangen.geantyref", "org.incendo.cloud.example.geantyref")
+
+        // cloud-paper dependencies
+        relocate("xyz.jpenilla.reflectionremapper", "org.incendo.cloud.example.reflectionremapper")
+        relocate("net.fabricmc.mappingio", "org.incendo.cloud.example.mappingio")
+
+        mergeServiceFiles()
     }
     assemble {
         dependsOn(shadowJar)
