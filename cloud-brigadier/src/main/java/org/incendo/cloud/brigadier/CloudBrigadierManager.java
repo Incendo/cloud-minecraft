@@ -106,7 +106,10 @@ public final class CloudBrigadierManager<C, S> implements SenderMapperHolder<S, 
                 commandManager.suggestionFactory().mapped(TooltipSuggestion::tooltipSuggestion)
         );
         this.registerInternalMappings();
-        final ServiceLoader<BrigadierMappingContributor> loader = ServiceLoader.load(BrigadierMappingContributor.class);
+        final ServiceLoader<BrigadierMappingContributor> loader = ServiceLoader.load(
+            BrigadierMappingContributor.class,
+            BrigadierMappingContributor.class.getClassLoader()
+        );
         loader.iterator().forEachRemaining(contributor -> contributor.contribute(commandManager, this));
         commandManager.registerCommandPreProcessor(ctx -> {
             if (!ctx.commandContext().contains(WrappedBrigadierParser.COMMAND_CONTEXT_BRIGADIER_NATIVE_SENDER)) {
