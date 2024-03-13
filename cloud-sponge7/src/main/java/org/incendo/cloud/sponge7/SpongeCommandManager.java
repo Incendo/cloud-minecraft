@@ -31,7 +31,6 @@ import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.SenderMapperHolder;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.key.CloudKey;
-import org.incendo.cloud.minecraft.signed.SignedArguments;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.Text;
@@ -82,7 +81,6 @@ public class SpongeCommandManager<C> extends CommandManager<C> implements Sender
         this.senderMapper = requireNonNull(senderMapper, "senderMapper");
         ((SpongePluginRegistrationHandler<C>) this.commandRegistrationHandler()).initialize(this);
         this.registerDefaultExceptionHandlers();
-        SignedArguments.registerParser(this);
     }
 
     @Override

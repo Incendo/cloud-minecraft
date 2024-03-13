@@ -6,7 +6,6 @@ plugins {
 dependencies {
     api(libs.cloud.core)
     api(projects.cloudBrigadier)
-    api(projects.cloudMinecraftSignedArguments)
     compileOnly(libs.bukkit)
     compileOnly(libs.commodore)
     testImplementation(libs.bukkit)

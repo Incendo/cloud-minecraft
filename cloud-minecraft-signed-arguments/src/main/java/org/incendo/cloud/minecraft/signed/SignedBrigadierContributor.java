@@ -23,43 +23,20 @@
 //
 package org.incendo.cloud.minecraft.signed;
 
-import com.mojang.brigadier.arguments.StringArgumentType;
-import io.leangen.geantyref.TypeToken;
 import org.apiguardian.api.API;
-import org.incendo.cloud.brigadier.BrigadierManagerHolder;
+import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.brigadier.CloudBrigadierManager;
+import org.incendo.cloud.brigadier.argument.BrigadierMappingContributor;
 
 @API(status = API.Status.INTERNAL)
-public final class SignedArguments {
-    private SignedArguments() {
-    }
-
-    /**
-     * Returns whether Adventure is present.
-     *
-     * @return whether Adventure is present
-     */
-    public static boolean adventurePresent() {
-        try {
-            Class.forName("net.kyori.adventure.chat.SignedMessage");
-            return true;
-        } catch (final ClassNotFoundException ignore) {
-            return false;
+public final class SignedBrigadierContributor implements BrigadierMappingContributor {
+    @Override
+    public <C, S> void contribute(
+            final CommandManager<C> commandManager,
+            final CloudBrigadierManager<C, S> brigadierManager
+    ) {
+        if (SignedArguments.adventurePresent()) {
+            SignedStringMapper.get().registerBrigadier(commandManager, brigadierManager);
         }
-    }
-
-    /**
-     * Registers the default Brigadier mapping for {@link SignedGreedyStringParser} if the manager
-     * is a {@link BrigadierManagerHolder}.
-     *
-     * @param brigadierManager command manager
-     * @param <C>              command sender type
-     */
-    @SuppressWarnings("unchecked")
-    public static <C> void registerDefaultBrigadierMapping(final Object brigadierManager) {
-        ((CloudBrigadierManager<C, ?>) brigadierManager).registerMapping(
-            new TypeToken<SignedGreedyStringParser<C>>() {},
-            builder -> builder.toConstant(StringArgumentType.greedyString()).cloudSuggestions()
-        );
     }
 }

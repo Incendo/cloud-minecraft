@@ -34,7 +34,6 @@ import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.SenderMapperHolder;
 import org.incendo.cloud.execution.ExecutionCoordinator;
-import org.incendo.cloud.minecraft.signed.SignedArguments;
 import org.incendo.cloud.state.RegistrationState;
 
 /**
@@ -69,7 +68,6 @@ public class CloudburstCommandManager<C> extends CommandManager<C> implements Se
                 CommandSender.class,
                 (context, annotations) -> this.senderMapper.reverse(context.sender())
         );
-        SignedArguments.registerParser(this);
 
         // Prevent commands from being registered when the server would reject them anyways
         this.owningPlugin.getServer().getPluginManager().registerEvent(

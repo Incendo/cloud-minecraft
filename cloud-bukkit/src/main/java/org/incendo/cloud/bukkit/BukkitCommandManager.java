@@ -62,8 +62,6 @@ import org.incendo.cloud.bukkit.parser.selector.MultiplePlayerSelectorParser;
 import org.incendo.cloud.bukkit.parser.selector.SingleEntitySelectorParser;
 import org.incendo.cloud.bukkit.parser.selector.SinglePlayerSelectorParser;
 import org.incendo.cloud.execution.ExecutionCoordinator;
-import org.incendo.cloud.minecraft.signed.SignedArguments;
-import org.incendo.cloud.minecraft.signed.SignedStringMapper;
 import org.incendo.cloud.parser.ParserParameters;
 import org.incendo.cloud.state.RegistrationState;
 
@@ -173,12 +171,6 @@ public abstract class BukkitCommandManager<C> extends CommandManager<C>
             this.registerParserSupplierFor(BlockPredicateParser.class);
         }
 
-        try {
-            SignedArguments.registerParser(this);
-        } catch (final BrigadierManagerNotPresent ignore) {
-            // Mappings registered in #registerBrigadier
-        }
-
         /* Register suggestion and state listener */
         this.owningPlugin.getServer().getPluginManager().registerEvents(
                 new CloudBukkitListener<>(this),
@@ -265,9 +257,6 @@ public abstract class BukkitCommandManager<C> extends CommandManager<C>
             cloudCommodoreManager.initialize(this);
             this.commandRegistrationHandler(cloudCommodoreManager);
             this.splitAliases(true);
-            if (SignedArguments.adventurePresent()) {
-                SignedStringMapper.get().registerBrigadier(this);
-            }
         } catch (final Exception e) {
             throw new BrigadierInitializationException(
                     "Unexpected exception initializing " + CloudCommodoreManager.class.getSimpleName(), e);

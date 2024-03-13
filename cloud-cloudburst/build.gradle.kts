@@ -8,5 +8,4 @@ dependencies {
     compileOnly(libs.cloudburst) {
         isTransitive = false
     }
-    api(projects.cloudMinecraftSignedArguments)
 }

@@ -11,5 +11,4 @@ dependencies {
     api(libs.cloud.core)
     api(projects.cloudBrigadier)
     compileOnly(libs.velocityApi)
-    api(projects.cloudMinecraftSignedArguments)
 }

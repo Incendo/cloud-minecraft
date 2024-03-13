@@ -6,5 +6,4 @@ plugins {
 dependencies {
     api(libs.cloud.core)
     compileOnly(libs.bungeecord)
-    api(projects.cloudMinecraftSignedArguments)
 }

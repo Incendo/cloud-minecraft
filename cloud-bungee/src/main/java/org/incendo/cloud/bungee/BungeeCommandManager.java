@@ -36,7 +36,6 @@ import org.incendo.cloud.bungee.parser.PlayerParser;
 import org.incendo.cloud.bungee.parser.ServerParser;
 import org.incendo.cloud.caption.CaptionProvider;
 import org.incendo.cloud.execution.ExecutionCoordinator;
-import org.incendo.cloud.minecraft.signed.SignedArguments;
 
 public class BungeeCommandManager<C> extends CommandManager<C> implements SenderMapperHolder<CommandSender, C> {
 
@@ -77,7 +76,6 @@ public class BungeeCommandManager<C> extends CommandManager<C> implements Sender
         this.parserRegistry()
                 .registerParser(PlayerParser.playerParser())
                 .registerParser(ServerParser.serverParser());
-        SignedArguments.registerParser(this);
 
         /* Register default captions */
         this.captionRegistry()

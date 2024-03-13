@@ -15,4 +15,5 @@ dependencies {
         isTransitive = false
     }
     implementation(libs.reflectionRemapper)
+    compileOnly(projects.cloudMinecraftSignedArguments)
 }

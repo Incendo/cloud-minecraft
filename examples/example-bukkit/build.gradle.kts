@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":cloud-paper"))
     implementation(libs.cloud.annotations)
     implementation(project(":cloud-minecraft-extras"))
+    implementation(projects.cloudMinecraftSignedArguments)
     /* Extras */
     implementation(libs.adventurePlatformBukkit)
     implementation(libs.minimessage)
@@ -34,6 +35,8 @@ tasks {
         // cloud-paper dependencies
         relocate("xyz.jpenilla.reflectionremapper", "org.incendo.cloud.example.reflectionremapper")
         relocate("net.fabricmc.mappingio", "org.incendo.cloud.example.mappingio")
+
+        mergeServiceFiles()
     }
     assemble {
         dependsOn(shadowJar)

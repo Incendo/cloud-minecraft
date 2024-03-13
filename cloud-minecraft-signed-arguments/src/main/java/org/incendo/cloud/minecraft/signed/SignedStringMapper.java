@@ -50,26 +50,12 @@ public interface SignedStringMapper extends BiFunction<CommandContext<?>,
     }
 
     /**
-     * Registers {@link SignedGreedyStringParser} to the parser registry, and to the
-     * {@link org.incendo.cloud.brigadier.CloudBrigadierManager} if applicable.
-     *
-     * @param manager command manager
-     */
-    default void registerParser(final CommandManager<?> manager) {
-        this.registerParser(manager.parserRegistry());
-        if (SignedArguments.brigadierPresent()) {
-            this.registerBrigadier(manager);
-        }
-    }
-
-    /**
      * Registers the {@link SignedGreedyStringParser} to the {@link org.incendo.cloud.brigadier.CloudBrigadierManager}.
      *
-     * <p>Implementations must check if the manager is a {@link org.incendo.cloud.brigadier.BrigadierManagerHolder}.</p>
-     *
-     * @param manager command manager
+     * @param commandManager   command manager
+     * @param brigadierManager brigadier manager
      */
-    void registerBrigadier(CommandManager<?> manager);
+    void registerBrigadier(CommandManager<?> commandManager, Object brigadierManager);
 
     /**
      * Registers {@link SignedGreedyStringParser} to the parser registry.
@@ -77,14 +63,14 @@ public interface SignedStringMapper extends BiFunction<CommandContext<?>,
      * @param registry parser registry
      */
     default void registerParser(final ParserRegistry<?> registry) {
-        registry.registerParser(signedGreedyStringParser());
+        registry.registerParser(signedGreedyStringParser(this));
     }
 
     final class Unsigned implements SignedStringMapper, Services.Fallback {
 
         @Override
-        public void registerBrigadier(final CommandManager<?> manager) {
-            SignedArguments.registerDefaultBrigadierMapping(manager);
+        public void registerBrigadier(final CommandManager<?> commandManager, final Object brigadierManager) {
+            SignedArguments.registerDefaultBrigadierMapping(brigadierManager);
         }
 
         @Override

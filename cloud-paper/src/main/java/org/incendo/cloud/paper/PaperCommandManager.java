@@ -39,8 +39,6 @@ import org.incendo.cloud.brigadier.CloudBrigadierManager;
 import org.incendo.cloud.bukkit.BukkitCommandManager;
 import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
 import org.incendo.cloud.execution.ExecutionCoordinator;
-import org.incendo.cloud.minecraft.signed.SignedArguments;
-import org.incendo.cloud.minecraft.signed.SignedStringMapper;
 import org.incendo.cloud.paper.suggestion.SuggestionListener;
 import org.incendo.cloud.paper.suggestion.SuggestionListenerFactory;
 import org.incendo.cloud.state.RegistrationState;
@@ -140,9 +138,6 @@ public class PaperCommandManager<C> extends BukkitCommandManager<C> {
                         this.owningPlugin()
                 );
                 this.paperBrigadierListener.brigadierManager().settings().set(BrigadierSetting.FORCE_EXECUTABLE, true);
-                if (SignedArguments.adventurePresent()) {
-                    SignedStringMapper.get().registerBrigadier(this);
-                }
             } catch (final Exception e) {
                 throw new BrigadierInitializationException(
                         "Failed to register " + PaperBrigadierListener.class.getSimpleName(), e);

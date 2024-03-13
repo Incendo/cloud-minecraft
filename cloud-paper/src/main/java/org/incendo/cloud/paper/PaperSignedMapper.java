@@ -44,7 +44,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.framework.qual.DefaultQualifier;
 import org.incendo.cloud.CommandManager;
-import org.incendo.cloud.brigadier.BrigadierManagerHolder;
+import org.incendo.cloud.brigadier.CloudBrigadierManager;
 import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
 import org.incendo.cloud.bukkit.BukkitCommandManager;
 import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
@@ -106,22 +106,20 @@ public final class PaperSignedMapper implements SignedStringMapper {
     }
 
     @Override
-    public void registerBrigadier(final CommandManager<?> manager) {
-        if (manager instanceof BukkitCommandManager) {
-            registerBrigadier((BrigadierManagerHolder<?, ?>) manager);
-        }
+    public void registerBrigadier(final CommandManager<?> commandManager, final Object brigadierManager) {
+        registerBrigadierGeneric(commandManager, brigadierManager);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static <C> void registerBrigadier(final BrigadierManagerHolder<?, ?> manager) {
+    private static <C> void registerBrigadierGeneric(final CommandManager<C> commandManager, final Object brigadierManager) {
         // Paper 1.20+
-        if (((CommandManager) manager).capabilities().contains(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)
+        if (commandManager.capabilities().contains(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)
             && CraftBukkitReflection.MAJOR_REVISION >= 20) {
             final BukkitBrigadierMapper<C> mapper =
-                new BukkitBrigadierMapper<>((BukkitCommandManager) manager, manager.brigadierManager());
+                new BukkitBrigadierMapper<>((BukkitCommandManager) commandManager, (CloudBrigadierManager) brigadierManager);
             mapper.mapSimpleNMS(new TypeToken<SignedGreedyStringParser<C>>() {}, "message", true);
         } else {
-            SignedArguments.registerDefaultBrigadierMapping((CommandManager) manager);
+            SignedArguments.registerDefaultBrigadierMapping(brigadierManager);
         }
     }
 
