@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.ServiceLoader;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import org.apiguardian.api.API;
@@ -46,6 +47,7 @@ import org.incendo.cloud.SenderMapperHolder;
 import org.incendo.cloud.brigadier.argument.ArgumentTypeFactory;
 import org.incendo.cloud.brigadier.argument.BrigadierMapping;
 import org.incendo.cloud.brigadier.argument.BrigadierMappingBuilder;
+import org.incendo.cloud.brigadier.argument.BrigadierMappingContributor;
 import org.incendo.cloud.brigadier.argument.BrigadierMappings;
 import org.incendo.cloud.brigadier.node.LiteralBrigadierNodeFactory;
 import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
@@ -104,6 +106,8 @@ public final class CloudBrigadierManager<C, S> implements SenderMapperHolder<S, 
                 commandManager.suggestionFactory().mapped(TooltipSuggestion::tooltipSuggestion)
         );
         this.registerInternalMappings();
+        final ServiceLoader<BrigadierMappingContributor> loader = ServiceLoader.load(BrigadierMappingContributor.class);
+        loader.iterator().forEachRemaining(contributor -> contributor.contribute(this));
         commandManager.registerCommandPreProcessor(ctx -> {
             if (!ctx.commandContext().contains(WrappedBrigadierParser.COMMAND_CONTEXT_BRIGADIER_NATIVE_SENDER)) {
                 ctx.commandContext().store(
