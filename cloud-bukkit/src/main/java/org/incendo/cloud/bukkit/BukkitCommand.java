@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import org.apiguardian.api.API;
 import org.bukkit.command.CommandSender;
@@ -42,6 +43,8 @@ import org.incendo.cloud.permission.Permission;
 import org.incendo.cloud.suggestion.Suggestion;
 import org.incendo.cloud.suggestion.Suggestions;
 import org.incendo.cloud.util.StringUtils;
+
+import static java.util.Objects.requireNonNull;
 
 final class BukkitCommand<C> extends org.bukkit.command.Command implements PluginIdentifiableCommand {
 
@@ -133,10 +136,15 @@ final class BukkitCommand<C> extends org.bukkit.command.Command implements Plugi
 
     @Override
     public @NonNull String getUsage() {
+        final CommandNode<C> node = this.namedNode();
+        if (node == null) {
+            this.getPlugin().getLogger().log(Level.WARNING, "Node does not exist in tree for command " + this.getLabel() + ".");
+            return "";
+        }
         return this.manager.commandSyntaxFormatter().apply(
-                null,
-                Collections.singletonList(Objects.requireNonNull(this.namedNode().component())),
-                this.namedNode()
+            null,
+            Collections.singletonList(requireNonNull(node.component())),
+            node
         );
     }
 

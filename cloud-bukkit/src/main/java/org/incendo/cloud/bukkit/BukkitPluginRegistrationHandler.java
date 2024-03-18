@@ -26,6 +26,7 @@ package org.incendo.cloud.bukkit;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,7 +40,6 @@ import org.bukkit.command.CommandMap;
 import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.entity.Player;
-import org.bukkit.help.GenericCommandHelpTopic;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.component.CommandComponent;
@@ -49,7 +49,7 @@ import org.incendo.cloud.setting.ManagerSetting;
 @API(status = API.Status.INTERNAL)
 public class BukkitPluginRegistrationHandler<C> implements CommandRegistrationHandler<C> {
 
-    private final Map<CommandComponent<C>, org.bukkit.command.Command> registeredCommands = new HashMap<>();
+    private final Map<CommandComponent<C>, RegisteredCommandData<C>> registeredCommands = new HashMap<>();
     private final Set<String> recognizedAliases = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
 
     private Map<String, org.bukkit.command.Command> bukkitCommands;
@@ -69,7 +69,6 @@ public class BukkitPluginRegistrationHandler<C> implements CommandRegistrationHa
                 (Map<String, org.bukkit.command.Command>) knownCommands.get(this.commandMap);
         this.bukkitCommands = bukkitCommands;
         this.bukkitCommandManager = bukkitCommandManager;
-        Bukkit.getHelpMap().registerHelpTopicFactory(BukkitCommand.class, GenericCommandHelpTopic::new);
     }
 
     @Override
@@ -124,38 +123,25 @@ public class BukkitPluginRegistrationHandler<C> implements CommandRegistrationHa
             newAliases.forEach(alias -> this.registerExternal(alias, command, bukkitCommand));
         }
 
-        this.registeredCommands.put(component, bukkitCommand);
+        this.registeredCommands.put(component, new RegisteredCommandData<>(bukkitCommand, newAliases));
         return true;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public final void unregisterRootCommand(
             final @NonNull CommandComponent<C> component
     ) {
-        final org.bukkit.command.Command registeredCommand = this.registeredCommands.get(component);
+        final RegisteredCommandData<C> registeredCommand = this.registeredCommands.get(component);
         if (registeredCommand == null) {
             return;
         }
-        ((BukkitCommand<C>) registeredCommand).disable();
+        registeredCommand.bukkit.disable();
 
-        final List<String> aliases = new ArrayList<>(component.alternativeAliases());
-        final Set<String> registeredAliases = new HashSet<>();
+        final Set<String> registeredAliases = registeredCommand.recognizedAliases;
 
-        for (final String alias : aliases) {
-            registeredAliases.add(this.getNamespacedLabel(alias));
-            if (this.bukkitCommandOrAliasExists(alias)) {
-                registeredAliases.add(alias);
-            }
+        for (final String alias : registeredAliases) {
+            this.bukkitCommands.remove(alias);
         }
-
-        if (this.bukkitCommandExists(component.name())) {
-            registeredAliases.add(component.name());
-        }
-        registeredAliases.add(this.getNamespacedLabel(component.name()));
-
-        this.bukkitCommands.remove(component.name());
-        this.bukkitCommands.remove(this.getNamespacedLabel(component.name()));
 
         this.recognizedAliases.removeAll(registeredAliases);
         if (this.bukkitCommandManager.splitAliases()) {
@@ -233,5 +219,20 @@ public class BukkitPluginRegistrationHandler<C> implements CommandRegistrationHa
                     .equalsIgnoreCase(this.bukkitCommandManager.owningPlugin().getName());
         }
         return command != null;
+    }
+
+    private static final class RegisteredCommandData<C> {
+        private final BukkitCommand<C> bukkit;
+        private final Set<String> recognizedAliases;
+
+        private RegisteredCommandData(
+            final BukkitCommand<C> bukkit,
+            final Set<String> recognizedAliases
+        ) {
+            this.bukkit = bukkit;
+            final Set<String> treeSet = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+            treeSet.addAll(recognizedAliases);
+            this.recognizedAliases = Collections.unmodifiableSet(treeSet);
+        }
     }
 }
