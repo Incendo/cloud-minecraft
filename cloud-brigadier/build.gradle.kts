@@ -6,6 +6,6 @@ plugins {
 dependencies {
     api(libs.cloud.core)
     /* Needs to be provided by the platform */
-    compileOnly(libs.brigadier)
+    compileOnlyApi(libs.brigadier)
     testImplementation(libs.brigadier)
 }

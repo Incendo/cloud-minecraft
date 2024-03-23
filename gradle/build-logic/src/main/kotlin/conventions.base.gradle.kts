@@ -1,9 +1,11 @@
+import gradle.kotlin.dsl.accessors._c15003335100b45636a8dae476bde48e.javadocLinks
 import org.incendo.cloudbuildlogic.util.ciBuild
 
 plugins {
     id("org.incendo.cloud-build-logic")
     id("org.incendo.cloud-build-logic.spotless")
     id("org.incendo.cloud-build-logic.errorprone")
+    id("org.incendo.cloud-build-logic.javadoc-links")
 }
 
 indra {
@@ -14,6 +16,10 @@ spotless {
     java {
         importOrderFile(rootProject.file(".spotless/cloud.importorder"))
     }
+}
+
+javadocLinks {
+    excludes.add("com.mojang:brigadier")
 }
 
 cloudSpotless {

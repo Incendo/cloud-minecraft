@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     api(libs.cloud.core)
+    api(projects.cloudBrigadier)
 
     // We expect these to either be
     //   1) Provided by the platform at runtime
