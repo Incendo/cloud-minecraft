@@ -4,7 +4,6 @@ plugins {
     id("org.incendo.cloud-build-logic")
     id("org.incendo.cloud-build-logic.spotless")
     id("org.incendo.cloud-build-logic.errorprone")
-    id("org.incendo.cloud-build-logic.javadoc-links")
 }
 
 indra {
