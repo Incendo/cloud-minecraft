@@ -1,4 +1,3 @@
-import gradle.kotlin.dsl.accessors._c15003335100b45636a8dae476bde48e.javadocLinks
 import org.incendo.cloudbuildlogic.util.ciBuild
 
 plugins {

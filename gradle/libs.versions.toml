@@ -52,6 +52,8 @@ minimessage = { group = "net.kyori", name = "adventure-text-minimessage", versio
 adventurePlatformBukkit = { group = "net.kyori", name = "adventure-platform-bukkit", version.ref = "adventurePlatform" }
 adventurePlatformBungeecord = { group = "net.kyori", name = "adventure-platform-bungeecord", version.ref = "adventurePlatform" }
 adventureTextSerializerPlain = { group = "net.kyori", name = "adventure-text-serializer-plain", version.ref = "adventureApi" }
+adventureTextSerializerLegacy = { group = "net.kyori", name = "adventure-text-serializer-legacy", version.ref = "adventureApi" }
+adventureTextSerializerGson = { group = "net.kyori", name = "adventure-text-serializer-gson", version.ref = "adventureApi" }
 paperApi = { group = "io.papermc.paper", name = "paper-api", version.ref = "paperApi" }
 paperMojangApi = { group = "io.papermc.paper", name = "paper-mojangapi", version.ref = "paperApi" }
 spongeApi7 = { group = "org.spongepowered", name = "spongeapi", version.ref = "spongeApi7" }

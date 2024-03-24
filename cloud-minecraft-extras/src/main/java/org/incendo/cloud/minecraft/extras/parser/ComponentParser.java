@@ -172,7 +172,10 @@ public final class ComponentParser<C> implements ArgumentParser<C, Component> {
      * @param stringMode       the string mode to use for the input for the component decoder
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public ComponentParser(final @NonNull Function<String, ? extends Component> componentDecoder, final StringParser.@NonNull StringMode stringMode) {
+    public ComponentParser(
+        final @NonNull Function<String, ? extends Component> componentDecoder,
+        final StringParser.@NonNull StringMode stringMode
+    ) {
         this.componentDecoder = componentDecoder;
         this.stringParser = new StringParser<>(stringMode);
     }

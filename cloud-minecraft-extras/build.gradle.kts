@@ -19,6 +19,8 @@ dependencies {
     }
     compileOnlyApiAndTests(libs.adventureApi)
     compileOnlyApiAndTests(libs.adventureTextSerializerPlain)
+    compileOnlyApiAndTests(libs.adventureTextSerializerLegacy)
+    compileOnlyApiAndTests(libs.adventureTextSerializerGson)
     // Only needed for features that explicitly mention MiniMessage
     compileOnlyApiAndTests(libs.minimessage)
 }
