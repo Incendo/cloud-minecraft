@@ -43,11 +43,11 @@ import org.incendo.cloud.parser.standard.StringParser;
  * Uses a provided {@link Function} to decode a string into a {@link Component}.
  *
  * @param <C> Command sender type
- * @param <O> Output component type
  * @since 2.0.0
  */
-@SuppressWarnings("NonExtendableApiUsage")
-public final class ComponentParser<C, O extends Component> implements ArgumentParser<C, O> {
+public final class ComponentParser<C> implements ArgumentParser<C, Component> {
+
+    private static final StringParser.StringMode DEFAULT_STRING_MODE = StringParser.StringMode.QUOTED;
 
     /**
      * Create a new parser descriptor for the default MiniMessage serializer using the
@@ -59,7 +59,7 @@ public final class ComponentParser<C, O extends Component> implements ArgumentPa
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
     public static <C> @NonNull ParserDescriptor<C, Component> miniMessageParser() {
-        return miniMessageParser(StringParser.StringMode.QUOTED);
+        return miniMessageParser(DEFAULT_STRING_MODE);
     }
 
     /**
@@ -73,7 +73,7 @@ public final class ComponentParser<C, O extends Component> implements ArgumentPa
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
     public static <C> @NonNull ParserDescriptor<C, Component> miniMessageParser(final StringParser.@NonNull StringMode stringMode) {
-        return componentParser(MiniMessage.miniMessage(), Component.class, stringMode);
+        return componentParser(MiniMessage.miniMessage(), stringMode);
     }
 
     /**
@@ -81,18 +81,15 @@ public final class ComponentParser<C, O extends Component> implements ArgumentPa
      * {@link StringParser.StringMode#QUOTED} mode.
      *
      * @param componentSerializer the component serializer
-     * @param classOfO         the class of the output component
      * @param <C>              Command sender type
-     * @param <O>              Output component type
      * @return the parser descriptor
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C, O extends Component> @NonNull ParserDescriptor<C, O> componentParser(
-        final @NonNull ComponentSerializer<?, O, String> componentSerializer,
-        final @NonNull Class<O> classOfO
+    public static <C> @NonNull ParserDescriptor<C, Component> componentParser(
+        final @NonNull ComponentSerializer<?, ? extends Component, String> componentSerializer
     ) {
-        return componentParser(componentSerializer::deserialize, classOfO);
+        return componentParser(componentSerializer::deserialize);
     }
 
     /**
@@ -100,18 +97,15 @@ public final class ComponentParser<C, O extends Component> implements ArgumentPa
      * {@link StringParser.StringMode#QUOTED} mode.
      *
      * @param componentDecoder the component decoder
-     * @param classOfO         the class of the output component
      * @param <C>              Command sender type
-     * @param <O>              Output component type
      * @return the parser descriptor
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C, O extends Component> @NonNull ParserDescriptor<C, O> componentParser(
-        final @NonNull Function<String, O> componentDecoder,
-        final @NonNull Class<O> classOfO
+    public static <C> @NonNull ParserDescriptor<C, Component> componentParser(
+        final @NonNull Function<String, ? extends Component> componentDecoder
     ) {
-        return componentParser(componentDecoder, classOfO, StringParser.StringMode.QUOTED);
+        return componentParser(componentDecoder, DEFAULT_STRING_MODE);
     }
 
     /**
@@ -119,20 +113,17 @@ public final class ComponentParser<C, O extends Component> implements ArgumentPa
      * provided string mode.
      *
      * @param componentSerializer the component decoder
-     * @param classOfO         the class of the output component
      * @param stringMode       the string mode to use
      * @param <C>              Command sender type
-     * @param <O>              Output component type
      * @return the parser descriptor
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C, O extends Component> @NonNull ParserDescriptor<C, O> componentParser(
-        final @NonNull ComponentSerializer<?, O, String> componentSerializer,
-        final @NonNull Class<O> classOfO,
+    public static <C> @NonNull ParserDescriptor<C, Component> componentParser(
+        final @NonNull ComponentSerializer<?, ? extends Component, String> componentSerializer,
         final StringParser.@NonNull StringMode stringMode
     ) {
-        return componentParser(componentSerializer::deserialize, classOfO, stringMode);
+        return componentParser(componentSerializer::deserialize, stringMode);
     }
 
     /**
@@ -140,20 +131,17 @@ public final class ComponentParser<C, O extends Component> implements ArgumentPa
      * provided string mode.
      *
      * @param componentDecoder the component decoder
-     * @param classOfO         the class of the output component
      * @param stringMode       the string mode to use
      * @param <C>              Command sender type
-     * @param <O>              Output component type
      * @return the parser descriptor
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C, O extends Component> @NonNull ParserDescriptor<C, O> componentParser(
-        final @NonNull Function<String, O> componentDecoder,
-        final @NonNull Class<O> classOfO,
+    public static <C> @NonNull ParserDescriptor<C, Component> componentParser(
+        final @NonNull Function<String, ? extends Component> componentDecoder,
         final StringParser.@NonNull StringMode stringMode
     ) {
-        return ParserDescriptor.of(new ComponentParser<>(componentDecoder, stringMode), classOfO);
+        return ParserDescriptor.of(new ComponentParser<>(componentDecoder, stringMode), Component.class);
     }
 
     /**
@@ -161,23 +149,20 @@ public final class ComponentParser<C, O extends Component> implements ArgumentPa
      * provided string mode.
      *
      * @param componentDecoder the component decoder
-     * @param classOfO         the class of the output component
      * @param stringMode       the string mode to use
      * @param <C>              Command sender type
-     * @param <O>              Output component type
      * @return the command component builder
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public static <C, O extends Component> CommandComponent.@NonNull Builder<C, O> componentComponent(
-        final @NonNull Function<String, O> componentDecoder,
-        final @NonNull Class<O> classOfO,
+    public static <C> CommandComponent.@NonNull Builder<C, Component> componentComponent(
+        final @NonNull Function<String, ? extends Component> componentDecoder,
         final StringParser.@NonNull StringMode stringMode
     ) {
-        return CommandComponent.<C, O>builder().parser(componentParser(componentDecoder, classOfO, stringMode));
+        return CommandComponent.<C, Component>builder().parser(componentParser(componentDecoder, stringMode));
     }
 
-    private final Function<String, O> componentDecoder;
+    private final Function<String, ? extends Component> componentDecoder;
     private final StringParser<C> stringParser;
 
     /**
@@ -187,13 +172,13 @@ public final class ComponentParser<C, O extends Component> implements ArgumentPa
      * @param stringMode       the string mode to use for the input for the component decoder
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public ComponentParser(final @NonNull Function<String, O> componentDecoder, final StringParser.@NonNull StringMode stringMode) {
+    public ComponentParser(final @NonNull Function<String, ? extends Component> componentDecoder, final StringParser.@NonNull StringMode stringMode) {
         this.componentDecoder = componentDecoder;
         this.stringParser = new StringParser<>(stringMode);
     }
 
     @Override
-    public @NonNull ArgumentParseResult<@NonNull O> parse(
+    public @NonNull ArgumentParseResult<@NonNull Component> parse(
         final @NonNull CommandContext<@NonNull C> commandContext,
         final @NonNull CommandInput commandInput
     ) {
@@ -227,7 +212,7 @@ public final class ComponentParser<C, O extends Component> implements ArgumentPa
      * @since 2.0.0
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
-    public @NonNull Function<String, O> componentDecoder() {
+    public @NonNull Function<String, ? extends Component> componentDecoder() {
         return this.componentDecoder;
     }
 }

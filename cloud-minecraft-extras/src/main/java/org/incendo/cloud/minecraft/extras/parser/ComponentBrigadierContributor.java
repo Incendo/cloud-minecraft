@@ -37,7 +37,7 @@ public final class ComponentBrigadierContributor implements BrigadierMappingCont
         final CommandManager<C> manager,
         final CloudBrigadierManager<C, S> brigadierManager
     ) {
-        brigadierManager.registerMapping(new TypeToken<ComponentParser<C, ?>>() {}, builder -> {
+        brigadierManager.registerMapping(new TypeToken<ComponentParser<C>>() {}, builder -> {
             builder.cloudSuggestions().to(argument -> {
                 switch (argument.stringMode()) {
                     case QUOTED:

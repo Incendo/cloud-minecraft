@@ -18,10 +18,6 @@ spotless {
     }
 }
 
-javadocLinks {
-    excludes.add("com.mojang:brigadier")
-}
-
 cloudSpotless {
     ktlintVersion.set(libs.versions.ktlint)
 }
