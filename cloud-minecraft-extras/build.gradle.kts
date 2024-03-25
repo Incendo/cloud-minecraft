@@ -5,6 +5,8 @@ plugins {
 
 dependencies {
     api(libs.cloud.core)
+    compileOnly(projects.cloudBrigadier)
+    compileOnly(libs.brigadier)
 
     // We expect these to either be
     //   1) Provided by the platform at runtime
@@ -17,6 +19,8 @@ dependencies {
     }
     compileOnlyApiAndTests(libs.adventureApi)
     compileOnlyApiAndTests(libs.adventureTextSerializerPlain)
+    compileOnly(libs.adventureTextSerializerLegacy) // for ComponentParser annotation mapping
+    compileOnly(libs.adventureTextSerializerGson) // for ComponentParser annotation mapping
     // Only needed for features that explicitly mention MiniMessage
     compileOnlyApiAndTests(libs.minimessage)
 }
