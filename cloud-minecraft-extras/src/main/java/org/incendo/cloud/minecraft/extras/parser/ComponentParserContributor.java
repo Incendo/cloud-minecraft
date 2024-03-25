@@ -30,7 +30,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.apiguardian.api.API;
-import org.incendo.cloud.minecraft.extras.MinecraftExtraParserParameters;
+import org.incendo.cloud.minecraft.extras.MinecraftExtrasParserParameters;
 import org.incendo.cloud.minecraft.extras.annotation.specifier.Decoder;
 import org.incendo.cloud.parser.ParserContributor;
 import org.incendo.cloud.parser.ParserParameters;
@@ -45,12 +45,12 @@ public final class ComponentParserContributor implements ParserContributor {
     public <C> void contribute(final ParserRegistry<C> registry) {
         try {
             registry.registerAnnotationMapper(Decoder.MiniMessage.class, (annotation, parsedType) -> {
-                return ParserParameters.single(MinecraftExtraParserParameters.COMPONENT_DECODER, MiniMessage.miniMessage()::deserialize);
+                return ParserParameters.single(MinecraftExtrasParserParameters.COMPONENT_DECODER, MiniMessage.miniMessage()::deserialize);
             });
             registry.registerAnnotationMapper(Decoder.Legacy.class, (annotation, parsedType) -> {
                 final char character = annotation.value();
                 return ParserParameters.single(
-                    MinecraftExtraParserParameters.COMPONENT_DECODER,
+                    MinecraftExtrasParserParameters.COMPONENT_DECODER,
                     string -> LegacyComponentSerializer.legacy(character).deserialize(string)
                 );
             });
@@ -59,7 +59,7 @@ public final class ComponentParserContributor implements ParserContributor {
                 final Function<String, ? extends Component> decoder =
                     downsampleColors ? GsonComponentSerializer.colorDownsamplingGson()::deserialize
                         : GsonComponentSerializer.gson()::deserialize;
-                return ParserParameters.single(MinecraftExtraParserParameters.COMPONENT_DECODER, decoder);
+                return ParserParameters.single(MinecraftExtrasParserParameters.COMPONENT_DECODER, decoder);
             });
             registry.registerAnnotationMapper(Decoder.class, (annotation, parsedType) -> {
                 final Function<String, ? extends Component> decoder;
@@ -68,7 +68,7 @@ public final class ComponentParserContributor implements ParserContributor {
                 } catch (final ReflectiveOperationException exception) {
                     throw new IllegalArgumentException("Could not create decoder for " + annotation.value(), exception);
                 }
-                return ParserParameters.single(MinecraftExtraParserParameters.COMPONENT_DECODER, decoder);
+                return ParserParameters.single(MinecraftExtrasParserParameters.COMPONENT_DECODER, decoder);
             });
 
             registry.registerParserSupplier(TypeToken.get(Component.class), options -> {
@@ -96,7 +96,7 @@ public final class ComponentParserContributor implements ParserContributor {
                     stringMode = StringParser.StringMode.SINGLE;
                 }
                 final Function<String, ? extends Component> decoder =
-                    options.get(MinecraftExtraParserParameters.COMPONENT_DECODER, MiniMessage.miniMessage()::deserialize);
+                    options.get(MinecraftExtrasParserParameters.COMPONENT_DECODER, MiniMessage.miniMessage()::deserialize);
                 return new ComponentParser<>(decoder, stringMode);
             });
         } catch (final Exception | LinkageError ignore) {

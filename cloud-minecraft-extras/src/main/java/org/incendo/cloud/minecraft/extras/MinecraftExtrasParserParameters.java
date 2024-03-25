@@ -35,9 +35,9 @@ import org.incendo.cloud.parser.ParserParameter;
  * @since 2.0.0
  */
 @API(status = API.Status.STABLE, since = "2.0.0")
-public final class MinecraftExtraParserParameters {
+public final class MinecraftExtrasParserParameters {
 
-    private MinecraftExtraParserParameters() {
+    private MinecraftExtrasParserParameters() {
     }
 
     /**
