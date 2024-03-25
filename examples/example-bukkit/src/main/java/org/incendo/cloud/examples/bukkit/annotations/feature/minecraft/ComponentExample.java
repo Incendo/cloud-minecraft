@@ -21,37 +21,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package org.incendo.cloud.examples.bukkit.builder.feature.minecraft;
+package org.incendo.cloud.examples.bukkit.annotations.feature.minecraft;
 
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.cloud.bukkit.BukkitCommandManager;
+import org.checkerframework.framework.qual.DefaultQualifier;
+import org.incendo.cloud.annotation.specifier.FlagYielding;
+import org.incendo.cloud.annotation.specifier.Greedy;
+import org.incendo.cloud.annotations.AnnotationParser;
+import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.examples.bukkit.ExamplePlugin;
-import org.incendo.cloud.examples.bukkit.builder.BuilderFeature;
-import org.incendo.cloud.minecraft.extras.parser.ComponentParser;
-import org.incendo.cloud.parser.standard.StringParser;
+import org.incendo.cloud.examples.bukkit.annotations.AnnotationFeature;
 
 /**
  * Example showcasing the component parser from cloud-minecraft-extras.
  */
-public final class ComponentExample implements BuilderFeature {
+@DefaultQualifier(NonNull.class)
+public final class ComponentExample implements AnnotationFeature {
+    private @MonotonicNonNull BukkitAudiences audiences;
 
     @Override
-    public void registerFeature(
-        final @NonNull ExamplePlugin examplePlugin,
-        final @NonNull BukkitCommandManager<CommandSender> manager
-    ) {
-        manager.command(
-            manager.commandBuilder("builder")
-                .literal("minimessage")
-                .required("msg", ComponentParser.componentParser(
-                    MiniMessage.miniMessage()::deserialize,
-                    StringParser.StringMode.GREEDY_FLAG_YIELDING
-                ))
-                .handler(ctx -> {
-                    examplePlugin.bukkitAudiences().sender(ctx.sender()).sendMessage(ctx.get("msg"));
-                })
-        );
+    public void registerFeature(final ExamplePlugin examplePlugin, final AnnotationParser<CommandSender> annotationParser) {
+        this.audiences = examplePlugin.bukkitAudiences();
+        annotationParser.parse(this);
+    }
+
+    @Command("annotations minimessage <msg>")
+    public void componentCommand(final CommandSender sender, @Greedy @FlagYielding final Component msg) {
+        this.audiences.sender(sender).sendMessage(msg);
     }
 }

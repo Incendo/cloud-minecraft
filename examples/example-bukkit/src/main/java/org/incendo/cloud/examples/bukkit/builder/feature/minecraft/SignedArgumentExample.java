@@ -38,7 +38,7 @@ import org.incendo.cloud.minecraft.signed.SignedString;
 import static org.incendo.cloud.minecraft.signed.SignedGreedyStringParser.signedGreedyStringParser;
 
 @DefaultQualifier(NonNull.class)
-public final class SignedArgument implements BuilderFeature {
+public final class SignedArgumentExample implements BuilderFeature {
     @Override
     public void registerFeature(final ExamplePlugin examplePlugin, final BukkitCommandManager<CommandSender> manager) {
         manager.command(manager.commandBuilder("builder")

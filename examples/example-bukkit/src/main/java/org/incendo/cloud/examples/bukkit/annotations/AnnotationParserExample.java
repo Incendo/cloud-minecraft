@@ -41,9 +41,11 @@ import org.incendo.cloud.examples.bukkit.annotations.feature.PermissionExample;
 import org.incendo.cloud.examples.bukkit.annotations.feature.RegexExample;
 import org.incendo.cloud.examples.bukkit.annotations.feature.RootCommandDeletionExample;
 import org.incendo.cloud.examples.bukkit.annotations.feature.StringArrayExample;
+import org.incendo.cloud.examples.bukkit.annotations.feature.minecraft.ComponentExample;
 import org.incendo.cloud.examples.bukkit.annotations.feature.minecraft.LocationExample;
 import org.incendo.cloud.examples.bukkit.annotations.feature.minecraft.NamespacedKeyExample;
 import org.incendo.cloud.examples.bukkit.annotations.feature.minecraft.SelectorExample;
+import org.incendo.cloud.examples.bukkit.annotations.feature.minecraft.SignedArgumentExample;
 
 /**
  * Main entrypoint for all annotation related examples. This class is responsible for creating and configuring
@@ -66,7 +68,9 @@ public final class AnnotationParserExample {
             // Minecraft-specific features
             new LocationExample(),
             new NamespacedKeyExample(),
-            new SelectorExample()
+            new SelectorExample(),
+            new SignedArgumentExample(),
+            new ComponentExample()
     );
 
     private final ExamplePlugin examplePlugin;
