@@ -31,7 +31,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.apiguardian.api.API;
 import org.incendo.cloud.minecraft.extras.MinecraftExtraParserParameters;
-import org.incendo.cloud.minecraft.extras.annotation.Decoder;
+import org.incendo.cloud.minecraft.extras.annotation.specifier.Decoder;
 import org.incendo.cloud.parser.ParserContributor;
 import org.incendo.cloud.parser.ParserParameters;
 import org.incendo.cloud.parser.ParserRegistry;

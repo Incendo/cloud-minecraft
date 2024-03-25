@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package org.incendo.cloud.minecraft.extras.annotation;
+package org.incendo.cloud.minecraft.extras.annotation.specifier;
 
 import io.leangen.geantyref.TypeToken;
 import java.lang.annotation.Documented;
