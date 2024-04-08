@@ -1,6 +1,6 @@
 [versions]
 # build logic
-cloud-build-logic = "0.0.13"
+cloud-build-logic = "0.0.14"
 checkstyle = "10.12.5"
 stylecheck = "0.2.1"
 ktlint = "0.50.0"
