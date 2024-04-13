@@ -35,9 +35,10 @@ import org.incendo.cloud.description.Description;
 import org.incendo.cloud.examples.bukkit.ExamplePlugin;
 import org.incendo.cloud.examples.bukkit.builder.BuilderFeature;
 import org.incendo.cloud.key.CloudKey;
-import org.incendo.cloud.type.tuple.Triplet;
 
 import static org.incendo.cloud.bukkit.parser.WorldParser.worldParser;
+import static org.incendo.cloud.parser.aggregate.AggregateParserTripletBuilder.directMapper;
+import static org.incendo.cloud.parser.standard.IntegerParser.integerParser;
 
 public final class CompoundArgumentExample implements BuilderFeature {
 
@@ -58,11 +59,10 @@ public final class CompoundArgumentExample implements BuilderFeature {
                 .requiredArgumentTriplet(
                         coordsKey,
                         TypeToken.get(Vector.class),
-                        Triplet.of("x", "y", "z"),
-                        Triplet.of(Integer.class, Integer.class, Integer.class),
-                        (sender, triplet) -> new Vector(triplet.first(), triplet.second(),
-                                triplet.third()
-                        ),
+                        "x", integerParser(),
+                        "y", integerParser(),
+                        "z", integerParser(),
+                        directMapper((sender, x, y, z) -> new Vector(x, y, z)),
                         Description.of("Coordinates")
                 )
                 .handler(context -> {

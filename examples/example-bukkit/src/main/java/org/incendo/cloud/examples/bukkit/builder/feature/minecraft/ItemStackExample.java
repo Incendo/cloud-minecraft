@@ -29,11 +29,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.bukkit.BukkitCommandManager;
-import org.incendo.cloud.bukkit.data.ProtoItemStack;
 import org.incendo.cloud.description.Description;
 import org.incendo.cloud.examples.bukkit.ExamplePlugin;
 import org.incendo.cloud.examples.bukkit.builder.BuilderFeature;
-import org.incendo.cloud.type.tuple.Pair;
+import org.incendo.cloud.parser.ArgumentParseResult;
+
+import static org.incendo.cloud.bukkit.parser.ItemStackParser.itemStackParser;
+import static org.incendo.cloud.parser.standard.IntegerParser.integerParser;
 
 /**
  * Example showcasing the use of the native item stack parser.
@@ -52,12 +54,14 @@ public final class ItemStackExample implements BuilderFeature {
                         .requiredArgumentPair(
                                 "itemstack",
                                 TypeToken.get(ItemStack.class),
-                                Pair.of("item", "amount"),
-                                Pair.of(ProtoItemStack.class, Integer.class),
-                                (sender, pair) -> {
-                                    final ProtoItemStack proto = pair.first();
-                                    final int amount = pair.second();
-                                    return proto.createItemStack(amount, true);
+                                "item", itemStackParser(),
+                                "amount", integerParser(),
+                                (sender, proto, amount) -> {
+                                    try {
+                                        return ArgumentParseResult.successFuture(proto.createItemStack(amount, true));
+                                    } catch (final IllegalArgumentException ex) {
+                                        return ArgumentParseResult.failureFuture(ex);
+                                    }
                                 },
                                 Description.of("The ItemStack to give")
                         )

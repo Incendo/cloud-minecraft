@@ -75,7 +75,7 @@ public final class AggregateCommandExample implements BuilderFeature {
                     final int x = aggregateCommandContext.get("x");
                     final int y = aggregateCommandContext.get("y");
                     final int z = aggregateCommandContext.get("z");
-                    return ArgumentParseResult.success(new Location(world, x, y, z));
+                    return new Location(world, x, y, z);
                 })
                 .build();
         manager.command(

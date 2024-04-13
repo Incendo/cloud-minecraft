@@ -155,12 +155,10 @@ class LiteralBrigadierNodeFactoryTest {
                                 .withComponent("integer", integerParser(0, 10))
                                 .withComponent("string", greedyStringParser())
                                 .withDirectMapper(
-                                        new TypeToken<Pair<Integer, String>>() {
-                                        },
-                                        (cmdCtx, ctx) -> ArgumentParseResult.success(
-                                                Pair.of(ctx.<Integer>get("integer"), ctx.<String>get("string"))
-                                        )
-                                ).build()
+                                        new TypeToken<Pair<Integer, String>>() {},
+                                        (cmdCtx, ctx) -> Pair.of(ctx.<Integer>get("integer"), ctx.<String>get("string"))
+                                )
+                                .build()
                 )
                 .required("boolean", booleanParser())
                 .build();
