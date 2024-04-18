@@ -39,6 +39,7 @@ import org.incendo.cloud.minecraft.extras.caption.ComponentCaptionFormatter;
 import org.incendo.cloud.paper.PaperCommandManager;
 
 import static net.kyori.adventure.text.Component.text;
+import static org.incendo.cloud.bukkit.parser.location.LocationParser.locationParser;
 
 /**
  * Example plugin class
@@ -117,6 +118,12 @@ public final class ExamplePlugin extends JavaPlugin {
         // Create the builder examples.
         //
         new BuilderExample(this, manager);
+
+        // TODO
+        manager.command(manager.commandBuilder("flagtest")
+            .flag(manager.flagBuilder("loc")
+                .withComponent(locationParser()))
+                .build());
     }
 
     /**

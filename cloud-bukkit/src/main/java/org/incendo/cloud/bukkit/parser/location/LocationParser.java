@@ -216,17 +216,31 @@ public final class LocationParser<C> implements ArgumentParser<C, Location>, Blo
             final @NonNull CommandContext<C> commandContext,
             final @NonNull CommandInput input
     ) {
-        final int toSkip = Math.min(components, input.remainingTokens()) - 1;
-        final StringBuilder prefix = new StringBuilder();
-        for (int i = 0; i < toSkip; i++) {
-            prefix.append(input.readStringSkipWhitespace()).append(" ");
+        final CommandInput inputCopy = input.copy();
+
+        int idx = input.cursor();
+        for (int i = 0; i < components; i++) {
+            idx = input.cursor();
+            if (!input.hasRemainingInput(true)) {
+                break;
+            }
+            final ArgumentParseResult<LocationCoordinate> coordinateResult = new LocationCoordinateParser<C>().parse(
+                commandContext,
+                input
+            );
+            if (coordinateResult.failure().isPresent()) {
+                break;
+            }
         }
+        input.cursor(idx);
 
         if (input.hasRemainingInput() && (input.peek() == '~' || input.peek() == '^')) {
-            prefix.append(input.read());
+            input.read();
         }
 
-        return IntegerParser.getSuggestions(
+        final String prefix = inputCopy.difference(input, true);
+
+		return IntegerParser.getSuggestions(
                 SUGGESTION_RANGE,
                 input
         ).stream().map(string -> prefix + string).collect(Collectors.toList());
