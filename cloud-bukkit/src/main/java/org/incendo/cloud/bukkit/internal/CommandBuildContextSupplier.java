@@ -27,6 +27,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -56,12 +58,19 @@ public final class CommandBuildContextSupplier {
         COMMAND_BUILD_CONTEXT_CTR = ctr;
 
         if (COMMAND_BUILD_CONTEXT_CTR == null) {
-            CREATE_CONTEXT_METHOD = Arrays.stream(COMMAND_BUILD_CONTEXT_CLASS.getDeclaredMethods())
-                    .filter(it -> it.getParameterCount() == 2 && COMMAND_BUILD_CONTEXT_CLASS.isAssignableFrom(it
-                            .getReturnType()) && Modifier.isStatic(it.getModifiers()))
-                    .skip(1)
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalStateException("Could not find CommandBuildContext.configurable"));
+            final List<Method> matchingFactoryMethods = Arrays.stream(COMMAND_BUILD_CONTEXT_CLASS.getDeclaredMethods())
+                .filter(it -> it.getParameterCount() == 2 && COMMAND_BUILD_CONTEXT_CLASS.isAssignableFrom(it
+                    .getReturnType()) && Modifier.isStatic(it.getModifiers()))
+                .collect(Collectors.toList());
+            if (matchingFactoryMethods.size() == 1) {
+                // 1.20.5+
+                CREATE_CONTEXT_METHOD = matchingFactoryMethods.get(0);
+            } else if (matchingFactoryMethods.size() > 1) {
+                // 1.20.4 and below
+                CREATE_CONTEXT_METHOD = matchingFactoryMethods.get(1);
+            } else {
+                throw new IllegalStateException("Could not find CommandBuildContext factory method");
+            }
 
             final Class<?> worldDataCls = CraftBukkitReflection.firstNonNullOrThrow(
                     () -> "Could not find WorldData class",
