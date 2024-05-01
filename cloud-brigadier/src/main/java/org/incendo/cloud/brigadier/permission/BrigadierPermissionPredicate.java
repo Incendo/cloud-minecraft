@@ -23,6 +23,8 @@
 //
 package org.incendo.cloud.brigadier.permission;
 
+import io.leangen.geantyref.GenericTypeReflector;
+import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -48,9 +50,9 @@ public final class BrigadierPermissionPredicate<C, S> implements Predicate<S> {
      * @param node              the cloud command node
      */
     public BrigadierPermissionPredicate(
-            final @NonNull SenderMapper<S, C> senderMapper,
-            final @NonNull BrigadierPermissionChecker<C> permissionChecker,
-            final @NonNull CommandNode<?> node
+        final @NonNull SenderMapper<S, C> senderMapper,
+        final @NonNull BrigadierPermissionChecker<C> permissionChecker,
+        final @NonNull CommandNode<?> node
     ) {
         this.senderMapper = senderMapper;
         this.permissionChecker = permissionChecker;
@@ -61,19 +63,19 @@ public final class BrigadierPermissionPredicate<C, S> implements Predicate<S> {
     @SuppressWarnings("unchecked")
     public boolean test(final @NonNull S source) {
         final Permission permission = (Permission) this.node.nodeMeta().getOrDefault(
-                CommandNode.META_KEY_PERMISSION,
-                Permission.empty()
+            CommandNode.META_KEY_PERMISSION,
+            Permission.empty()
         );
-        final Set<Class<?>> senderTypes = (Set<Class<?>>) this.node.nodeMeta().getOrDefault(
-                CommandNode.META_KEY_SENDER_TYPES,
-                Collections.emptySet()
+        final Set<Type> senderTypes = (Set<Type>) this.node.nodeMeta().getOrDefault(
+            CommandNode.META_KEY_SENDER_TYPES,
+            Collections.emptySet()
         );
         final C cloudSender = this.senderMapper.map(source);
         if (senderTypes.isEmpty()) {
             return this.permissionChecker.hasPermission(cloudSender, permission);
         }
-        for (final Class<?> senderType : senderTypes) {
-            if (senderType.isInstance(cloudSender)) {
+        for (final Type senderType : senderTypes) {
+            if (GenericTypeReflector.isSuperType(senderType, cloudSender.getClass())) {
                 return this.permissionChecker.hasPermission(cloudSender, permission);
             }
         }
