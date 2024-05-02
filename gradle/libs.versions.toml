@@ -5,7 +5,7 @@ checkstyle = "10.12.5"
 stylecheck = "0.2.1"
 ktlint = "0.50.0"
 errorprone = "2.27.1"
-run-task = "2.2.3"
+run-task = "2.3.0"
 
 cloudCore = "2.0.0-beta.5"
 
