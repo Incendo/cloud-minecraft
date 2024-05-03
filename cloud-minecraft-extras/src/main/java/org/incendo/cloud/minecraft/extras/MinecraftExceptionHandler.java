@@ -30,9 +30,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -99,14 +101,26 @@ public final class MinecraftExceptionHandler<C> {
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
     public static <C> MessageFactory<C, InvalidCommandSenderException> createDefaultInvalidSenderHandler() {
-        return (formatter, ctx) -> text()
-            .color(NamedTextColor.RED)
-            .append(ctx.context().formatCaption(
-                formatter,
-                StandardCaptionKeys.EXCEPTION_INVALID_SENDER,
-                RichVariable.of("actual", text(TypeUtils.simpleName(ctx.context().sender().getClass()), NamedTextColor.GRAY)),
-                RichVariable.of("expected", text(TypeUtils.simpleName(ctx.exception().requiredSender()), NamedTextColor.GRAY))
-            ));
+        return (formatter, ctx) -> {
+            final boolean multiple = ctx.exception().requiredSenderTypes().size() > 1;
+            final Component expected = multiple
+                ? Component.join(
+                    JoinConfiguration.commas(true),
+                    ctx.exception().requiredSenderTypes().stream()
+                        .map(TypeUtils::simpleName)
+                        .map(name -> text(name, NamedTextColor.GRAY))
+                        .collect(Collectors.toList())
+                )
+                : text(TypeUtils.simpleName(ctx.exception().requiredSenderTypes().iterator().next()), NamedTextColor.GRAY);
+            return text()
+                    .color(NamedTextColor.RED)
+                    .append(ctx.context().formatCaption(
+                            formatter,
+                            multiple ? StandardCaptionKeys.EXCEPTION_INVALID_SENDER_LIST : StandardCaptionKeys.EXCEPTION_INVALID_SENDER,
+                            RichVariable.of("actual", text(TypeUtils.simpleName(ctx.context().sender().getClass()), NamedTextColor.GRAY)),
+                            RichVariable.of("expected", expected)
+                    ));
+        };
     }
 
     /**

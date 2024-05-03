@@ -23,6 +23,10 @@
 //
 package org.incendo.cloud.bungee;
 
+import io.leangen.geantyref.GenericTypeReflector;
+import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import net.md_5.bungee.api.CommandSender;
@@ -74,11 +78,17 @@ public final class BungeeCommand<C> extends Command implements TabExecutor {
             return false;
         }
 
-        final Permission permission = (Permission) node
-            .nodeMeta()
-            .getOrDefault(CommandNode.META_KEY_PERMISSION, Permission.empty());
-
-        return this.manager.testPermission(this.manager.senderMapper().map(sender), permission).allowed();
+        final Map<Type, Permission> accessMap =
+            node.nodeMeta().getOrDefault(CommandNode.META_KEY_ACCESS, Collections.emptyMap());
+        final C cloudSender = this.manager.senderMapper().map(sender);
+        for (final Map.Entry<Type, Permission> entry : accessMap.entrySet()) {
+            if (GenericTypeReflector.isSuperType(entry.getKey(), cloudSender.getClass())) {
+                if (this.manager.testPermission(cloudSender, entry.getValue()).allowed()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private @Nullable CommandNode<C> namedNode() {

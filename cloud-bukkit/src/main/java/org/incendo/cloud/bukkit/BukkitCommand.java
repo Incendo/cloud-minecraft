@@ -23,8 +23,11 @@
 //
 package org.incendo.cloud.bukkit;
 
+import io.leangen.geantyref.GenericTypeReflector;
+import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -155,11 +158,17 @@ final class BukkitCommand<C> extends org.bukkit.command.Command implements Plugi
             return false;
         }
 
-        final Permission permission = (Permission) node
-                .nodeMeta()
-                .getOrDefault(CommandNode.META_KEY_PERMISSION, Permission.empty());
-
-        return this.manager.testPermission(this.manager.senderMapper().map(target), permission).allowed();
+        final Map<Type, Permission> accessMap =
+            node.nodeMeta().getOrDefault(CommandNode.META_KEY_ACCESS, Collections.emptyMap());
+        final C cloudSender = this.manager.senderMapper().map(target);
+        for (final Map.Entry<Type, Permission> entry : accessMap.entrySet()) {
+            if (GenericTypeReflector.isSuperType(entry.getKey(), cloudSender.getClass())) {
+                if (this.manager.testPermission(cloudSender, entry.getValue()).allowed()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @API(status = API.Status.INTERNAL, since = "1.7.0")

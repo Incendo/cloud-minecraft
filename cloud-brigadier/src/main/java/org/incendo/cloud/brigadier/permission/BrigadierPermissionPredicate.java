@@ -26,7 +26,7 @@ package org.incendo.cloud.brigadier.permission;
 import io.leangen.geantyref.GenericTypeReflector;
 import java.lang.reflect.Type;
 import java.util.Collections;
-import java.util.Set;
+import java.util.Map;
 import java.util.function.Predicate;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -60,23 +60,15 @@ public final class BrigadierPermissionPredicate<C, S> implements Predicate<S> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public boolean test(final @NonNull S source) {
-        final Permission permission = (Permission) this.node.nodeMeta().getOrDefault(
-            CommandNode.META_KEY_PERMISSION,
-            Permission.empty()
-        );
-        final Set<Type> senderTypes = (Set<Type>) this.node.nodeMeta().getOrDefault(
-            CommandNode.META_KEY_SENDER_TYPES,
-            Collections.emptySet()
-        );
         final C cloudSender = this.senderMapper.map(source);
-        if (senderTypes.isEmpty()) {
-            return this.permissionChecker.hasPermission(cloudSender, permission);
-        }
-        for (final Type senderType : senderTypes) {
-            if (GenericTypeReflector.isSuperType(senderType, cloudSender.getClass())) {
-                return this.permissionChecker.hasPermission(cloudSender, permission);
+        final Map<Type, Permission> accessMap =
+            this.node.nodeMeta().getOrDefault(CommandNode.META_KEY_ACCESS, Collections.emptyMap());
+        for (final Map.Entry<Type, Permission> entry : accessMap.entrySet()) {
+            if (GenericTypeReflector.isSuperType(entry.getKey(), cloudSender.getClass())) {
+                if (this.permissionChecker.hasPermission(cloudSender, entry.getValue())) {
+                    return true;
+                }
             }
         }
         return false;
