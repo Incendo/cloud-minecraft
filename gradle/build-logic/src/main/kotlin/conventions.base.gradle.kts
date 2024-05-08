@@ -8,6 +8,9 @@ plugins {
 
 indra {
     checkstyle().set(libs.versions.checkstyle)
+    javaVersions {
+        minimumToolchain(21)
+    }
 }
 
 spotless {

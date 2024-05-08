@@ -42,6 +42,7 @@ import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.Command;
+import org.incendo.cloud.bukkit.internal.BukkitHelper;
 import org.incendo.cloud.component.CommandComponent;
 import org.incendo.cloud.internal.CommandRegistrationHandler;
 import org.incendo.cloud.setting.ManagerSetting;
@@ -80,7 +81,7 @@ public class BukkitPluginRegistrationHandler<C> implements CommandRegistrationHa
             return false;
         }
         final String label = component.name();
-        final String namespacedLabel = this.getNamespacedLabel(label);
+        final String namespacedLabel = BukkitHelper.namespacedLabel(this.bukkitCommandManager, label);
 
         final List<String> aliases = new ArrayList<>(component.alternativeAliases());
 
@@ -100,7 +101,7 @@ public class BukkitPluginRegistrationHandler<C> implements CommandRegistrationHa
         final Set<String> newAliases = new HashSet<>();
 
         for (final String alias : aliases) {
-            final String namespacedAlias = this.getNamespacedLabel(alias);
+            final String namespacedAlias = BukkitHelper.namespacedLabel(this.bukkitCommandManager, alias);
             newAliases.add(namespacedAlias);
             if (!this.bukkitCommandOrAliasExists(alias)) {
                 newAliases.add(alias);
@@ -154,16 +155,6 @@ public class BukkitPluginRegistrationHandler<C> implements CommandRegistrationHa
             // Once the command has been unregistered, we need to refresh the command list for all online players.
             Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
         }
-    }
-
-    /**
-     * Returns the namespaced version of a label.
-     *
-     * @param label label
-     * @return namespaced label
-     */
-    public @NonNull String getNamespacedLabel(final @NonNull String label) {
-        return String.format("%s:%s", this.bukkitCommandManager.owningPlugin().getName(), label).toLowerCase(Locale.ROOT);
     }
 
     /**

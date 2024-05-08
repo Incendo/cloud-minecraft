@@ -19,8 +19,18 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         mavenCentral()
+        // TODO
+        mavenLocal {
+            content {
+                includeGroup("io.papermc.paper")
+            }
+        }
         maven("https://oss.sonatype.org/content/repositories/snapshots/") {
             name = "sonatypeOssSnapshots"
+            mavenContent { snapshotsOnly() }
+        }
+        maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+            name = "sonatypeS01OssSnapshots"
             mavenContent { snapshotsOnly() }
         }
         /* The Minecraft repository, used for cloud-brigadier */

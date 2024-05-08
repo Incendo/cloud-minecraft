@@ -1,6 +1,6 @@
 [versions]
 # build logic
-cloud-build-logic = "0.0.14"
+cloud-build-logic = "0.0.15-SNAPSHOT"
 checkstyle = "10.12.5"
 stylecheck = "0.2.1"
 ktlint = "0.50.0"
@@ -18,7 +18,7 @@ bungeecord = "1.20-R0.2"
 cloudburst = "1.0.0-SNAPSHOT"
 adventureApi = "4.15.0"
 adventurePlatform = "4.3.2"
-paperApi = "1.20.4-R0.1-SNAPSHOT"
+paperApi = "1.20.6-R0.1-SNAPSHOT"
 velocityApi = "3.3.0-SNAPSHOT"
 spongeApi7 = "7.3.0"
 

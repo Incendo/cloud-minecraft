@@ -54,7 +54,7 @@ public class CloudburstCommandManager<C> extends CommandManager<C> implements Se
      * @param commandExecutionCoordinator  Coordinator provider
      * @param senderMapper                 Function that maps {@link CommandSender} to the command sender type
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "this-escape"})
     public CloudburstCommandManager(
             final @NonNull Plugin owningPlugin,
             final @NonNull ExecutionCoordinator<C> commandExecutionCoordinator,

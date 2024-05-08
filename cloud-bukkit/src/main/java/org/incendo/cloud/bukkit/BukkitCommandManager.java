@@ -62,6 +62,7 @@ import org.incendo.cloud.bukkit.parser.selector.MultiplePlayerSelectorParser;
 import org.incendo.cloud.bukkit.parser.selector.SingleEntitySelectorParser;
 import org.incendo.cloud.bukkit.parser.selector.SinglePlayerSelectorParser;
 import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.internal.CommandRegistrationHandler;
 import org.incendo.cloud.parser.ParserParameters;
 import org.incendo.cloud.state.RegistrationState;
 
@@ -98,6 +99,7 @@ public abstract class BukkitCommandManager<C> extends CommandManager<C>
      * @throws InitializationException if construction of the manager fails
      */
     @API(status = API.Status.INTERNAL, since = "2.0.0")
+    @SuppressWarnings("this-escape")
     protected BukkitCommandManager(
             final @NonNull Plugin owningPlugin,
             final @NonNull ExecutionCoordinator<C> commandExecutionCoordinator,
@@ -242,7 +244,7 @@ public abstract class BukkitCommandManager<C> extends CommandManager<C>
      * @throws BrigadierInitializationException when the prerequisite capabilities are not present or some other issue occurs
      * during registration of Brigadier support
      */
-    public void registerBrigadier() throws BrigadierInitializationException {
+    public synchronized void registerBrigadier() throws BrigadierInitializationException {
         this.requireState(RegistrationState.BEFORE_REGISTRATION);
         this.checkBrigadierCompatibility();
         if (!this.hasCapability(CloudBukkitCapabilities.COMMODORE_BRIGADIER)) {
@@ -251,6 +253,10 @@ public abstract class BukkitCommandManager<C> extends CommandManager<C>
                             + CloudBukkitCapabilities.COMMODORE_BRIGADIER + " (Minecraft version too new). "
                             + "See the Javadocs for more details"
             );
+        }
+        final CommandRegistrationHandler<C> handler = this.commandRegistrationHandler();
+        if (handler instanceof CloudCommodoreManager) {
+            throw new IllegalStateException("Brigadier is already registered! Holder: " + handler);
         }
         try {
             final CloudCommodoreManager<C> cloudCommodoreManager = new CloudCommodoreManager<>(this);

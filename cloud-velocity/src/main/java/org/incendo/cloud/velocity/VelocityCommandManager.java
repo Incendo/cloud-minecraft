@@ -86,7 +86,7 @@ public class VelocityCommandManager<C> extends CommandManager<C>
      * @param senderMapper                 Function that maps {@link CommandSource} to the command sender type
      */
     @Inject
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "this-escape"})
     public VelocityCommandManager(
             final @NonNull PluginContainer plugin,
             final @NonNull ProxyServer proxyServer,

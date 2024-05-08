@@ -28,16 +28,19 @@ import org.apiguardian.api.API;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.CloudCapability;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.brigadier.BrigadierManagerHolder;
 import org.incendo.cloud.brigadier.BrigadierSetting;
 import org.incendo.cloud.brigadier.CloudBrigadierManager;
 import org.incendo.cloud.bukkit.BukkitCommandManager;
 import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
+import org.incendo.cloud.bukkit.internal.CraftBukkitReflection;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.paper.suggestion.SuggestionListener;
 import org.incendo.cloud.paper.suggestion.SuggestionListenerFactory;
@@ -54,7 +57,7 @@ import org.incendo.cloud.state.RegistrationState;
  */
 public class PaperCommandManager<C> extends BukkitCommandManager<C> {
 
-    private @Nullable PaperBrigadierListener<C> paperBrigadierListener = null;
+    private @Nullable BrigadierManagerHolder<C, ?> brigadierManagerHolder = null;
 
     /**
      * Create a new Paper command manager.
@@ -76,6 +79,7 @@ public class PaperCommandManager<C> extends BukkitCommandManager<C> {
      * @throws InitializationException if construction of the manager fails
      */
     @API(status = API.Status.STABLE, since = "2.0.0")
+    @SuppressWarnings("this-escape")
     public PaperCommandManager(
             final @NonNull Plugin owningPlugin,
             final @NonNull ExecutionCoordinator<C> commandExecutionCoordinator,
@@ -125,24 +129,56 @@ public class PaperCommandManager<C> extends BukkitCommandManager<C> {
      * during registration of Brigadier support
      */
     @Override
-    public void registerBrigadier() throws BrigadierInitializationException {
+    public synchronized void registerBrigadier() throws BrigadierInitializationException {
+        this.registerBrigadier(true);
+    }
+
+    /**
+     * Variant of {@link #registerBrigadier()} that only uses the old Paper-MojangAPI, even
+     * when the modern Paper commands API is present. This may be useful for debugging issues
+     * with the new Paper command system.
+     *
+     * @throws BrigadierInitializationException when the prerequisite capabilities are not present or some other issue occurs
+     * during registration of Brigadier support
+     * @deprecated This method will continue to work while the Paper commands API is still incubating, but will eventually no
+     * longer function when the old API is removed.
+     */
+    @Deprecated
+    public synchronized void registerLegacyPaperBrigadier() throws BrigadierInitializationException {
+        this.registerBrigadier(false);
+    }
+
+    private void registerBrigadier(final boolean allowModern) {
         this.requireState(RegistrationState.BEFORE_REGISTRATION);
         this.checkBrigadierCompatibility();
+
+        if (this.brigadierManagerHolder != null) {
+            throw new IllegalStateException("Brigadier is already registered! Holder: " + this.brigadierManagerHolder);
+        }
+
         if (!this.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
             super.registerBrigadier();
+        } else if (allowModern && CraftBukkitReflection.classExists("io.papermc.paper.command.brigadier.CommandSourceStack")) {
+            try {
+                final ModernPaperBrigadier<C> brig = new ModernPaperBrigadier<>(this);
+                this.brigadierManagerHolder = brig;
+                this.commandRegistrationHandler(brig);
+            } catch (final Exception e) {
+                throw new BrigadierInitializationException("Failed to register ModernPaperBrigadier", e);
+            }
         } else {
             try {
-                this.paperBrigadierListener = new PaperBrigadierListener<>(this);
-                Bukkit.getPluginManager().registerEvents(
-                        this.paperBrigadierListener,
-                        this.owningPlugin()
-                );
-                this.paperBrigadierListener.brigadierManager().settings().set(BrigadierSetting.FORCE_EXECUTABLE, true);
+                this.brigadierManagerHolder = new LegacyPaperBrigadier<>(this);
+                Bukkit.getPluginManager().registerEvents((Listener) this.brigadierManagerHolder, this.owningPlugin());
+                this.brigadierManagerHolder.brigadierManager().settings().set(BrigadierSetting.FORCE_EXECUTABLE, true);
             } catch (final Exception e) {
-                throw new BrigadierInitializationException(
-                        "Failed to register " + PaperBrigadierListener.class.getSimpleName(), e);
+                throw new BrigadierInitializationException("Failed to register LegacyPaperBrigadier", e);
             }
         }
+    }
+
+    final void lockRegistration0() {
+        this.lockRegistration();
     }
 
     /**
@@ -154,7 +190,7 @@ public class PaperCommandManager<C> extends BukkitCommandManager<C> {
     @API(status = API.Status.STABLE, since = "2.0.0")
     @Override
     public boolean hasBrigadierManager() {
-        return this.paperBrigadierListener != null || super.hasBrigadierManager();
+        return this.brigadierManagerHolder != null || super.hasBrigadierManager();
     }
 
     /**
@@ -167,8 +203,8 @@ public class PaperCommandManager<C> extends BukkitCommandManager<C> {
     @API(status = API.Status.STABLE, since = "2.0.0")
     @Override
     public @NonNull CloudBrigadierManager<C, ?> brigadierManager() {
-        if (this.paperBrigadierListener != null) {
-            return this.paperBrigadierListener.brigadierManager();
+        if (this.brigadierManagerHolder != null) {
+            return this.brigadierManagerHolder.brigadierManager();
         }
         return super.brigadierManager();
     }
