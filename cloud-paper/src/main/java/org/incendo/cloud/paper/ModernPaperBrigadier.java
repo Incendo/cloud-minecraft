@@ -24,11 +24,14 @@
 package org.incendo.cloud.paper;
 
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import io.papermc.paper.command.brigadier.CommandRegistrationFlag;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.registrar.ReloadableRegistrarEvent;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import org.bukkit.Bukkit;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -95,15 +98,16 @@ final class ModernPaperBrigadier<C> implements CommandRegistrationHandler<C>, Br
                 new CloudBrigadierCommand<>(
                     this.manager,
                     this.brigadierManager,
-                    this::stripNamespace,
-                    rootNode
+                    this::stripNamespace
                 ),
                 permissionChecker
             );
-            commands.register(
+            commands.registerWithFlags(
+                this.manager.owningPlugin().getPluginMeta(),
                 brigNode,
                 this.findBukkitDescription(rootNode),
-                new ArrayList<>(rootNode.component().alternativeAliases())
+                new ArrayList<>(rootNode.component().alternativeAliases()),
+                new HashSet<>(Collections.singletonList(CommandRegistrationFlag.FLATTEN_ALIASES))
             );
         }
     }

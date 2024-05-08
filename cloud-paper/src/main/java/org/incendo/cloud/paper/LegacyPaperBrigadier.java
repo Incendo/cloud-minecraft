@@ -112,7 +112,7 @@ class LegacyPaperBrigadier<C> implements Listener,
         event.setLiteral(literalFactory.createNode(
             event.getLiteral().getLiteral(),
             node,
-            new CloudBrigadierCommand<>(this.paperCommandManager, this.brigadierManager, this::stripNamespace, null),
+            new CloudBrigadierCommand<>(this.paperCommandManager, this.brigadierManager, this::stripNamespace),
             permissionChecker
         ));
     }
