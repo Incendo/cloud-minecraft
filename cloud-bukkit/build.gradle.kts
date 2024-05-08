@@ -9,10 +9,13 @@ dependencies {
     compileOnly(libs.bukkit)
     compileOnly(libs.commodore)
     testImplementation(libs.bukkit)
-    // TODO
-    // javadocLinks(libs.paperApi) {
-    //     isTransitive = false
-    // }
+    javadocLinks(libs.paperApi) {
+        isTransitive = false
+    }
+}
+
+configurations.javadocLinksSources {
+    exclude("io.papermc.paper")
 }
 
 spotless {
