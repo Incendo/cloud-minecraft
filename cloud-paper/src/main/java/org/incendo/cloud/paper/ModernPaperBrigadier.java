@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.Command;
@@ -142,5 +143,11 @@ final class ModernPaperBrigadier<C> implements CommandRegistrationHandler<C>, Br
 
     @Override
     public void unregisterRootCommand(final @NonNull CommandComponent<C> rootCommand) {
+        // Our permission checker will return false once the root node no longer exists,
+        // so updateCommands will remove the client node.
+        // The command will be fully removed on the next `/minecraft:reload`
+        for (final Player player : this.manager.owningPlugin().getServer().getOnlinePlayers()) {
+            player.updateCommands();
+        }
     }
 }
