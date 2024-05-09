@@ -112,22 +112,12 @@ class LegacyPaperBrigadier<C> implements Listener,
         event.setLiteral(literalFactory.createNode(
             event.getLiteral().getLiteral(),
             node,
-            new CloudBrigadierCommand<>(this.paperCommandManager, this.brigadierManager, this::stripNamespace),
+            new CloudBrigadierCommand<>(
+                this.paperCommandManager,
+                this.brigadierManager,
+                command -> BukkitHelper.stripNamespace(this.paperCommandManager, command)
+            ),
             permissionChecker
         ));
-    }
-
-    private String stripNamespace(final String command) {
-        final String[] split = command.split(" ");
-        if (!split[0].contains(":")) {
-            return command;
-        }
-        final String token = split[0];
-        final String[] splitToken = token.split(":");
-        if (BukkitHelper.namespacedLabel(this.paperCommandManager, splitToken[1]).equals(token)) {
-            split[0] = splitToken[1];
-            return String.join(" ", split);
-        }
-        return command;
     }
 }

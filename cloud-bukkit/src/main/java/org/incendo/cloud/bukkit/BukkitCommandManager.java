@@ -25,7 +25,6 @@ package org.incendo.cloud.bukkit;
 
 import io.leangen.geantyref.TypeToken;
 import java.lang.reflect.Method;
-import java.util.Locale;
 import java.util.concurrent.Executor;
 import java.util.logging.Level;
 import org.apiguardian.api.API;
@@ -296,33 +295,6 @@ public abstract class BukkitCommandManager<C> extends CommandManager<C>
         }
         throw new BrigadierManagerHolder.BrigadierManagerNotPresent("The CloudBrigadierManager is either not supported in the "
                 + "current environment, or it is not enabled.");
-    }
-
-    /**
-     * Strip the plugin namespace from a plugin namespaced command. This
-     * will also strip the leading '/' if it's present
-     *
-     * @param command Command
-     * @return Stripped command
-     */
-    @API(status = API.Status.INTERNAL, consumers = "org.incendo.cloud.*")
-    public final @NonNull String stripNamespace(final @NonNull String command) {
-        @NonNull String input;
-
-        /* Remove leading '/' */
-        if (command.charAt(0) == '/') {
-            input = command.substring(1);
-        } else {
-            input = command;
-        }
-
-        /* Remove leading plugin namespace */
-        final String namespace = String.format("%s:", this.owningPlugin().getName().toLowerCase(Locale.ROOT));
-        if (input.startsWith(namespace)) {
-            input = input.substring(namespace.length());
-        }
-
-        return input;
     }
 
     /**

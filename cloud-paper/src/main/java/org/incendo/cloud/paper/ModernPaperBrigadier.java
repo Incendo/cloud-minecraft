@@ -98,7 +98,7 @@ final class ModernPaperBrigadier<C> implements CommandRegistrationHandler<C>, Br
                 new CloudBrigadierCommand<>(
                     this.manager,
                     this.brigadierManager,
-                    this::stripNamespace
+                    command -> BukkitHelper.stripNamespace(this.manager, command)
                 ),
                 permissionChecker
             );
@@ -123,20 +123,6 @@ final class ModernPaperBrigadier<C> implements CommandRegistrationHandler<C>, Br
             }
         }
         return null;
-    }
-
-    private String stripNamespace(final String command) {
-        final String[] split = command.split(" ");
-        if (!split[0].contains(":")) {
-            return command;
-        }
-        final String token = split[0];
-        final String[] splitToken = token.split(":");
-        if (BukkitHelper.namespacedLabel(this.manager, splitToken[1]).equals(token)) {
-            split[0] = splitToken[1];
-            return String.join(" ", split);
-        }
-        return command;
     }
 
     @Override

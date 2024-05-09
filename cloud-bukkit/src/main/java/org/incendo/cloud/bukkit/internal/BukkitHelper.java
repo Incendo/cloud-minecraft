@@ -64,6 +64,27 @@ public final class BukkitHelper {
      * @return namespaced label
      */
     public static @NonNull String namespacedLabel(final @NonNull BukkitCommandManager<?> manager, final @NonNull String label) {
-        return String.format("%s:%s", manager.owningPlugin().getName(), label).toLowerCase(Locale.ROOT);
+        return (manager.owningPlugin().getName() + ':' + label).toLowerCase(Locale.ROOT);
+    }
+
+    /**
+     * Strips the owning plugin namespace from a command.
+     *
+     * @param manager command manager
+     * @param command command line
+     * @return modified command line
+     */
+    public static String stripNamespace(final @NonNull BukkitCommandManager<?> manager, final @NonNull String command) {
+        final String[] split = command.split(" ");
+        if (!split[0].contains(":")) {
+            return command;
+        }
+        final String token = split[0];
+        final String[] splitToken = token.split(":");
+        if (BukkitHelper.namespacedLabel(manager, splitToken[1]).equals(token)) {
+            split[0] = splitToken[1];
+            return String.join(" ", split);
+        }
+        return command;
     }
 }
