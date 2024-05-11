@@ -84,6 +84,11 @@ public final class BukkitDefaultCaptionsProvider<C> extends DelegatingCaptionPro
      */
     public static final String ARGUMENT_PARSE_FAILURE_NAMESPACED_KEY_NEED_NAMESPACE =
         "Invalid input '<input>', requires an explicit namespace.";
+    /**
+     * Default caption for {@link BukkitCaptionKeys#ARGUMENT_PARSE_FAILURE_ROTATION_INVALID_FORMAT}
+     */
+    public static final String ARGUMENT_PARSE_FAILURE_ROTATION_INVALID_FORMAT =
+        "'<input>' is not a valid rotation. Required format is '<yaw> <pitch>'";
 
     private static final CaptionProvider<?> PROVIDER = CaptionProvider.constantProvider()
         .putCaption(
@@ -119,6 +124,10 @@ public final class BukkitDefaultCaptionsProvider<C> extends DelegatingCaptionPro
         ).putCaption(
             BukkitCaptionKeys.ARGUMENT_PARSE_FAILURE_NAMESPACED_KEY_NEED_NAMESPACE,
             ARGUMENT_PARSE_FAILURE_NAMESPACED_KEY_NEED_NAMESPACE
+        )
+        .putCaption(
+            BukkitCaptionKeys.ARGUMENT_PARSE_FAILURE_ROTATION_INVALID_FORMAT,
+            ARGUMENT_PARSE_FAILURE_ROTATION_INVALID_FORMAT
         )
         .build();
 

@@ -57,6 +57,8 @@ import org.incendo.cloud.bukkit.parser.PlayerParser;
 import org.incendo.cloud.bukkit.parser.WorldParser;
 import org.incendo.cloud.bukkit.parser.location.Location2DParser;
 import org.incendo.cloud.bukkit.parser.location.LocationParser;
+import org.incendo.cloud.bukkit.parser.rotation.AngleParser;
+import org.incendo.cloud.bukkit.parser.rotation.RotationParser;
 import org.incendo.cloud.bukkit.parser.selector.MultipleEntitySelectorParser;
 import org.incendo.cloud.bukkit.parser.selector.MultiplePlayerSelectorParser;
 import org.incendo.cloud.bukkit.parser.selector.SingleEntitySelectorParser;
@@ -130,7 +132,9 @@ public abstract class BukkitCommandManager<C> extends CommandManager<C>
                 .registerParser(Location2DParser.location2DParser())
                 .registerParser(ItemStackParser.itemStackParser())
                 .registerParser(SingleEntitySelectorParser.singleEntitySelectorParser())
-                .registerParser(SinglePlayerSelectorParser.singlePlayerSelectorParser());
+                .registerParser(SinglePlayerSelectorParser.singlePlayerSelectorParser())
+                .registerParser(AngleParser.angleParser())
+                .registerParser(RotationParser.rotationParser());
 
         /* Register Entity Selector Parsers */
         this.parserRegistry().registerAnnotationMapper(
