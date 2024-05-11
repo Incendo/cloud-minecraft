@@ -43,6 +43,8 @@ import org.incendo.cloud.bukkit.parser.ItemStackPredicateParser;
 import org.incendo.cloud.bukkit.parser.NamespacedKeyParser;
 import org.incendo.cloud.bukkit.parser.location.Location2DParser;
 import org.incendo.cloud.bukkit.parser.location.LocationParser;
+import org.incendo.cloud.bukkit.parser.rotation.AngleParser;
+import org.incendo.cloud.bukkit.parser.rotation.RotationParser;
 import org.incendo.cloud.bukkit.parser.selector.MultipleEntitySelectorParser;
 import org.incendo.cloud.bukkit.parser.selector.MultiplePlayerSelectorParser;
 import org.incendo.cloud.bukkit.parser.selector.SingleEntitySelectorParser;
@@ -97,6 +99,10 @@ public final class BukkitBrigadierMapper<C> {
         this.mapNMS(new TypeToken<LocationParser<C>>() {}, "vec3", this::argumentVec3);
         /* Map Vec2 */
         this.mapNMS(new TypeToken<Location2DParser<C>>() {}, "vec2", this::argumentVec2);
+        /* Map Angle */
+        this.mapSimpleNMS(new TypeToken<AngleParser<C>>() {}, "angle");
+        /* Map Rotation */
+        this.mapSimpleNMS(new TypeToken<RotationParser<C>>() {}, "rotation");
     }
 
     @SuppressWarnings({"ConstantValue", "unused"})
