@@ -39,6 +39,7 @@ import org.incendo.cloud.SenderMapperHolder;
 import org.incendo.cloud.brigadier.BrigadierManagerHolder;
 import org.incendo.cloud.brigadier.CloudBrigadierManager;
 import org.incendo.cloud.bukkit.BukkitCommandContextKeys;
+import org.incendo.cloud.bukkit.BukkitDefaultCaptionsProvider;
 import org.incendo.cloud.bukkit.BukkitParsers;
 import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
 import org.incendo.cloud.bukkit.PluginHolder;
@@ -103,6 +104,7 @@ public class ModernPaperCommandManager<C> extends CommandManager<C> implements S
         BukkitParsers.register(this);
 
         this.registerDefaultExceptionHandlers();
+        this.captionRegistry().registerProvider(new BukkitDefaultCaptionsProvider<>());
 
         this.registerCommandPreProcessor(ctx -> ctx.commandContext().store(
             BukkitCommandContextKeys.BUKKIT_COMMAND_SENDER,
