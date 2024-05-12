@@ -35,12 +35,13 @@ import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.CommandManager;
-import org.incendo.cloud.brigadier.CloudBrigadierCommand;
 import org.incendo.cloud.brigadier.CloudBrigadierManager;
 import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
 import org.incendo.cloud.component.CommandComponent;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.suggestion.SuggestionFactory;
+
+import static org.incendo.cloud.brigadier.CloudBrigadierCommand.parsedNodes;
 
 /**
  * Produces Brigadier suggestions by invoking the Cloud suggestion provider.
@@ -93,7 +94,8 @@ public final class BrigadierSuggestionFactory<C, S> {
             this.commandManager
         );
         commandContext.store(WrappedBrigadierParser.COMMAND_CONTEXT_BRIGADIER_NATIVE_SENDER, senderContext.getSource());
-        String command = builder.getInput().substring(CloudBrigadierCommand.parsedNodes(senderContext.getLastChild()).get(0).second().getStart());
+        String command = builder.getInput()
+            .substring(parsedNodes(senderContext.getLastChild()).get(0).second().getStart());
 
         /* Remove namespace */
         final String leading = command.split(" ")[0];

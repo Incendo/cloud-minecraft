@@ -95,9 +95,6 @@ final class ModernPaperBrigadier<C, B> implements CommandRegistrationHandler<C>,
 
         this.brigadierManager = new CloudBrigadierManager<>(
             this.manager,
-            () -> {
-                throw new UnsupportedOperationException();
-            },
             SenderMapper.create(
                 source -> {
                     if (baseType.equals(CommandSender.class)) {
