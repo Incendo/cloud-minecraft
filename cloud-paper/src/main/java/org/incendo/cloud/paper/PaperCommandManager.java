@@ -24,6 +24,7 @@
 package org.incendo.cloud.paper;
 
 import java.util.concurrent.Executor;
+import java.util.function.Function;
 import org.apiguardian.api.API;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -87,7 +88,11 @@ public class PaperCommandManager<C> extends BukkitCommandManager<C> {
     ) throws InitializationException {
         super(owningPlugin, commandExecutionCoordinator, senderMapper);
 
-        this.registerCommandPreProcessor(new PaperCommandPreprocessor<>(this));
+        this.registerCommandPreProcessor(new PaperCommandPreprocessor<>(
+            this,
+            this.senderMapper(),
+            Function.identity()
+        ));
     }
 
     /**
@@ -160,8 +165,14 @@ public class PaperCommandManager<C> extends BukkitCommandManager<C> {
             super.registerBrigadier();
         } else if (allowModern && CraftBukkitReflection.classExists("io.papermc.paper.command.brigadier.CommandSourceStack")) {
             try {
-                final ModernPaperBrigadier<C> brig = new ModernPaperBrigadier<>(this);
+                final ModernPaperBrigadier<C, CommandSender> brig = new ModernPaperBrigadier<>(
+                    CommandSender.class,
+                    this,
+                    this.senderMapper(),
+                    this::lockRegistration
+                );
                 this.brigadierManagerHolder = brig;
+                brig.registerPlugin(this.owningPlugin());
                 this.commandRegistrationHandler(brig);
             } catch (final Exception e) {
                 throw new BrigadierInitializationException("Failed to register ModernPaperBrigadier", e);
@@ -175,10 +186,6 @@ public class PaperCommandManager<C> extends BukkitCommandManager<C> {
                 throw new BrigadierInitializationException("Failed to register LegacyPaperBrigadier", e);
             }
         }
-    }
-
-    final void lockRegistration0() {
-        this.lockRegistration();
     }
 
     /**

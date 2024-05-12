@@ -23,6 +23,7 @@
 //
 package org.incendo.cloud.bukkit.parser;
 
+import com.google.common.base.Suppliers;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import java.lang.reflect.Constructor;
@@ -32,6 +33,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.apiguardian.api.API;
 import org.bukkit.Material;
@@ -143,17 +145,15 @@ public class ItemStackParser<C> implements ArgumentParser.FutureArgumentParser<C
         );
         private static final Class<?> CRAFT_ITEM_STACK_CLASS =
                 CraftBukkitReflection.needOBCClass("inventory.CraftItemStack");
-        private static final Class<?> ARGUMENT_ITEM_STACK_CLASS =
-                MinecraftArgumentTypes.getClassByKey(NamespacedKey.minecraft("item_stack"));
+        private static final Supplier<Class<?>> ARGUMENT_ITEM_STACK_CLASS =
+            Suppliers.memoize(() -> MinecraftArgumentTypes.getClassByKey(NamespacedKey.minecraft("item_stack")));
         private static final Class<?> ITEM_INPUT_CLASS = requireNonNull(findItemInputClass(), "ItemInput class");
         private static final Class<?> NMS_ITEM_CLASS = CraftBukkitReflection.needNMSClassOrElse(
                 "Item",
                 "net.minecraft.world.item.Item"
         );
-        private static final Class<?> CRAFT_MAGIC_NUMBERS_CLASS =
-                CraftBukkitReflection.needOBCClass("util.CraftMagicNumbers");
-        private static final Method GET_MATERIAL_METHOD = CraftBukkitReflection
-                .needMethod(CRAFT_MAGIC_NUMBERS_CLASS, "getMaterial", NMS_ITEM_CLASS);
+        private static final Supplier<Method> GET_MATERIAL_METHOD = Suppliers.memoize(() -> CraftBukkitReflection
+                .needMethod(CraftBukkitReflection.needOBCClass("util.CraftMagicNumbers"), "getMaterial", NMS_ITEM_CLASS));
         private static final Method CREATE_ITEM_STACK_METHOD = CraftBukkitReflection.firstNonNullOrThrow(
                 () -> "Couldn't find createItemStack method on ItemInput",
                 CraftBukkitReflection.findMethod(ITEM_INPUT_CLASS, "a", int.class, boolean.class),
@@ -183,23 +183,24 @@ public class ItemStackParser<C> implements ArgumentParser.FutureArgumentParser<C
         private final ArgumentParser<C, ProtoItemStack> parser;
 
         ModernParser() {
-            try {
-                this.parser = this.createParser();
-            } catch (final ReflectiveOperationException ex) {
-                throw new RuntimeException("Failed to initialize modern ItemStack parser.", ex);
-            }
+            this.parser = this.createParser();
         }
 
         @SuppressWarnings("unchecked")
-        private ArgumentParser<C, ProtoItemStack> createParser() throws ReflectiveOperationException {
-            final Constructor<?> ctr = ARGUMENT_ITEM_STACK_CLASS.getDeclaredConstructors()[0];
-            final ArgumentType<Object> inst;
-            if (ctr.getParameterCount() == 0) {
-                inst = (ArgumentType<Object>) ctr.newInstance();
-            } else {
-                // 1.19+
-                inst = (ArgumentType<Object>) ctr.newInstance(CommandBuildContextSupplier.commandBuildContext());
-            }
+        private ArgumentParser<C, ProtoItemStack> createParser() {
+            final Supplier<ArgumentType<Object>> inst = () -> {
+                final Constructor<?> ctr = ARGUMENT_ITEM_STACK_CLASS.get().getDeclaredConstructors()[0];
+                try {
+                    if (ctr.getParameterCount() == 0) {
+                        return (ArgumentType<Object>) ctr.newInstance();
+                    } else {
+                        // 1.19+
+                        return (ArgumentType<Object>) ctr.newInstance(CommandBuildContextSupplier.commandBuildContext());
+                    }
+                } catch (final ReflectiveOperationException e) {
+                    throw new RuntimeException("Failed to initialize modern ItemStack parser.", e);
+                }
+            };
             return new WrappedBrigadierParser<C, Object>(inst)
                     .flatMapSuccess((ctx, itemInput) -> ArgumentParseResult.successFuture(
                             new ModernProtoItemStack(itemInput)));
@@ -233,7 +234,7 @@ public class ItemStackParser<C> implements ArgumentParser.FutureArgumentParser<C
                     if (HOLDER_CLASS != null && HOLDER_CLASS.isInstance(item)) {
                         item = VALUE_METHOD.invoke(item);
                     }
-                    this.material = (Material) GET_MATERIAL_METHOD.invoke(null, item);
+                    this.material = (Material) GET_MATERIAL_METHOD.get().invoke(null, item);
                     final Object compoundTag = COMPOUND_TAG_FIELD.get(itemInput);
                     if (compoundTag != null) {
                         this.snbt = compoundTag.toString();

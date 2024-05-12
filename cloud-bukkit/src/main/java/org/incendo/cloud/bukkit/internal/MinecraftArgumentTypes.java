@@ -23,6 +23,7 @@
 //
 package org.incendo.cloud.bukkit.internal;
 
+import com.google.common.base.Suppliers;
 import com.mojang.brigadier.arguments.ArgumentType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -32,6 +33,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.function.Supplier;
 import org.apiguardian.api.API;
 import org.bukkit.NamespacedKey;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -76,11 +78,11 @@ public final class MinecraftArgumentTypes {
     @SuppressWarnings("unchecked")
     private static final class ArgumentTypeGetterImpl implements MinecraftArgumentTypes.ArgumentTypeGetter {
 
-        private final Object argumentRegistry;
+        private final Supplier<Object> argumentRegistry;
         private final Map<?, ?> byClassMap;
 
         private ArgumentTypeGetterImpl() {
-            this.argumentRegistry = RegistryReflection.registryByName("command_argument_type");
+            this.argumentRegistry = Suppliers.memoize(() -> RegistryReflection.registryByName("command_argument_type"));
             try {
                 final Field declaredField = CraftBukkitReflection.needMCClass("commands.synchronization.ArgumentTypeInfos")
                         .getDeclaredFields()[0];
@@ -93,7 +95,7 @@ public final class MinecraftArgumentTypes {
 
         @Override
         public Class<? extends ArgumentType<?>> getClassByKey(final @NonNull NamespacedKey key) throws IllegalArgumentException {
-            final Object argTypeInfo = RegistryReflection.get(this.argumentRegistry, key.getNamespace() + ":" + key.getKey());
+            final Object argTypeInfo = RegistryReflection.get(this.argumentRegistry.get(), key.getNamespace() + ":" + key.getKey());
             for (final Map.Entry<?, ?> entry : this.byClassMap.entrySet()) {
                 if (entry.getValue() == argTypeInfo) {
                     return (Class<? extends ArgumentType<?>>) entry.getKey();

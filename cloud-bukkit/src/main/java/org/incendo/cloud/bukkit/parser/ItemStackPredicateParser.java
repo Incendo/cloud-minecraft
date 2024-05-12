@@ -23,6 +23,7 @@
 //
 package org.incendo.cloud.bukkit.parser;
 
+import com.google.common.base.Suppliers;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.StringRange;
 import java.lang.reflect.Constructor;
@@ -31,11 +32,13 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import org.apiguardian.api.API;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
 import org.incendo.cloud.bukkit.BukkitCommandManager;
 import org.incendo.cloud.bukkit.data.ItemStackPredicate;
@@ -65,8 +68,8 @@ public final class ItemStackPredicateParser<C> implements ArgumentParser.FutureA
 
     private static final Class<?> CRAFT_ITEM_STACK_CLASS =
             CraftBukkitReflection.needOBCClass("inventory.CraftItemStack");
-    private static final Class<?> ARGUMENT_ITEM_PREDICATE_CLASS =
-            MinecraftArgumentTypes.getClassByKey(NamespacedKey.minecraft("item_predicate"));
+    private static final Supplier<Class<?>> ARGUMENT_ITEM_PREDICATE_CLASS =
+            Suppliers.memoize(() -> MinecraftArgumentTypes.getClassByKey(NamespacedKey.minecraft("item_predicate")));
     private static final Class<?> ARGUMENT_ITEM_PREDICATE_RESULT_CLASS = CraftBukkitReflection.firstNonNullOrNull(
             CraftBukkitReflection.findNMSClass("ArgumentItemPredicate$b"),
             CraftBukkitReflection.findMCClass("commands.arguments.item.ArgumentItemPredicate$b"),
@@ -121,23 +124,25 @@ public final class ItemStackPredicateParser<C> implements ArgumentParser.FutureA
      * @since 1.5.0
      */
     public ItemStackPredicateParser() {
-        try {
-            this.parser = this.createParser();
-        } catch (final ReflectiveOperationException ex) {
-            throw new RuntimeException("Failed to initialize ItemPredicate parser.", ex);
-        }
+        this.parser = this.createParser();
     }
 
     @SuppressWarnings("unchecked")
-    private ArgumentParser<C, ItemStackPredicate> createParser() throws ReflectiveOperationException {
-        final Constructor<?> ctr = ARGUMENT_ITEM_PREDICATE_CLASS.getDeclaredConstructors()[0];
-        final ArgumentType<Object> inst;
-        if (ctr.getParameterCount() == 0) {
-            inst = (ArgumentType<Object>) ctr.newInstance();
-        } else {
-            // 1.19+
-            inst = (ArgumentType<Object>) ctr.newInstance(CommandBuildContextSupplier.commandBuildContext());
-        }
+    private ArgumentParser<C, ItemStackPredicate> createParser() {
+        final Supplier<ArgumentType<Object>> inst = () -> {
+            final Constructor<?> ctr = ARGUMENT_ITEM_PREDICATE_CLASS.get().getDeclaredConstructors()[0];
+            try {
+                if (ctr.getParameterCount() == 0) {
+                    return (ArgumentType<Object>) ctr.newInstance();
+                } else {
+                    // 1.19+
+                    return (ArgumentType<Object>) ctr.newInstance(CommandBuildContextSupplier.commandBuildContext());
+                }
+            } catch (final ReflectiveOperationException e) {
+                throw new RuntimeException("Failed to initialize ItemPredicate parser.", e);
+            }
+        };
+
         return new WrappedBrigadierParser<C, Object>(inst).flatMapSuccess((ctx, result) -> {
             if (result instanceof Predicate) {
                 // 1.19+
@@ -174,13 +179,13 @@ public final class ItemStackPredicateParser<C> implements ArgumentParser.FutureA
     }
 
     /**
-     * Called reflectively by {@link BukkitCommandManager}.
+     * Called reflectively by {@link org.incendo.cloud.bukkit.BukkitParsers}.
      *
      * @param commandManager command manager
      * @param <C>            sender type
      */
     @SuppressWarnings("unused")
-    private static <C> void registerParserSupplier(final @NonNull BukkitCommandManager<C> commandManager) {
+    private static <C> void registerParserSupplier(final @NonNull CommandManager<C> commandManager) {
         commandManager.parserRegistry().registerParser(ItemStackPredicateParser.itemStackPredicateParser());
     }
 

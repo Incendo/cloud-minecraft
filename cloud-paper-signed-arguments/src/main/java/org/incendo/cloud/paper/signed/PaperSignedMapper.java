@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Logger;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.chat.ChatType;
 import net.kyori.adventure.chat.SignedMessage;
@@ -55,6 +56,7 @@ import org.incendo.cloud.minecraft.signed.SignedArguments;
 import org.incendo.cloud.minecraft.signed.SignedGreedyStringParser;
 import org.incendo.cloud.minecraft.signed.SignedString;
 import org.incendo.cloud.minecraft.signed.SignedStringMapper;
+import org.incendo.cloud.paper.PluginMetaHolder;
 import org.incendo.cloud.parser.ArgumentParseResult;
 import org.jetbrains.annotations.Contract;
 import xyz.jpenilla.reflectionremapper.ReflectionRemapper;
@@ -115,8 +117,16 @@ public final class PaperSignedMapper implements SignedStringMapper {
         // Paper 1.20+
         if (commandManager.capabilities().contains(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)
             && CraftBukkitReflection.MAJOR_REVISION >= 20) {
-            final BukkitBrigadierMapper<C> mapper =
-                new BukkitBrigadierMapper<>((BukkitCommandManager) commandManager, (CloudBrigadierManager) brigadierManager);
+            final BukkitBrigadierMapper<C> mapper;
+            if (commandManager instanceof BukkitCommandManager) {
+                mapper = new BukkitBrigadierMapper<>(
+                    ((BukkitCommandManager) commandManager).owningPlugin().getLogger(),
+                    (CloudBrigadierManager) brigadierManager);
+            } else {
+                mapper = new BukkitBrigadierMapper<>(
+                    Logger.getLogger(((PluginMetaHolder) commandManager).owningPluginMeta().getName()),
+                    (CloudBrigadierManager) brigadierManager);
+            }
             mapper.mapSimpleNMS(new TypeToken<SignedGreedyStringParser<C>>() {}, "message", true);
         } else {
             SignedArguments.registerDefaultBrigadierMapping(brigadierManager);

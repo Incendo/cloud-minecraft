@@ -23,16 +23,19 @@
 //
 package org.incendo.cloud.bukkit.internal;
 
+import com.google.common.base.Suppliers;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import io.leangen.geantyref.TypeToken;
 import java.lang.reflect.Constructor;
+import java.util.function.Supplier;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apiguardian.api.API;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.brigadier.CloudBrigadierManager;
-import org.incendo.cloud.bukkit.BukkitCommandManager;
 import org.incendo.cloud.bukkit.parser.BlockPredicateParser;
 import org.incendo.cloud.bukkit.parser.EnchantmentParser;
 import org.incendo.cloud.bukkit.parser.ItemStackParser;
@@ -55,48 +58,31 @@ import org.incendo.cloud.parser.standard.UUIDParser;
 @API(status = API.Status.INTERNAL)
 public final class BukkitBrigadierMapper<C> {
 
-    private final BukkitCommandManager<C> commandManager;
+    private final Logger logger;
     private final CloudBrigadierManager<C, ?> brigadierManager;
 
     /**
      * Class that handles mapping argument types to Brigadier for Bukkit (Commodore) and Paper.
      *
-     * @param commandManager   The {@link BukkitCommandManager} to use for mapping
+     * @param logger           logger for errors
      * @param brigadierManager The {@link CloudBrigadierManager} to use for mapping
      */
     public BukkitBrigadierMapper(
-        final @NonNull BukkitCommandManager<C> commandManager,
+        final @NonNull Logger logger,
         final @NonNull CloudBrigadierManager<C, ?> brigadierManager
     ) {
-        this.commandManager = commandManager;
+        this.logger = logger;
         this.brigadierManager = brigadierManager;
     }
 
     /**
      * Register Brigadier mappings for cloud-bukkit parsers.
      */
-    @SuppressWarnings("unused")
     public void registerBuiltInMappings() {
-        /* UUID nms argument is a 1.16+ feature */
-        try {
-            final Class<? extends ArgumentType<?>> uuid = MinecraftArgumentTypes.getClassByKey(NamespacedKey.minecraft("uuid"));
-            /* Map UUID */
-            this.mapSimpleNMS(new TypeToken<UUIDParser<C>>() {}, "uuid");
-        } catch (final IllegalArgumentException ignore) {
-            // < 1.16
-        }
+        this.registerUUID();
         /* Map NamespacedKey */
         this.mapSimpleNMS(new TypeToken<NamespacedKeyParser<C>>() {}, "resource_location", true);
-        /* Map Enchantment */
-        try {
-            // Pre-1.19.3
-            final Class<? extends ArgumentType<?>> ench = MinecraftArgumentTypes.getClassByKey(
-                NamespacedKey.minecraft("item_enchantment"));
-            this.mapSimpleNMS(new TypeToken<EnchantmentParser<C>>() {}, "item_enchantment");
-        } catch (final IllegalArgumentException ignore) {
-            // 1.19.3+
-            this.mapResourceKey(new TypeToken<EnchantmentParser<C>>() {}, "enchantment");
-        }
+        this.registerEnchantment();
         /* Map Item arguments */
         this.mapSimpleNMS(new TypeToken<ItemStackParser<C>>() {}, "item_stack");
         this.mapSimpleNMS(new TypeToken<ItemStackPredicateParser<C>>() {}, "item_predicate");
@@ -111,6 +97,44 @@ public final class BukkitBrigadierMapper<C> {
         this.mapNMS(new TypeToken<LocationParser<C>>() {}, "vec3", this::argumentVec3);
         /* Map Vec2 */
         this.mapNMS(new TypeToken<Location2DParser<C>>() {}, "vec2", this::argumentVec2);
+    }
+
+    @SuppressWarnings({"ConstantValue", "unused"})
+    private void registerEnchantment() {
+        if (Bukkit.getServer() == null) {
+            // Paper 1.20.6+ bootstrap time
+            this.mapResourceKey(new TypeToken<EnchantmentParser<C>>() {}, "enchantment");
+            return;
+        }
+
+        /* Map Enchantment */
+        try {
+            // Pre-1.19.3
+            final Class<? extends ArgumentType<?>> ench = MinecraftArgumentTypes.getClassByKey(
+                NamespacedKey.minecraft("item_enchantment"));
+            this.mapSimpleNMS(new TypeToken<EnchantmentParser<C>>() {}, "item_enchantment");
+        } catch (final IllegalArgumentException ignore) {
+            // 1.19.3+
+            this.mapResourceKey(new TypeToken<EnchantmentParser<C>>() {}, "enchantment");
+        }
+    }
+
+    @SuppressWarnings({"ConstantValue", "unused"})
+    private void registerUUID() {
+        if (Bukkit.getServer() == null) {
+            // Paper 1.20.6+ bootstrap time
+            this.mapSimpleNMS(new TypeToken<UUIDParser<C>>() {}, "uuid");
+            return;
+        }
+
+        /* UUID nms argument is a 1.16+ feature */
+        try {
+            final Class<? extends ArgumentType<?>> uuid = MinecraftArgumentTypes.getClassByKey(NamespacedKey.minecraft("uuid"));
+            /* Map UUID */
+            this.mapSimpleNMS(new TypeToken<UUIDParser<C>>() {}, "uuid");
+        } catch (final IllegalArgumentException ignore) {
+            // < 1.16
+        }
     }
 
     private <T extends ArgumentParser<C, ?>> void mapResourceKey(
@@ -217,19 +241,19 @@ public final class BukkitBrigadierMapper<C> {
         final @NonNull ArgumentTypeFactory factory,
         final boolean cloudSuggestions
     ) {
-        final Class<? extends ArgumentType<?>> argumentTypeClass;
-        try {
-            argumentTypeClass = MinecraftArgumentTypes.getClassByKey(NamespacedKey.minecraft(argumentId));
-        } catch (final Exception e) {
-            this.commandManager.owningPlugin().getLogger().log(Level.WARNING, "Failed to locate class for " + argumentId, e);
-            return;
-        }
+        final Supplier<Class<? extends ArgumentType<?>>> argumentTypeClass = Suppliers.memoize(() -> {
+            try {
+                return MinecraftArgumentTypes.getClassByKey(NamespacedKey.minecraft(argumentId));
+            } catch (final Exception e) {
+                throw new RuntimeException("Failed to locate class for " + argumentId, e);
+            }
+        });
         this.brigadierManager.registerMapping(type, builder -> {
             builder.to(argument -> {
                 try {
-                    return factory.makeInstance(argumentTypeClass);
+                    return factory.makeInstance(argumentTypeClass.get());
                 } catch (final Exception e) {
-                    this.commandManager.owningPlugin().getLogger().log(
+                    this.logger.log(
                         Level.WARNING,
                         "Failed to create instance of " + argumentId + ", falling back to StringArgumentType.word()",
                         e

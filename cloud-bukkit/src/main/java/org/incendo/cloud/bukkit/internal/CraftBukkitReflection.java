@@ -38,7 +38,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Utilities for doing reflection on CraftBukkit, used by the cloud implementation.
  */
 @API(status = API.Status.INTERNAL, consumers = "org.incendo.cloud.*")
-@SuppressWarnings("EmptyCatch")
+@SuppressWarnings({"EmptyCatch", "ConstantValue"})
 public final class CraftBukkitReflection {
 
     private static final String PREFIX_NMS = "net.minecraft.server";
@@ -49,15 +49,38 @@ public final class CraftBukkitReflection {
     public static final int MAJOR_REVISION;
 
     static {
-        final Class<?> serverClass = Bukkit.getServer().getClass();
+        final Class<?> serverClass;
+        if (Bukkit.getServer() == null) {
+            // Paper plugin Bootstrapper 1.20.6+
+            serverClass = needClass("org.bukkit.craftbukkit.CraftServer");
+        } else {
+            serverClass = Bukkit.getServer().getClass();
+        }
         final String pkg = serverClass.getPackage().getName();
         final String nmsVersion = pkg.substring(pkg.lastIndexOf(".") + 1);
         if (!nmsVersion.contains("_")) {
             int fallbackVersion = -1;
-            try {
-                final Method getMinecraftVersion = serverClass.getDeclaredMethod("getMinecraftVersion");
-                fallbackVersion = Integer.parseInt(getMinecraftVersion.invoke(Bukkit.getServer()).toString().split("\\.")[1]);
-            } catch (final Exception ignored) {
+            if (Bukkit.getServer() != null) {
+                try {
+                    final Method getMinecraftVersion = serverClass.getDeclaredMethod("getMinecraftVersion");
+                    fallbackVersion = Integer.parseInt(getMinecraftVersion.invoke(Bukkit.getServer()).toString().split("\\.")[1]);
+                } catch (final Exception ignored) {
+                }
+            } else {
+                // Paper plugin bootstrapper 1.20.6+
+                try {
+                    final Class<?> sharedConstants = needClass("net.minecraft.SharedConstants");
+                    final Method getCurrentVersion = sharedConstants.getDeclaredMethod("getCurrentVersion");
+                    final Object currentVersion = getCurrentVersion.invoke(null);
+                    final Method getName = currentVersion.getClass().getDeclaredMethod("getName");
+                    final String versionName = (String) getName.invoke(currentVersion);
+                    try {
+                        fallbackVersion = Integer.parseInt(versionName.split("\\.")[1]);
+                    } catch (final Exception ignored) {
+                    }
+                } catch (final ReflectiveOperationException e) {
+                    throw new RuntimeException(e);
+                }
             }
             MAJOR_REVISION = fallbackVersion;
         } else {

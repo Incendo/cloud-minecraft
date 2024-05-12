@@ -53,12 +53,12 @@ class LegacyPaperBrigadier<C> implements Listener,
             this.paperCommandManager,
             SenderMapper.create(
                 sender -> this.paperCommandManager.senderMapper().map(sender.getBukkitSender()),
-                new BukkitBackwardsBrigadierSenderMapper<>(this.paperCommandManager)
+                new BukkitBackwardsBrigadierSenderMapper<>(this.paperCommandManager.senderMapper())
             )
         );
 
         final BukkitBrigadierMapper<C> mapper =
-            new BukkitBrigadierMapper<>(this.paperCommandManager, this.brigadierManager);
+            new BukkitBrigadierMapper<>(this.paperCommandManager.owningPlugin().getLogger(), this.brigadierManager);
         mapper.registerBuiltInMappings();
         PaperBrigadierMappings.register(mapper);
     }

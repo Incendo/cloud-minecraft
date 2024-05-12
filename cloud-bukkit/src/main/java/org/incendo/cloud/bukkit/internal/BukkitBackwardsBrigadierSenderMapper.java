@@ -28,7 +28,7 @@ import java.util.function.Function;
 import org.apiguardian.api.API;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.cloud.bukkit.BukkitCommandManager;
+import org.incendo.cloud.SenderMapper;
 
 /**
  * This is not API, and as such, may break, change, or be removed without any notice.
@@ -41,17 +41,17 @@ public final class BukkitBackwardsBrigadierSenderMapper<C, S> implements Functio
     private static final Method GET_LISTENER_METHOD =
             CraftBukkitReflection.needMethod(VANILLA_COMMAND_WRAPPER_CLASS, "getListener", CommandSender.class);
 
-    private final BukkitCommandManager<C> commandManager;
+    private final SenderMapper<?, C> senderMapper;
 
-    public BukkitBackwardsBrigadierSenderMapper(final @NonNull BukkitCommandManager<C> commandManager) {
-        this.commandManager = commandManager;
+    public BukkitBackwardsBrigadierSenderMapper(final @NonNull SenderMapper<?, C> senderMapper) {
+        this.senderMapper = senderMapper;
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public S apply(final @NonNull C cloud) {
         try {
-            return (S) GET_LISTENER_METHOD.invoke(null, this.commandManager.senderMapper().reverse(cloud));
+            return (S) GET_LISTENER_METHOD.invoke(null, this.senderMapper.reverse(cloud));
         } catch (final ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }

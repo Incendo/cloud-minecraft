@@ -23,8 +23,6 @@
 //
 package org.incendo.cloud.bukkit;
 
-import io.leangen.geantyref.TypeToken;
-import java.lang.reflect.Method;
 import java.util.concurrent.Executor;
 import java.util.logging.Level;
 import org.apiguardian.api.API;
@@ -39,30 +37,8 @@ import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.SenderMapperHolder;
 import org.incendo.cloud.brigadier.BrigadierManagerHolder;
 import org.incendo.cloud.brigadier.CloudBrigadierManager;
-import org.incendo.cloud.bukkit.annotation.specifier.AllowEmptySelection;
-import org.incendo.cloud.bukkit.annotation.specifier.DefaultNamespace;
-import org.incendo.cloud.bukkit.annotation.specifier.RequireExplicitNamespace;
-import org.incendo.cloud.bukkit.data.MultipleEntitySelector;
-import org.incendo.cloud.bukkit.data.MultiplePlayerSelector;
-import org.incendo.cloud.bukkit.internal.CraftBukkitReflection;
-import org.incendo.cloud.bukkit.parser.BlockPredicateParser;
-import org.incendo.cloud.bukkit.parser.EnchantmentParser;
-import org.incendo.cloud.bukkit.parser.ItemStackParser;
-import org.incendo.cloud.bukkit.parser.ItemStackPredicateParser;
-import org.incendo.cloud.bukkit.parser.MaterialParser;
-import org.incendo.cloud.bukkit.parser.NamespacedKeyParser;
-import org.incendo.cloud.bukkit.parser.OfflinePlayerParser;
-import org.incendo.cloud.bukkit.parser.PlayerParser;
-import org.incendo.cloud.bukkit.parser.WorldParser;
-import org.incendo.cloud.bukkit.parser.location.Location2DParser;
-import org.incendo.cloud.bukkit.parser.location.LocationParser;
-import org.incendo.cloud.bukkit.parser.selector.MultipleEntitySelectorParser;
-import org.incendo.cloud.bukkit.parser.selector.MultiplePlayerSelectorParser;
-import org.incendo.cloud.bukkit.parser.selector.SingleEntitySelectorParser;
-import org.incendo.cloud.bukkit.parser.selector.SinglePlayerSelectorParser;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.internal.CommandRegistrationHandler;
-import org.incendo.cloud.parser.ParserParameters;
 import org.incendo.cloud.state.RegistrationState;
 
 /**
@@ -70,8 +46,8 @@ import org.incendo.cloud.state.RegistrationState;
  *
  * @param <C> command sender type
  */
-public abstract class BukkitCommandManager<C> extends CommandManager<C>
-        implements BrigadierManagerHolder<C, Object>, SenderMapperHolder<CommandSender, C> {
+public abstract class BukkitCommandManager<C> extends CommandManager<C> implements BrigadierManagerHolder<C, Object>,
+    SenderMapperHolder<CommandSender, C>, PluginHolder {
 
     private final Plugin owningPlugin;
     private final SenderMapper<CommandSender, C> senderMapper;
@@ -120,57 +96,7 @@ public abstract class BukkitCommandManager<C> extends CommandManager<C>
         /* Register Bukkit Preprocessor */
         this.registerCommandPreProcessor(new BukkitCommandPreprocessor<>(this));
 
-        /* Register Bukkit Parsers */
-        this.parserRegistry()
-                .registerParser(WorldParser.worldParser())
-                .registerParser(MaterialParser.materialParser())
-                .registerParser(PlayerParser.playerParser())
-                .registerParser(OfflinePlayerParser.offlinePlayerParser())
-                .registerParser(EnchantmentParser.enchantmentParser())
-                .registerParser(LocationParser.locationParser())
-                .registerParser(Location2DParser.location2DParser())
-                .registerParser(ItemStackParser.itemStackParser())
-                .registerParser(SingleEntitySelectorParser.singleEntitySelectorParser())
-                .registerParser(SinglePlayerSelectorParser.singlePlayerSelectorParser());
-
-        /* Register Entity Selector Parsers */
-        this.parserRegistry().registerAnnotationMapper(
-                AllowEmptySelection.class,
-                (annotation, type) -> ParserParameters.single(
-                        BukkitParserParameters.ALLOW_EMPTY_SELECTOR_RESULT,
-                        annotation.value()
-                )
-        );
-        this.parserRegistry().registerParserSupplier(
-                TypeToken.get(MultipleEntitySelector.class),
-                parserParameters -> new MultipleEntitySelectorParser<>(
-                        parserParameters.get(BukkitParserParameters.ALLOW_EMPTY_SELECTOR_RESULT, true)
-                )
-        );
-        this.parserRegistry().registerParserSupplier(
-                TypeToken.get(MultiplePlayerSelector.class),
-                parserParameters -> new MultiplePlayerSelectorParser<>(
-                        parserParameters.get(BukkitParserParameters.ALLOW_EMPTY_SELECTOR_RESULT, true)
-                )
-        );
-
-        if (CraftBukkitReflection.classExists("org.bukkit.NamespacedKey")) {
-            this.registerParserSupplierFor(NamespacedKeyParser.class);
-            this.parserRegistry().registerAnnotationMapper(
-                    RequireExplicitNamespace.class,
-                    (annotation, type) -> ParserParameters.single(BukkitParserParameters.REQUIRE_EXPLICIT_NAMESPACE, true)
-            );
-            this.parserRegistry().registerAnnotationMapper(
-                    DefaultNamespace.class,
-                    (annotation, type) -> ParserParameters.single(BukkitParserParameters.DEFAULT_NAMESPACE, annotation.value())
-            );
-        }
-
-        /* Register MC 1.13+ parsers */
-        if (this.hasCapability(CloudBukkitCapabilities.BRIGADIER)) {
-            this.registerParserSupplierFor(ItemStackPredicateParser.class);
-            this.registerParserSupplierFor(BlockPredicateParser.class);
-        }
+        BukkitParsers.register(this);
 
         /* Register suggestion and state listener */
         this.owningPlugin.getServer().getPluginManager().registerEvents(
@@ -182,13 +108,7 @@ public abstract class BukkitCommandManager<C> extends CommandManager<C>
         this.captionRegistry().registerProvider(new BukkitDefaultCaptionsProvider<>());
     }
 
-    /**
-     * Returns the plugin that owns the manager.
-     *
-     * @return owning plugin
-     * @since 2.0.0
-     */
-    @API(status = API.Status.STABLE, since = "2.0.0")
+    @Override
     public final @NonNull Plugin owningPlugin() {
         return this.owningPlugin;
     }
@@ -295,24 +215,6 @@ public abstract class BukkitCommandManager<C> extends CommandManager<C>
         }
         throw new BrigadierManagerHolder.BrigadierManagerNotPresent("The CloudBrigadierManager is either not supported in the "
                 + "current environment, or it is not enabled.");
-    }
-
-    /**
-     * Attempts to call the method on the provided class matching the signature
-     * <p>{@code private static void registerParserSupplier(BukkitCommandManager)}</p>
-     * using reflection.
-     *
-     * @param argumentClass argument class
-     */
-    private void registerParserSupplierFor(final @NonNull Class<?> argumentClass) {
-        try {
-            final Method registerParserSuppliers = argumentClass
-                    .getDeclaredMethod("registerParserSupplier", BukkitCommandManager.class);
-            registerParserSuppliers.setAccessible(true);
-            registerParserSuppliers.invoke(null, this);
-        } catch (final ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private void registerDefaultExceptionHandlers() {

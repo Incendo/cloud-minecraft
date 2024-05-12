@@ -1,0 +1,7 @@
+name: ExamplePlugin
+version: 1.2.0
+# api-version: '1.13'
+api-version: '1.20.6'
+main: org.incendo.cloud.examples.bukkit.ExamplePlugin
+bootstrapper: org.incendo.cloud.examples.bukkit.ExamplePluginBootstrap
+# depends: [ Essentials ]

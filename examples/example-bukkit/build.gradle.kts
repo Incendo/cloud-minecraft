@@ -6,6 +6,10 @@ plugins {
     alias(libs.plugins.run.paper)
 }
 
+java {
+    disableAutoTargetJvm()
+}
+
 dependencies {
     /* Cloud */
     implementation(project(":cloud-paper"))
@@ -16,15 +20,25 @@ dependencies {
     implementation(libs.adventurePlatformBukkit)
     implementation(libs.minimessage)
     /* Bukkit */
-    compileOnly(libs.bukkit)
+    // compileOnly(libs.bukkit)
+    compileOnly(libs.paperApi)
     /* Annotation processing */
     annotationProcessor(libs.cloud.annotations)
+}
+
+afterEvaluate {
+    tasks {
+        compileJava {
+            // TODO
+            options.compilerArgs.remove("-Werror")
+        }
+    }
 }
 
 tasks {
     shadowJar {
         // adventure-platform
-        relocate("net.kyori", "org.incendo.cloud.example.kyori")
+        // relocate("net.kyori", "org.incendo.cloud.example.kyori")
 
         // cloud
         // relocate("org.incendo.cloud", "my.package.cloud") // We don't relocate cloud itself in this example, but you still should
@@ -37,6 +51,10 @@ tasks {
         relocate("net.fabricmc.mappingio", "org.incendo.cloud.example.mappingio")
 
         mergeServiceFiles()
+
+        manifest {
+            attributes("paperweight-mappings-namespace" to "mojang")
+        }
     }
     assemble {
         dependsOn(shadowJar)

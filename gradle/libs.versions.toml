@@ -55,7 +55,6 @@ adventureTextSerializerPlain = { group = "net.kyori", name = "adventure-text-ser
 adventureTextSerializerLegacy = { group = "net.kyori", name = "adventure-text-serializer-legacy", version.ref = "adventureApi" }
 adventureTextSerializerGson = { group = "net.kyori", name = "adventure-text-serializer-gson", version.ref = "adventureApi" }
 paperApi = { group = "io.papermc.paper", name = "paper-api", version.ref = "paperApi" }
-paperMojangApi = { group = "io.papermc.paper", name = "paper-mojangapi", version.ref = "paperApi" }
 spongeApi7 = { group = "org.spongepowered", name = "spongeapi", version.ref = "spongeApi7" }
 velocityApi = { group = "com.velocitypowered", name = "velocity-api", version.ref = "velocityApi" }
 

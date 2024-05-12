@@ -26,6 +26,7 @@ package org.incendo.cloud.bukkit;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.CloudCapability;
 import org.incendo.cloud.bukkit.internal.CraftBukkitReflection;
@@ -67,7 +68,11 @@ public enum CloudBukkitCapabilities implements CloudCapability {
     ASYNCHRONOUS_COMPLETION(CraftBukkitReflection.classExists(
             "com.destroystokyo.paper.event.server.AsyncTabCompleteEvent"));
 
-    static final Set<CloudBukkitCapabilities> CAPABLE = Arrays.stream(values())
+    /**
+     * The available capabilities.
+     */
+    @API(status = API.Status.INTERNAL)
+    public static final Set<CloudBukkitCapabilities> CAPABLE = Arrays.stream(values())
             .filter(CloudBukkitCapabilities::capable)
             .collect(Collectors.toSet());
 

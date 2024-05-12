@@ -30,8 +30,8 @@ import java.util.Objects;
 import org.apiguardian.api.API;
 import org.bukkit.NamespacedKey;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.bukkit.BukkitCaptionKeys;
-import org.incendo.cloud.bukkit.BukkitCommandManager;
 import org.incendo.cloud.bukkit.BukkitParserParameters;
 import org.incendo.cloud.caption.Caption;
 import org.incendo.cloud.caption.CaptionVariable;
@@ -198,13 +198,13 @@ public final class NamespacedKeyParser<C> implements ArgumentParser<C, Namespace
     }
 
     /**
-     * Called reflectively by {@link BukkitCommandManager}.
+     * Called reflectively by {@link org.incendo.cloud.bukkit.BukkitParsers}.
      *
      * @param commandManager command manager
      * @param <C>            sender type
      */
     @SuppressWarnings("unused")
-    private static <C> void registerParserSupplier(final @NonNull BukkitCommandManager<C> commandManager) {
+    private static <C> void registerParserSupplier(final @NonNull CommandManager<C> commandManager) {
         commandManager.parserRegistry()
                 .registerParserSupplier(TypeToken.get(NamespacedKey.class), params -> new NamespacedKeyParser<>(
                         params.has(BukkitParserParameters.REQUIRE_EXPLICIT_NAMESPACE),

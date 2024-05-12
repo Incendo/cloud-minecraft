@@ -9,7 +9,7 @@ java {
 
 dependencies {
     compileOnly(libs.paperApi)
-    api(projects.cloudBukkit)
+    api(projects.cloudPaper)
     implementation(libs.reflectionRemapper)
     api(projects.cloudMinecraftSignedArguments)
 }

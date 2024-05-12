@@ -29,6 +29,7 @@ import com.mojang.brigadier.tree.RootCommandNode;
 import io.papermc.paper.command.brigadier.CommandRegistrationFlag;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.plugin.bootstrap.BootstrapContext;
 import io.papermc.paper.plugin.lifecycle.event.registrar.ReloadableRegistrarEvent;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import java.lang.reflect.Field;
@@ -41,59 +42,96 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import org.bukkit.Bukkit;
+import java.util.logging.Logger;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.Command;
+import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.brigadier.BrigadierManagerHolder;
 import org.incendo.cloud.brigadier.CloudBrigadierCommand;
 import org.incendo.cloud.brigadier.CloudBrigadierManager;
 import org.incendo.cloud.brigadier.permission.BrigadierPermissionChecker;
+import org.incendo.cloud.bukkit.PluginHolder;
 import org.incendo.cloud.bukkit.internal.BukkitBackwardsBrigadierSenderMapper;
 import org.incendo.cloud.bukkit.internal.BukkitBrigadierMapper;
 import org.incendo.cloud.bukkit.internal.BukkitHelper;
 import org.incendo.cloud.component.CommandComponent;
-import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.internal.CommandNode;
 import org.incendo.cloud.internal.CommandRegistrationHandler;
 
 @SuppressWarnings("UnstableApiUsage")
-final class ModernPaperBrigadier<C> implements CommandRegistrationHandler<C>, BrigadierManagerHolder<C, CommandSourceStack> {
-    private final PaperCommandManager<C> manager;
+final class ModernPaperBrigadier<C, B> implements CommandRegistrationHandler<C>, BrigadierManagerHolder<C, CommandSourceStack> {
+    private final CommandManager<C> manager;
+    private final Runnable lockRegistration;
+    private final PluginMetaHolder metaHolder;
     private final CloudBrigadierManager<C, CommandSourceStack> brigadierManager;
     private final Map<String, Set<String>> aliases = new ConcurrentHashMap<>();
     private final Set<Command<C>> registeredCommands = new HashSet<>();
     private volatile @Nullable Commands commands;
 
-    ModernPaperBrigadier(final PaperCommandManager<C> manager) {
+    // TODO - Allow registering in bootstrap/onEnable per-root-note, based on meta value?
+    @SuppressWarnings("unchecked")
+    ModernPaperBrigadier(
+        final Class<B> baseType,
+        final CommandManager<C> manager,
+        final SenderMapper<B, C> senderMapper,
+        final Runnable lockRegistration
+    ) {
         this.manager = manager;
+        this.lockRegistration = lockRegistration;
+
+        if (manager instanceof PluginMetaHolder) {
+            this.metaHolder = (PluginMetaHolder) manager;
+        } else if (manager instanceof PluginHolder) {
+            this.metaHolder = PluginMetaHolder.fromPluginHolder((PluginHolder) manager);
+        } else {
+            throw new IllegalArgumentException(manager.toString());
+        }
+
         this.brigadierManager = new CloudBrigadierManager<>(
             this.manager,
-            () -> new CommandContext<>(
-                this.manager.senderMapper().map(Bukkit.getConsoleSender()),
-                this.manager
-            ),
+            () -> {
+                throw new UnsupportedOperationException();
+            },
             SenderMapper.create(
-                sender -> this.manager.senderMapper().map(sender.getSender()),
-                new BukkitBackwardsBrigadierSenderMapper<>(this.manager)
+                source -> {
+                    if (baseType.equals(CommandSender.class)) {
+                        return senderMapper.map((B) source.getSender());
+                    } else {
+                        return senderMapper.map((B) source);
+                    }
+                },
+                sender -> {
+                    if (baseType.equals(CommandSender.class)) {
+                        return (CommandSourceStack) new BukkitBackwardsBrigadierSenderMapper<>(senderMapper).apply(sender);
+                    } else {
+                        return (CommandSourceStack) senderMapper.reverse(sender);
+                    }
+                }
             )
         );
 
         final BukkitBrigadierMapper<C> mapper =
-            new BukkitBrigadierMapper<>(this.manager, this.brigadierManager);
+            new BukkitBrigadierMapper<>(Logger.getLogger(this.metaHolder.owningPluginMeta().getName()), this.brigadierManager);
         mapper.registerBuiltInMappings();
         PaperBrigadierMappings.register(mapper);
+    }
 
-        // TODO - Allow registering in bootstrap/onEnable per-root-note, based on meta value
-        manager.owningPlugin().getLifecycleManager()
-            .registerEventHandler(LifecycleEvents.COMMANDS, this::register);
+    void registerPlugin(final Plugin plugin) {
+        plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, this::register);
+    }
+
+    void registerBootstrap(final BootstrapContext context) {
+        context.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, this::register);
     }
 
     private void register(final ReloadableRegistrarEvent<Commands> event) {
-        this.manager.lockRegistration0(); // Lock registration once event is called
+        this.lockRegistration.run(); // Lock registration once event is called
 
         final Commands commands = event.registrar();
         this.commands = commands;
@@ -106,7 +144,7 @@ final class ModernPaperBrigadier<C> implements CommandRegistrationHandler<C>, Br
 
     private void registerCommand(final Commands commands, final CommandNode<C> rootNode) {
         final Set<String> registered = commands.registerWithFlags(
-            this.manager.owningPlugin().getPluginMeta(),
+            this.metaHolder.owningPluginMeta(),
             this.createRootNode(rootNode, rootNode.component().name()),
             this.findBukkitDescription(rootNode),
             new ArrayList<>(rootNode.component().alternativeAliases()),
@@ -130,7 +168,7 @@ final class ModernPaperBrigadier<C> implements CommandRegistrationHandler<C>, Br
             new CloudBrigadierCommand<>(
                 this.manager,
                 this.brigadierManager,
-                command -> BukkitHelper.stripNamespace(this.manager, command)
+                command -> BukkitHelper.stripNamespace(this.metaHolder.owningPluginMeta().getName(), command)
             ),
             permissionChecker
         );
@@ -202,7 +240,7 @@ final class ModernPaperBrigadier<C> implements CommandRegistrationHandler<C>, Br
         return ret;
     }
 
-    private static @MonotonicNonNull Method COMMANDNODE_REMOVE_METHOD = null;
+    private static @MonotonicNonNull Method commandnodeRemoveMethod = null;
 
     private void unregisterRoot(final Commands commands, final String label) {
         final @Nullable Set<String> removed = this.aliases.remove(label);
@@ -212,11 +250,11 @@ final class ModernPaperBrigadier<C> implements CommandRegistrationHandler<C>, Br
         this.registeredCommands.removeIf(command -> command.rootComponent().name().equals(label));
 
         try {
-            if (COMMANDNODE_REMOVE_METHOD == null) {
-                COMMANDNODE_REMOVE_METHOD = com.mojang.brigadier.tree.CommandNode.class.getMethod(
+            if (commandnodeRemoveMethod == null) {
+                commandnodeRemoveMethod = com.mojang.brigadier.tree.CommandNode.class.getMethod(
                     "removeCommand", String.class
                 );
-                COMMANDNODE_REMOVE_METHOD.setAccessible(true);
+                commandnodeRemoveMethod.setAccessible(true);
             }
         } catch (final ReflectiveOperationException e) {
             throw new RuntimeException("Failed to find removeCommand method", e);
@@ -227,7 +265,7 @@ final class ModernPaperBrigadier<C> implements CommandRegistrationHandler<C>, Br
             final RootCommandNode<CommandSourceStack> root = dispatcher.getRoot();
             for (final String removedLabel : removed) {
                 try {
-                    COMMANDNODE_REMOVE_METHOD.invoke(root, removedLabel);
+                    commandnodeRemoveMethod.invoke(root, removedLabel);
                 } catch (final ReflectiveOperationException e) {
                     throw new RuntimeException("Failed to delete node " + removedLabel, e);
                 }
@@ -248,12 +286,12 @@ final class ModernPaperBrigadier<C> implements CommandRegistrationHandler<C>, Br
     }
 
     private void resendCommands() {
-        for (final Player player : this.manager.owningPlugin().getServer().getOnlinePlayers()) {
+        for (final Player player : this.metaHolder.owningPlugin().getServer().getOnlinePlayers()) {
             player.updateCommands();
         }
     }
 
-    private static @MonotonicNonNull Field COMMANDS_INVALID_FIELD = null;
+    private static @MonotonicNonNull Field commandsInvalidField = null;
 
     private static void unsafeOperation(final Commands commands, final Consumer<Commands> task) {
         unsafeGet(commands, cmds -> {
@@ -264,16 +302,16 @@ final class ModernPaperBrigadier<C> implements CommandRegistrationHandler<C>, Br
 
     private static <T> T unsafeGet(final Commands commands, final Function<Commands, T> task) {
         try {
-            if (COMMANDS_INVALID_FIELD == null) {
-                COMMANDS_INVALID_FIELD = commands.getClass().getDeclaredField("invalid");
-                COMMANDS_INVALID_FIELD.setAccessible(true);
+            if (commandsInvalidField == null) {
+                commandsInvalidField = commands.getClass().getDeclaredField("invalid");
+                commandsInvalidField.setAccessible(true);
             }
-            final boolean prev = COMMANDS_INVALID_FIELD.getBoolean(commands);
+            final boolean prev = commandsInvalidField.getBoolean(commands);
             try {
-                COMMANDS_INVALID_FIELD.setBoolean(commands, false);
+                commandsInvalidField.setBoolean(commands, false);
                 return task.apply(commands);
             } finally {
-                COMMANDS_INVALID_FIELD.setBoolean(commands, prev);
+                commandsInvalidField.setBoolean(commands, prev);
             }
         } catch (final ReflectiveOperationException e) {
             throw new RuntimeException("Failed to perform unsafe command operation", e);

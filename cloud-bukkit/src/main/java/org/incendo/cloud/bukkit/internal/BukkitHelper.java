@@ -25,11 +25,14 @@ package org.incendo.cloud.bukkit.internal;
 
 import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.Executor;
 import org.apiguardian.api.API;
+import org.bukkit.Server;
+import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.Command;
-import org.incendo.cloud.bukkit.BukkitCommandManager;
 import org.incendo.cloud.bukkit.BukkitCommandMeta;
+import org.incendo.cloud.bukkit.PluginHolder;
 import org.incendo.cloud.description.CommandDescription;
 
 @API(status = API.Status.INTERNAL)
@@ -60,31 +63,72 @@ public final class BukkitHelper {
     /**
      * Returns the namespaced version of a label.
      *
-     * @param label label
+     * @param manager manager
+     * @param label   label
      * @return namespaced label
      */
-    public static @NonNull String namespacedLabel(final @NonNull BukkitCommandManager<?> manager, final @NonNull String label) {
-        return (manager.owningPlugin().getName() + ':' + label).toLowerCase(Locale.ROOT);
+    public static @NonNull String namespacedLabel(final @NonNull PluginHolder manager, final @NonNull String label) {
+        return namespacedLabel(manager.owningPlugin().getName(), label);
+    }
+
+    /**
+     * Returns the namespaced version of a label.
+     *
+     * @param pluginName plugin name
+     * @param label      label
+     * @return namespaced label
+     */
+    public static @NonNull String namespacedLabel(final @NonNull String pluginName, final @NonNull String label) {
+        return (pluginName + ':' + label).toLowerCase(Locale.ROOT);
     }
 
     /**
      * Strips the owning plugin namespace from a command.
      *
-     * @param manager command manager
+     * @param manager manager
      * @param command command line
      * @return modified command line
      */
-    public static String stripNamespace(final @NonNull BukkitCommandManager<?> manager, final @NonNull String command) {
+    public static @NonNull String stripNamespace(final @NonNull PluginHolder manager, final @NonNull String command) {
+        return stripNamespace(manager.owningPlugin().getName(), command);
+    }
+
+    /**
+     * Strips the owning plugin namespace from a command.
+     *
+     * @param pluginName plugin name
+     * @param command    command line
+     * @return modified command line
+     */
+    public static @NonNull String stripNamespace(final @NonNull String pluginName, final @NonNull String command) {
         final String[] split = command.split(" ");
         if (!split[0].contains(":")) {
             return command;
         }
         final String token = split[0];
         final String[] splitToken = token.split(":");
-        if (BukkitHelper.namespacedLabel(manager, splitToken[1]).equals(token)) {
+        if (namespacedLabel(pluginName, splitToken[1]).equals(token)) {
             split[0] = splitToken[1];
             return String.join(" ", split);
         }
         return command;
+    }
+
+    /**
+     * Bukkit main thread executor.
+     *
+     * @param pluginHolder plugin holder
+     * @return executor
+     */
+    public static @NonNull Executor mainThreadExecutor(final @NonNull PluginHolder pluginHolder) {
+        final Plugin plugin = pluginHolder.owningPlugin();
+        final Server server = plugin.getServer();
+        return task -> {
+            if (server.isPrimaryThread()) {
+                task.run();
+                return;
+            }
+            server.getScheduler().runTask(plugin, task);
+        };
     }
 }
