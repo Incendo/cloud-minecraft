@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -59,7 +58,6 @@ public final class BrigadierSuggestionFactory<C, S> {
 
     private final CloudBrigadierManager<C, S> cloudBrigadierManager;
     private final CommandManager<C> commandManager;
-    private final Supplier<CommandContext<C>> dummyContextProvider;
     private final SuggestionFactory<C, ? extends TooltipSuggestion> suggestionFactory;
 
     /**
@@ -67,18 +65,15 @@ public final class BrigadierSuggestionFactory<C, S> {
      *
      * @param cloudBrigadierManager the brigadier manager
      * @param commandManager        the command manager
-     * @param dummyContextProvider  creates the context provided when retrieving suggestions
      * @param suggestionFactory     the suggestion factory-producing tooltip suggestions
      */
     public BrigadierSuggestionFactory(
             final @NonNull CloudBrigadierManager<C, S> cloudBrigadierManager,
             final @NonNull CommandManager<C> commandManager,
-            final @NonNull Supplier<CommandContext<C>> dummyContextProvider,
             final @NonNull SuggestionFactory<C, ? extends TooltipSuggestion> suggestionFactory
     ) {
         this.cloudBrigadierManager = cloudBrigadierManager;
         this.commandManager = commandManager;
-        this.dummyContextProvider = dummyContextProvider;
         this.suggestionFactory = suggestionFactory;
     }
 
@@ -92,27 +87,18 @@ public final class BrigadierSuggestionFactory<C, S> {
      * @return future that completes with the suggestions
      */
     public @NonNull CompletableFuture<@NonNull Suggestions> buildSuggestions(
-            final com.mojang.brigadier.context.@Nullable CommandContext<S> senderContext,
+            final com.mojang.brigadier.context.@NonNull CommandContext<S> senderContext,
             final org.incendo.cloud.internal.@Nullable CommandNode<C> parentNode,
             final @NonNull CommandComponent<C> component,
             final @NonNull SuggestionsBuilder builder
     ) {
-        final CommandContext<C> commandContext;
-        String command = builder.getInput();
-        if (senderContext == null) {
-            commandContext = this.dummyContextProvider.get();
-            if (command.startsWith("/") /* Minecraft specific */) {
-                command = command.substring(1);
-            }
-        } else {
-            final C cloudSender = this.cloudBrigadierManager.senderMapper().map(senderContext.getSource());
-            commandContext = new CommandContext<>(
-                    true,
-                    cloudSender,
-                    this.commandManager
-            );
-            command = command.substring(getNodes(senderContext.getLastChild()).get(0).second().getStart());
-        }
+        final C cloudSender = this.cloudBrigadierManager.senderMapper().map(senderContext.getSource());
+        final CommandContext<C> commandContext = new CommandContext<>(
+            true,
+            cloudSender,
+            this.commandManager
+        );
+        String command = builder.getInput().substring(getNodes(senderContext.getLastChild()).get(0).second().getStart());
 
         /* Remove namespace */
         final String leading = command.split(" ")[0];

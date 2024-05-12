@@ -32,7 +32,6 @@ import org.incendo.cloud.Command;
 import org.incendo.cloud.brigadier.CloudBrigadierCommand;
 import org.incendo.cloud.brigadier.CloudBrigadierManager;
 import org.incendo.cloud.component.CommandComponent;
-import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.internal.CommandRegistrationHandler;
 
 final class VelocityPluginRegistrationHandler<C> implements CommandRegistrationHandler<C> {
@@ -44,12 +43,6 @@ final class VelocityPluginRegistrationHandler<C> implements CommandRegistrationH
         this.manager = velocityCommandManager;
         this.brigadierManager = new CloudBrigadierManager<>(
                 velocityCommandManager,
-                () -> new CommandContext<>(
-                        velocityCommandManager.senderMapper()
-                                .map(velocityCommandManager.proxyServer()
-                                        .getConsoleCommandSource()),
-                        velocityCommandManager
-                ),
                 velocityCommandManager.senderMapper()
         );
     }

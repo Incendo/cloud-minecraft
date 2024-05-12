@@ -38,7 +38,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.CommandManager;
@@ -52,7 +51,6 @@ import org.incendo.cloud.brigadier.argument.BrigadierMappings;
 import org.incendo.cloud.brigadier.node.LiteralBrigadierNodeFactory;
 import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
 import org.incendo.cloud.brigadier.suggestion.TooltipSuggestion;
-import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.parser.ArgumentParser;
 import org.incendo.cloud.parser.flag.CommandFlagParser;
 import org.incendo.cloud.parser.standard.BooleanParser;
@@ -89,12 +87,10 @@ public final class CloudBrigadierManager<C, S> implements SenderMapperHolder<S, 
      * Create a new cloud brigadier manager
      *
      * @param commandManager        Command manager
-     * @param dummyContextProvider  Provider of dummy context for completions
      * @param brigadierSourceMapper Mapper between the Brigadier command source type and cloud command sender type
      */
     public CloudBrigadierManager(
             final @NonNull CommandManager<C> commandManager,
-            final @NonNull Supplier<@NonNull CommandContext<C>> dummyContextProvider,
             final @NonNull SenderMapper<S, C> brigadierSourceMapper
     ) {
         this.brigadierSourceMapper = Objects.requireNonNull(brigadierSourceMapper, "brigadierSourceMapper");
@@ -102,7 +98,6 @@ public final class CloudBrigadierManager<C, S> implements SenderMapperHolder<S, 
         this.literalBrigadierNodeFactory = new LiteralBrigadierNodeFactory<>(
                 this,
                 commandManager,
-                dummyContextProvider,
                 commandManager.suggestionFactory().mapped(TooltipSuggestion::tooltipSuggestion)
         );
         this.registerInternalMappings();

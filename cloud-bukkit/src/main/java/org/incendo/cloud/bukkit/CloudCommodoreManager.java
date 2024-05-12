@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Objects;
 import me.lucko.commodore.Commodore;
 import me.lucko.commodore.CommodoreProvider;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.Command;
@@ -42,7 +41,6 @@ import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.brigadier.CloudBrigadierManager;
 import org.incendo.cloud.bukkit.internal.BukkitBackwardsBrigadierSenderMapper;
 import org.incendo.cloud.bukkit.internal.BukkitBrigadierMapper;
-import org.incendo.cloud.context.CommandContext;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 class CloudCommodoreManager<C> extends BukkitPluginRegistrationHandler<C> {
@@ -59,10 +57,6 @@ class CloudCommodoreManager<C> extends BukkitPluginRegistrationHandler<C> {
         this.commodore = CommodoreProvider.getCommodore(commandManager.owningPlugin());
         this.brigadierManager = new CloudBrigadierManager<>(
                 commandManager,
-                () -> new CommandContext<>(
-                        commandManager.senderMapper().map(Bukkit.getConsoleSender()),
-                        commandManager
-                ),
                 SenderMapper.create(
                         sender -> {
                             final CommandSender bukkitSender = getBukkitSender(sender);

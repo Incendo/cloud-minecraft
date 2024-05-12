@@ -40,10 +40,8 @@ import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.brigadier.CloudBrigadierManager;
 import org.incendo.cloud.brigadier.suggestion.CloudDelegatingSuggestionProvider;
-import org.incendo.cloud.context.StandardCommandContextFactory;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.internal.CommandRegistrationHandler;
-import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.aggregate.AggregateParser;
 import org.incendo.cloud.suggestion.Suggestion;
 import org.incendo.cloud.type.tuple.Pair;
@@ -71,7 +69,6 @@ class LiteralBrigadierNodeFactoryTest {
         this.commandManager = new TestCommandManager();
         final CloudBrigadierManager<Object, Object> cloudBrigadierManager = new CloudBrigadierManager<>(
                 this.commandManager,
-                () -> new StandardCommandContextFactory<>(this.commandManager).create(false, new Object()),
                 SenderMapper.identity()
         );
         this.literalBrigadierNodeFactory = cloudBrigadierManager.literalBrigadierNodeFactory();

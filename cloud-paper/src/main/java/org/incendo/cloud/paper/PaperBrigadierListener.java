@@ -25,7 +25,6 @@ package org.incendo.cloud.paper;
 
 import com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource;
 import java.util.regex.Pattern;
-import org.bukkit.Bukkit;
 import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -39,7 +38,6 @@ import org.incendo.cloud.brigadier.permission.BrigadierPermissionChecker;
 import org.incendo.cloud.bukkit.BukkitPluginRegistrationHandler;
 import org.incendo.cloud.bukkit.internal.BukkitBackwardsBrigadierSenderMapper;
 import org.incendo.cloud.bukkit.internal.BukkitBrigadierMapper;
-import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.internal.CommandNode;
 
 @SuppressWarnings("UnstableApiUsage")
@@ -53,10 +51,6 @@ class PaperBrigadierListener<C> implements Listener {
         this.paperCommandManager = paperCommandManager;
         this.brigadierManager = new CloudBrigadierManager<>(
             this.paperCommandManager,
-            () -> new CommandContext<>(
-                this.paperCommandManager.senderMapper().map(Bukkit.getConsoleSender()),
-                this.paperCommandManager
-            ),
             SenderMapper.create(
                 sender -> this.paperCommandManager.senderMapper().map(sender.getBukkitSender()),
                 new BukkitBackwardsBrigadierSenderMapper<>(this.paperCommandManager)

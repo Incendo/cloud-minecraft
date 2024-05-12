@@ -38,7 +38,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.CommandManager;
@@ -53,7 +52,6 @@ import org.incendo.cloud.brigadier.suggestion.CloudDelegatingSuggestionProvider;
 import org.incendo.cloud.brigadier.suggestion.SuggestionsType;
 import org.incendo.cloud.brigadier.suggestion.TooltipSuggestion;
 import org.incendo.cloud.component.CommandComponent;
-import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.internal.CommandNode;
 import org.incendo.cloud.parser.ArgumentParser;
 import org.incendo.cloud.parser.MappedArgumentParser;
@@ -73,13 +71,11 @@ public final class LiteralBrigadierNodeFactory<C, S> implements BrigadierNodeFac
      *
      * @param cloudBrigadierManager the brigadier manager
      * @param commandManager        the command manager
-     * @param dummyContextProvider  creates the context provided when retrieving suggestions
      * @param suggestionFactory     the suggestion factory-producing tooltip suggestions
      */
     public LiteralBrigadierNodeFactory(
             final @NonNull CloudBrigadierManager<C, S> cloudBrigadierManager,
             final @NonNull CommandManager<C> commandManager,
-            final @NonNull Supplier<CommandContext<C>> dummyContextProvider,
             final @NonNull SuggestionFactory<C, ? extends TooltipSuggestion> suggestionFactory
     ) {
         this.cloudBrigadierManager = cloudBrigadierManager;
@@ -87,7 +83,6 @@ public final class LiteralBrigadierNodeFactory<C, S> implements BrigadierNodeFac
         this.brigadierSuggestionFactory = new BrigadierSuggestionFactory<>(
                 cloudBrigadierManager,
                 commandManager,
-                dummyContextProvider,
                 suggestionFactory
         );
     }
