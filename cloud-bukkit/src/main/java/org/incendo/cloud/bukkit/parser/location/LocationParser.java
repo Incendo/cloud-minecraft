@@ -130,7 +130,12 @@ public final class LocationParser<C> implements ArgumentParser<C, Location>, Blo
         } else if (bukkitSender instanceof Entity) {
             originalLocation = ((Entity) bukkitSender).getLocation();
         } else {
-            originalLocation = new Location(Bukkit.getWorlds().get(0), 0, 0, 0);
+            if (Bukkit.getWorlds().isEmpty()) {
+                // For testing
+                originalLocation = new Location(null, 0, 0, 0);
+            } else {
+                originalLocation = new Location(Bukkit.getWorlds().get(0), 0, 0, 0);
+            }
         }
 
         if (((coordinates[0].type() == LocationCoordinateType.LOCAL)
