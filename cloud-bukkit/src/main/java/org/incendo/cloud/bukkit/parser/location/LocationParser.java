@@ -245,9 +245,9 @@ public final class LocationParser<C> implements ArgumentParser<C, Location>, Blo
 
         final String prefix = inputCopy.difference(input, true);
 
-		return IntegerParser.getSuggestions(
-                SUGGESTION_RANGE,
-                input
+        return IntegerParser.getSuggestions(
+            SUGGESTION_RANGE,
+            input
         ).stream().map(string -> prefix + string).collect(Collectors.toList());
     }
 
