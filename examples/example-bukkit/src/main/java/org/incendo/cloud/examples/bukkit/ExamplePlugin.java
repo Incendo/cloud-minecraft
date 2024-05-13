@@ -36,7 +36,7 @@ import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler;
 import org.incendo.cloud.minecraft.extras.MinecraftHelp;
 import org.incendo.cloud.minecraft.extras.caption.ComponentCaptionFormatter;
-import org.incendo.cloud.paper.PaperCommandManager;
+import org.incendo.cloud.paper.LegacyPaperCommandManager;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -59,7 +59,7 @@ public final class ExamplePlugin extends JavaPlugin {
         // (2) This function maps the Bukkit CommandSender to your custom sender type and back. If you're not using a custom
         //     type, then SenderMapper.identity() maps CommandSender to itself.
         //
-        final PaperCommandManager<CommandSender> manager = new PaperCommandManager<>(
+        final LegacyPaperCommandManager<CommandSender> manager = new LegacyPaperCommandManager<>(
                 /* Owning plugin */ this,
                 /* (1) */ ExecutionCoordinator.simpleCoordinator(),
                 /* (2) */ SenderMapper.identity()

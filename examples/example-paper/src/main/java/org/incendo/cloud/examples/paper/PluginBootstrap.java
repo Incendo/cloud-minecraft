@@ -31,7 +31,7 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.framework.qual.DefaultQualifier;
 import org.incendo.cloud.execution.ExecutionCoordinator;
-import org.incendo.cloud.paper.ModernPaperCommandManager;
+import org.incendo.cloud.paper.PaperCommandManager;
 import org.incendo.cloud.setting.ManagerSetting;
 
 import static org.incendo.cloud.parser.standard.StringParser.stringParser;
@@ -39,12 +39,12 @@ import static org.incendo.cloud.parser.standard.StringParser.stringParser;
 @SuppressWarnings("UnstableApiUsage")
 @DefaultQualifier(NonNull.class)
 public final class PluginBootstrap implements io.papermc.paper.plugin.bootstrap.PluginBootstrap {
-    private ModernPaperCommandManager.@MonotonicNonNull Bootstrapped<CommandSourceStack> commandManager;
+    private PaperCommandManager.@MonotonicNonNull Bootstrapped<CommandSourceStack> commandManager;
 
     @Override
     public void bootstrap(final BootstrapContext context) {
-        final ModernPaperCommandManager.Bootstrapped<CommandSourceStack> mgr =
-            ModernPaperCommandManager.builder()
+        final PaperCommandManager.Bootstrapped<CommandSourceStack> mgr =
+            PaperCommandManager.builder()
                 .executionCoordinator(ExecutionCoordinator.simpleCoordinator())
                 .buildBootstrapped(context);
 
@@ -78,7 +78,7 @@ public final class PluginBootstrap implements io.papermc.paper.plugin.bootstrap.
         try {
             return Class.forName(context.getConfiguration().getMainClass())
                 .asSubclass(JavaPlugin.class)
-                .getDeclaredConstructor(ModernPaperCommandManager.Bootstrapped.class)
+                .getDeclaredConstructor(PaperCommandManager.Bootstrapped.class)
                 .newInstance(this.commandManager);
         } catch (final ReflectiveOperationException e) {
             throw new RuntimeException(e);

@@ -45,9 +45,9 @@ class LegacyPaperBrigadier<C> implements Listener,
     BrigadierManagerHolder<C, com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource> {
 
     private final CloudBrigadierManager<C, com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource> brigadierManager;
-    private final PaperCommandManager<C> paperCommandManager;
+    private final LegacyPaperCommandManager<C> paperCommandManager;
 
-    LegacyPaperBrigadier(final @NonNull PaperCommandManager<C> paperCommandManager) {
+    LegacyPaperBrigadier(final @NonNull LegacyPaperCommandManager<C> paperCommandManager) {
         this.paperCommandManager = paperCommandManager;
         this.brigadierManager = new CloudBrigadierManager<>(
             this.paperCommandManager,

@@ -27,14 +27,14 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.framework.qual.DefaultQualifier;
-import org.incendo.cloud.paper.ModernPaperCommandManager;
+import org.incendo.cloud.paper.PaperCommandManager;
 
 @SuppressWarnings("UnstableApiUsage")
 @DefaultQualifier(NonNull.class)
 public final class PaperPlugin extends JavaPlugin {
-    private final ModernPaperCommandManager.Bootstrapped<CommandSourceStack> commandManager;
+    private final PaperCommandManager.Bootstrapped<CommandSourceStack> commandManager;
 
-    public PaperPlugin(final ModernPaperCommandManager.Bootstrapped<CommandSourceStack> commandManager) {
+    public PaperPlugin(final PaperCommandManager.Bootstrapped<CommandSourceStack> commandManager) {
         this.commandManager = commandManager;
     }
 
