@@ -21,21 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package org.incendo.cloud.examples.bukkit;
+package org.incendo.cloud.examples.paper;
 
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.plugin.bootstrap.BootstrapContext;
-import io.papermc.paper.plugin.bootstrap.PluginBootstrap;
 import io.papermc.paper.plugin.bootstrap.PluginProviderContext;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.framework.qual.DefaultQualifier;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.paper.ModernPaperCommandManager;
 import org.incendo.cloud.setting.ManagerSetting;
 
 import static org.incendo.cloud.parser.standard.StringParser.stringParser;
 
-public final class ExamplePluginBootstrap implements PluginBootstrap {
+@SuppressWarnings("UnstableApiUsage")
+@DefaultQualifier(NonNull.class)
+public final class PluginBootstrap implements io.papermc.paper.plugin.bootstrap.PluginBootstrap {
     private ModernPaperCommandManager.@MonotonicNonNull Bootstrapped<CommandSourceStack> commandManager;
 
     @Override

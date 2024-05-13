@@ -23,7 +23,6 @@
 //
 package org.incendo.cloud.examples.bukkit;
 
-import io.papermc.paper.command.brigadier.CommandSourceStack;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
@@ -37,7 +36,6 @@ import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler;
 import org.incendo.cloud.minecraft.extras.MinecraftHelp;
 import org.incendo.cloud.minecraft.extras.caption.ComponentCaptionFormatter;
-import org.incendo.cloud.paper.ModernPaperCommandManager;
 import org.incendo.cloud.paper.PaperCommandManager;
 
 import static net.kyori.adventure.text.Component.text;
@@ -51,16 +49,8 @@ public final class ExamplePlugin extends JavaPlugin {
     private BukkitAudiences bukkitAudiences;
     private MinecraftHelp<CommandSender> minecraftHelp;
 
-    private final ModernPaperCommandManager.Bootstrapped<CommandSourceStack> mgr;
-
-    public ExamplePlugin(final ModernPaperCommandManager.Bootstrapped<CommandSourceStack> commandManager) {
-        this.mgr = commandManager;
-    }
-
     @Override
     public void onEnable() {
-        this.mgr.onEnable();
-
         //
         // (1) The execution coordinator determines how commands are executed. The simple execution coordinator will
         //     run the command on the thread that is calling it. In the case of Bukkit, this is the primary server thread.

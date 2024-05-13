@@ -72,6 +72,9 @@ include("cloud-velocity")
 include("examples/example-bukkit")
 findProject(":examples/example-bukkit")?.name = "example-bukkit"
 
+include("examples/example-paper")
+findProject(":examples/example-paper")?.name = "example-paper"
+
 include("examples/example-bungee")
 findProject(":examples/example-bungee")?.name = "example-bungee"
 
