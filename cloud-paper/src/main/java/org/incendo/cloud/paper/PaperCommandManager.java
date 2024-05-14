@@ -30,8 +30,10 @@ import java.util.logging.Level;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.apiguardian.api.API;
+import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.CloudCapability;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.SenderMapper;
@@ -113,7 +115,13 @@ public class PaperCommandManager<C> extends CommandManager<C> implements SenderM
         this.registerCommandPreProcessor(new PaperCommandPreprocessor<>(
             this,
             this.senderMapper(),
-            CommandSourceStack::getExecutor
+            commandSourceStack -> {
+                final @Nullable Entity executor = commandSourceStack.getExecutor();
+                if (executor != null) {
+                    return executor;
+                }
+                return commandSourceStack.getSender();
+            }
         ));
     }
 
