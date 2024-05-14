@@ -1,0 +1,5 @@
+name: CloudPaperExample
+version: 2.0.0-SNAPSHOT
+api-version: '1.20.6'
+main: org.incendo.cloud.examples.paper.PaperPlugin
+bootstrapper: org.incendo.cloud.examples.paper.PluginBootstrap

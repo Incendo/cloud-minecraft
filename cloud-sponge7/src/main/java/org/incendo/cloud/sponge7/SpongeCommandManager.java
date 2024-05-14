@@ -70,7 +70,7 @@ public class SpongeCommandManager<C> extends CommandManager<C> implements Sender
      * @param senderMapper                A function converting from a native {@link CommandSource} to this manager's sender type
      */
     @Inject
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "this-escape"})
     public SpongeCommandManager(
             final @NonNull PluginContainer container,
             final @NonNull ExecutionCoordinator<C> commandExecutionCoordinator,

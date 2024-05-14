@@ -23,6 +23,10 @@ dependencyResolutionManagement {
             name = "sonatypeOssSnapshots"
             mavenContent { snapshotsOnly() }
         }
+        maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+            name = "sonatypeS01OssSnapshots"
+            mavenContent { snapshotsOnly() }
+        }
         /* The Minecraft repository, used for cloud-brigadier */
         maven("https://libraries.minecraft.net/") {
             name = "minecraftLibraries"
@@ -67,6 +71,9 @@ include("cloud-velocity")
 
 include("examples/example-bukkit")
 findProject(":examples/example-bukkit")?.name = "example-bukkit"
+
+include("examples/example-paper")
+findProject(":examples/example-paper")?.name = "example-paper"
 
 include("examples/example-bungee")
 findProject(":examples/example-bungee")?.name = "example-bungee"

@@ -25,18 +25,35 @@ package org.incendo.cloud.paper.suggestion.tooltips;
 
 import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
 import com.mojang.brigadier.Message;
-import io.papermc.paper.brigadier.PaperBrigadier;
+import io.papermc.paper.command.brigadier.MessageComponentSerializer;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.brigadier.suggestion.TooltipSuggestion;
+import org.incendo.cloud.bukkit.internal.CraftBukkitReflection;
+import org.jetbrains.annotations.NotNull;
 
 final class NativeCompletionMapper implements CompletionMapper {
 
+    @SuppressWarnings("UnstableApiUsage")
     @Override
     public AsyncTabCompleteEvent.@NonNull Completion map(final @NonNull TooltipSuggestion suggestion) {
+        if (!CraftBukkitReflection.classExists("io.papermc.paper.command.brigadier.MessageComponentSerializer")) {
+            return mapLegacy(suggestion);
+        }
+        return AsyncTabCompleteEvent.Completion.completion(
+            suggestion.suggestion(),
+            MessageComponentSerializer.message().deserializeOrNull(suggestion.tooltip())
+        );
+    }
+
+    @SuppressWarnings("removal")
+    private static AsyncTabCompleteEvent.@NonNull Completion mapLegacy(final @NotNull TooltipSuggestion suggestion) {
         final Message tooltip = suggestion.tooltip();
         if (tooltip == null) {
             return AsyncTabCompleteEvent.Completion.completion(suggestion.suggestion());
         }
-        return AsyncTabCompleteEvent.Completion.completion(suggestion.suggestion(), PaperBrigadier.componentFromMessage(tooltip));
+        return AsyncTabCompleteEvent.Completion.completion(
+            suggestion.suggestion(),
+            io.papermc.paper.brigadier.PaperBrigadier.componentFromMessage(tooltip)
+        );
     }
 }

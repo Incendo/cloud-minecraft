@@ -68,7 +68,6 @@ public final class CloudDelegatingSuggestionProvider<C, S> implements Suggestion
         return this.brigadierSuggestionFactory.buildSuggestions(
                 context,
                 this.node.parent(),
-                this.node.component(),
                 builder
         );
     }

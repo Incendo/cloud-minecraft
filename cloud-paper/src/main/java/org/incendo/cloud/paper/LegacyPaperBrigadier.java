@@ -23,7 +23,6 @@
 //
 package org.incendo.cloud.paper;
 
-import com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource;
 import java.util.regex.Pattern;
 import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.event.EventHandler;
@@ -31,47 +30,53 @@ import org.bukkit.event.Listener;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.CommandTree;
 import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.brigadier.BrigadierManagerHolder;
 import org.incendo.cloud.brigadier.CloudBrigadierCommand;
 import org.incendo.cloud.brigadier.CloudBrigadierManager;
 import org.incendo.cloud.brigadier.node.LiteralBrigadierNodeFactory;
 import org.incendo.cloud.brigadier.permission.BrigadierPermissionChecker;
-import org.incendo.cloud.bukkit.BukkitPluginRegistrationHandler;
 import org.incendo.cloud.bukkit.internal.BukkitBackwardsBrigadierSenderMapper;
 import org.incendo.cloud.bukkit.internal.BukkitBrigadierMapper;
+import org.incendo.cloud.bukkit.internal.BukkitHelper;
 import org.incendo.cloud.internal.CommandNode;
 
-@SuppressWarnings("UnstableApiUsage")
-class PaperBrigadierListener<C> implements Listener {
+@SuppressWarnings({"UnstableApiUsage", "deprecation", "removal"})
+class LegacyPaperBrigadier<C> implements Listener,
+    BrigadierManagerHolder<C, com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource> {
 
-    private final CloudBrigadierManager<C, BukkitBrigadierCommandSource> brigadierManager;
-    private final PaperCommandManager<C> paperCommandManager;
-    private final BukkitPluginRegistrationHandler<C> registrationHandler;
+    private final CloudBrigadierManager<C, com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource> brigadierManager;
+    private final LegacyPaperCommandManager<C> paperCommandManager;
 
-    PaperBrigadierListener(final @NonNull PaperCommandManager<C> paperCommandManager) {
+    LegacyPaperBrigadier(final @NonNull LegacyPaperCommandManager<C> paperCommandManager) {
         this.paperCommandManager = paperCommandManager;
         this.brigadierManager = new CloudBrigadierManager<>(
             this.paperCommandManager,
             SenderMapper.create(
                 sender -> this.paperCommandManager.senderMapper().map(sender.getBukkitSender()),
-                new BukkitBackwardsBrigadierSenderMapper<>(this.paperCommandManager)
+                new BukkitBackwardsBrigadierSenderMapper<>(this.paperCommandManager.senderMapper())
             )
         );
-        this.registrationHandler = (BukkitPluginRegistrationHandler<C>) paperCommandManager.commandRegistrationHandler();
 
         final BukkitBrigadierMapper<C> mapper =
-            new BukkitBrigadierMapper<>(this.paperCommandManager, this.brigadierManager);
+            new BukkitBrigadierMapper<>(this.paperCommandManager.owningPlugin().getLogger(), this.brigadierManager);
         mapper.registerBuiltInMappings();
         PaperBrigadierMappings.register(mapper);
     }
 
-    protected @NonNull CloudBrigadierManager<C, BukkitBrigadierCommandSource> brigadierManager() {
+    @Override
+    public final boolean hasBrigadierManager() {
+        return true;
+    }
+
+    @Override
+    public final @NonNull CloudBrigadierManager<C, com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource> brigadierManager() {
         return this.brigadierManager;
     }
 
     @EventHandler
     public void onCommandRegister(
         final com.destroystokyo.paper.event.brigadier.
-        @NonNull CommandRegisteredEvent<BukkitBrigadierCommandSource> event
+        @NonNull CommandRegisteredEvent<com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource> event
     ) {
         if (!(event.getCommand() instanceof PluginIdentifiableCommand)) {
             return;
@@ -102,27 +107,17 @@ class PaperBrigadierListener<C> implements Listener {
 
             return this.paperCommandManager.testPermission(sender, permission).allowed();
         };
-        final LiteralBrigadierNodeFactory<C, BukkitBrigadierCommandSource> literalFactory =
+        final LiteralBrigadierNodeFactory<C, com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource> literalFactory =
             this.brigadierManager.literalBrigadierNodeFactory();
         event.setLiteral(literalFactory.createNode(
             event.getLiteral().getLiteral(),
             node,
-            new CloudBrigadierCommand<>(this.paperCommandManager, this.brigadierManager, this::stripNamespace),
+            new CloudBrigadierCommand<>(
+                this.paperCommandManager,
+                this.brigadierManager,
+                command -> BukkitHelper.stripNamespace(this.paperCommandManager, command)
+            ),
             permissionChecker
         ));
-    }
-
-    private String stripNamespace(final String command) {
-        final String[] split = command.split(" ");
-        if (!split[0].contains(":")) {
-            return command;
-        }
-        final String token = split[0];
-        final String[] splitToken = token.split(":");
-        if (this.registrationHandler.getNamespacedLabel(splitToken[1]).equals(token)) {
-            split[0] = splitToken[1];
-            return String.join(" ", split);
-        }
-        return command;
     }
 }

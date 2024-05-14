@@ -59,6 +59,7 @@ public class BungeeCommandManager<C> extends CommandManager<C> implements Sender
      * @param commandExecutionCoordinator  Coordinator provider
      * @param senderMapper                 Function that maps {@link CommandSender} to the command sender type
      */
+    @SuppressWarnings("this-escape")
     public BungeeCommandManager(
             final @NonNull Plugin owningPlugin,
             final @NonNull ExecutionCoordinator<C> commandExecutionCoordinator,

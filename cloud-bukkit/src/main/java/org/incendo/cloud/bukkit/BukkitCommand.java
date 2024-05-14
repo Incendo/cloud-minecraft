@@ -29,7 +29,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import org.apiguardian.api.API;
@@ -39,8 +38,8 @@ import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.Command;
+import org.incendo.cloud.bukkit.internal.BukkitHelper;
 import org.incendo.cloud.component.CommandComponent;
-import org.incendo.cloud.description.CommandDescription;
 import org.incendo.cloud.internal.CommandNode;
 import org.incendo.cloud.permission.Permission;
 import org.incendo.cloud.suggestion.Suggestion;
@@ -57,20 +56,6 @@ final class BukkitCommand<C> extends org.bukkit.command.Command implements Plugi
 
     private boolean disabled;
 
-    private static @NonNull String description(final @NonNull Command<?> command) {
-        final Optional<String> bukkitDescription = command.commandMeta().optional(BukkitCommandMeta.BUKKIT_DESCRIPTION);
-        if (bukkitDescription.isPresent()) {
-            return bukkitDescription.get();
-        }
-
-        final CommandDescription description = command.commandDescription();
-        if (!description.isEmpty()) {
-            return description.description().textDescription();
-        }
-
-        return command.rootComponent().description().textDescription();
-    }
-
     BukkitCommand(
             final @NonNull String label,
             final @NonNull List<@NonNull String> aliases,
@@ -80,7 +65,7 @@ final class BukkitCommand<C> extends org.bukkit.command.Command implements Plugi
     ) {
         super(
                 label,
-                description(cloudCommand),
+                BukkitHelper.description(cloudCommand),
                 "",
                 aliases
         );
@@ -129,7 +114,7 @@ final class BukkitCommand<C> extends org.bukkit.command.Command implements Plugi
 
     @Override
     public @NonNull String getDescription() {
-        return description(this.cloudCommand);
+        return BukkitHelper.description(this.cloudCommand);
     }
 
     @Override

@@ -23,181 +23,237 @@
 //
 package org.incendo.cloud.paper;
 
-import java.util.concurrent.Executor;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.plugin.bootstrap.BootstrapContext;
+import io.papermc.paper.plugin.configuration.PluginMeta;
+import java.util.logging.Level;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.apiguardian.api.API;
-import org.bukkit.Bukkit;
-import org.bukkit.Server;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.CloudCapability;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.SenderMapper;
-import org.incendo.cloud.brigadier.BrigadierSetting;
+import org.incendo.cloud.SenderMapperHolder;
+import org.incendo.cloud.brigadier.BrigadierManagerHolder;
 import org.incendo.cloud.brigadier.CloudBrigadierManager;
-import org.incendo.cloud.bukkit.BukkitCommandManager;
+import org.incendo.cloud.bukkit.BukkitCommandContextKeys;
+import org.incendo.cloud.bukkit.BukkitDefaultCaptionsProvider;
+import org.incendo.cloud.bukkit.BukkitParsers;
 import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
+import org.incendo.cloud.bukkit.PluginHolder;
 import org.incendo.cloud.execution.ExecutionCoordinator;
-import org.incendo.cloud.paper.suggestion.SuggestionListener;
-import org.incendo.cloud.paper.suggestion.SuggestionListenerFactory;
-import org.incendo.cloud.state.RegistrationState;
+import org.incendo.cloud.internal.CommandRegistrationHandler;
 
 /**
- * {@link CommandManager} implementation for Bukkit-based platforms (i.e. Spigot, Paper),
- * with specific support for Paper features (gated behind {@link CloudBukkitCapabilities} for
- * "backwards-compatibility").
+ * A {@link CommandManager} implementation for modern Paper API, using {@link CommandSourceStack} as the base sender type.
+ *
+ * <p>This manager will only function on servers implementing Paper API 1.20.6 or newer.</p>
  *
  * @param <C> command sender type
- * @see PaperCommandManager#PaperCommandManager(Plugin, ExecutionCoordinator, SenderMapper)
- * @see #createNative(Plugin, ExecutionCoordinator)
+ * @see #builder()
+ * @see #builder(SenderMapper)
  */
-public class PaperCommandManager<C> extends BukkitCommandManager<C> {
-
-    private @Nullable PaperBrigadierListener<C> paperBrigadierListener = null;
+@API(status = API.Status.EXPERIMENTAL)
+@SuppressWarnings("UnstableApiUsage")
+public class PaperCommandManager<C> extends CommandManager<C> implements SenderMapperHolder<CommandSourceStack, C>,
+    PluginMetaHolder, PluginHolder, BrigadierManagerHolder<C, CommandSourceStack> {
+    private final PluginMeta pluginMeta;
+    private final SenderMapper<CommandSourceStack, C> senderMapper;
 
     /**
-     * Create a new Paper command manager.
+     * Creates a new {@link Builder} for a manager with sender type {@link C}.
      *
-     * @param owningPlugin                Plugin constructing the manager. Used when registering commands to the command map,
-     *                                    registering event listeners, etc.
-     * @param commandExecutionCoordinator Execution coordinator instance. Due to Bukkit blocking the main thread for
-     *                                    suggestion requests, it's potentially unsafe to use anything other than
-     *                                    {@link ExecutionCoordinator#nonSchedulingExecutor()} for
-     *                                    {@link ExecutionCoordinator.Builder#suggestionsExecutor(Executor)}. Once the
-     *                                    coordinator, a suggestion provider, parser, or similar routes suggestion logic
-     *                                    off of the calling (main) thread, it won't be possible to schedule further logic
-     *                                    back to the main thread without a deadlock. When Brigadier support is active, this issue
-     *                                    is avoided, as it allows for non-blocking suggestions.
-     *                                    Paper's asynchronous completion API can also
-     *                                    be used to avoid this issue: {@link #registerAsynchronousCompletions()}
-     * @param senderMapper                Mapper between Bukkit's {@link CommandSender} and the command sender type {@code C}.
-     * @see #registerBrigadier()
-     * @throws InitializationException if construction of the manager fails
+     * @param senderMapper sender mapper
+     * @param <C>          command sender type
+     * @return builder
      */
-    @API(status = API.Status.STABLE, since = "2.0.0")
-    public PaperCommandManager(
-            final @NonNull Plugin owningPlugin,
-            final @NonNull ExecutionCoordinator<C> commandExecutionCoordinator,
-            final @NonNull SenderMapper<CommandSender, C> senderMapper
-    ) throws InitializationException {
-        super(owningPlugin, commandExecutionCoordinator, senderMapper);
-
-        this.registerCommandPreProcessor(new PaperCommandPreprocessor<>(this));
+    public static <C> Builder<C> builder(final SenderMapper<CommandSourceStack, C> senderMapper) {
+        return new Builder<>(senderMapper);
     }
 
     /**
-     * Create a command manager using Bukkit's {@link CommandSender} as the sender type.
+     * Creates a new {@link Builder} using the native Paper {@link CommandSourceStack} sender type.
      *
-     * @param owningPlugin                plugin owning the command manager
-     * @param commandExecutionCoordinator execution coordinator instance
-     * @return a new command manager
-     * @throws InitializationException if the construction of the manager fails
-     * @see #PaperCommandManager(Plugin, ExecutionCoordinator, SenderMapper) for a more thorough explanation
-     * @since 1.5.0
+     * @return builder
      */
-    @API(status = API.Status.STABLE, since = "2.0.0")
-    public static @NonNull PaperCommandManager<@NonNull CommandSender> createNative(
-            final @NonNull Plugin owningPlugin,
-            final @NonNull ExecutionCoordinator<CommandSender> commandExecutionCoordinator
-    ) throws InitializationException {
-        return new PaperCommandManager<>(
-                owningPlugin,
-                commandExecutionCoordinator,
-                SenderMapper.identity()
+    public static Builder<CommandSourceStack> builder() {
+        return new Builder<>(SenderMapper.identity());
+    }
+
+    private PaperCommandManager(
+        final @NonNull PluginMeta pluginMeta,
+        final @NonNull ExecutionCoordinator<C> executionCoordinator,
+        final @NonNull SenderMapper<CommandSourceStack, C> senderMapper
+    ) {
+        super(executionCoordinator, CommandRegistrationHandler.nullCommandRegistrationHandler());
+        this.pluginMeta = pluginMeta;
+        this.senderMapper = senderMapper;
+
+        this.commandRegistrationHandler(new ModernPaperBrigadier<>(
+            CommandSourceStack.class,
+            this,
+            senderMapper,
+            this::lockRegistration
+        ));
+
+        CloudBukkitCapabilities.CAPABLE.forEach(this::registerCapability);
+        this.registerCapability(CloudCapability.StandardCapabilities.ROOT_COMMAND_DELETION);
+
+        BukkitParsers.register(this);
+
+        this.registerDefaultExceptionHandlers();
+        this.captionRegistry().registerProvider(new BukkitDefaultCaptionsProvider<>());
+
+        this.registerCommandPreProcessor(ctx -> ctx.commandContext().store(
+            BukkitCommandContextKeys.BUKKIT_COMMAND_SENDER,
+            this.senderMapper().reverse(ctx.commandContext().sender()).getSender()
+        ));
+        this.registerCommandPreProcessor(new PaperCommandPreprocessor<>(
+            this,
+            this.senderMapper(),
+            CommandSourceStack::getExecutor
+        ));
+    }
+
+    @Override
+    public final boolean hasPermission(final @NonNull C sender, final @NonNull String permission) {
+        return this.senderMapper().reverse(sender).getSender().hasPermission(permission);
+    }
+
+    @Override
+    public final @NonNull SenderMapper<CommandSourceStack, C> senderMapper() {
+        return this.senderMapper;
+    }
+
+    private void registerDefaultExceptionHandlers() {
+        this.registerDefaultExceptionHandlers(
+            triplet -> this.senderMapper().reverse(triplet.first().sender()).getSender()
+                .sendMessage(Component.text(
+                    triplet.first().formatCaption(triplet.second(), triplet.third()),
+                    NamedTextColor.RED
+                )),
+            pair -> this.owningPlugin().getLogger().log(Level.SEVERE, pair.first(), pair.second())
         );
     }
 
-    /**
-     * Attempts to enable Brigadier command registration through the Paper API, falling
-     * back to {@link BukkitCommandManager#registerBrigadier()} if that fails.
-     *
-     * <p>Callers should check for {@link CloudBukkitCapabilities#NATIVE_BRIGADIER} first
-     * to avoid exceptions.</p>
-     *
-     * <p>A check for {@link CloudBukkitCapabilities#NATIVE_BRIGADIER} {@code ||} {@link CloudBukkitCapabilities#COMMODORE_BRIGADIER}
-     * may also be appropriate for some use cases (because of the fallback behavior), but not most, as Commodore does not offer
-     * any functionality on modern
-     * versions (see the documentation for {@link CloudBukkitCapabilities#COMMODORE_BRIGADIER}).</p>
-     *
-     * @see #hasCapability(CloudCapability)
-     * @throws BrigadierInitializationException when the prerequisite capabilities are not present or some other issue occurs
-     * during registration of Brigadier support
-     */
     @Override
-    public void registerBrigadier() throws BrigadierInitializationException {
-        this.requireState(RegistrationState.BEFORE_REGISTRATION);
-        this.checkBrigadierCompatibility();
-        if (!this.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
-            super.registerBrigadier();
-        } else {
-            try {
-                this.paperBrigadierListener = new PaperBrigadierListener<>(this);
-                Bukkit.getPluginManager().registerEvents(
-                        this.paperBrigadierListener,
-                        this.owningPlugin()
-                );
-                this.paperBrigadierListener.brigadierManager().settings().set(BrigadierSetting.FORCE_EXECUTABLE, true);
-            } catch (final Exception e) {
-                throw new BrigadierInitializationException(
-                        "Failed to register " + PaperBrigadierListener.class.getSimpleName(), e);
-            }
+    public final PluginMeta owningPluginMeta() {
+        return this.pluginMeta;
+    }
+
+    @Override
+    public final boolean hasBrigadierManager() {
+        return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public final @NonNull CloudBrigadierManager<C, ? extends CommandSourceStack> brigadierManager() {
+        return ((BrigadierManagerHolder<C, CommandSourceStack>) this.commandRegistrationHandler())
+            .brigadierManager();
+    }
+
+    /**
+     * Variant of {@link PaperCommandManager} created at
+     * {@link io.papermc.paper.plugin.bootstrap.PluginBootstrap bootstrap} time
+     * rather than in {@link Plugin#onEnable()}. This allows command registered at bootstrap time to be used by
+     * data pack functions.
+     *
+     * @param <C> command sender type
+     */
+    public static final class Bootstrapped<C> extends PaperCommandManager<C> {
+        private Bootstrapped(
+            final @NonNull PluginMeta pluginMeta,
+            final @NonNull ExecutionCoordinator<C> executionCoordinator,
+            final @NonNull SenderMapper<CommandSourceStack, C> senderMapper
+        ) {
+            super(pluginMeta, executionCoordinator, senderMapper);
+        }
+
+        /**
+         * Runs the second phase of initialization for managers created at bootstrap time.
+         *
+         * <p>This method must be called in {@link Plugin#onEnable()} for some features to work.</p>
+         */
+        public void onEnable() {
+            /*
+            ((ModernPaperBrigadier<CommandSourceStack, C>) this.commandRegistrationHandler())
+                .registerPlugin(this.owningPlugin());
+             */
         }
     }
 
     /**
-     * {@inheritDoc}
+     * First stage builder for {@link PaperCommandManager}.
      *
-     * @return {@inheritDoc}
-     * @since 2.0.0
+     * @param <C> command sender type
      */
-    @API(status = API.Status.STABLE, since = "2.0.0")
-    @Override
-    public boolean hasBrigadierManager() {
-        return this.paperBrigadierListener != null || super.hasBrigadierManager();
+    public static final class Builder<C> {
+        private final SenderMapper<CommandSourceStack, C> senderMapper;
+
+        private Builder(final SenderMapper<CommandSourceStack, C> senderMapper) {
+            this.senderMapper = senderMapper;
+        }
+
+        /**
+         * Configures the {@link ExecutionCoordinator} for the manager.
+         *
+         * @param executionCoordinator execution coordinator
+         * @return coordinated builder
+         */
+        public CoordinatedBuilder<C> executionCoordinator(final ExecutionCoordinator<C> executionCoordinator) {
+            return new CoordinatedBuilder<>(this.senderMapper, executionCoordinator);
+        }
     }
 
     /**
-     * {@inheritDoc}
+     * Second stage builder for {@link PaperCommandManager}.
      *
-     * @return {@inheritDoc}
-     * @throws BrigadierManagerNotPresent when {@link #hasBrigadierManager()} is false
-     * @since 1.2.0
+     * @param <C> command sender type
      */
-    @API(status = API.Status.STABLE, since = "2.0.0")
-    @Override
-    public @NonNull CloudBrigadierManager<C, ?> brigadierManager() {
-        if (this.paperBrigadierListener != null) {
-            return this.paperBrigadierListener.brigadierManager();
-        }
-        return super.brigadierManager();
-    }
+    public static final class CoordinatedBuilder<C> {
+        private final SenderMapper<CommandSourceStack, C> senderMapper;
+        private final ExecutionCoordinator<C> executionCoordinator;
 
-    /**
-     * Registers asynchronous completions using the Paper API. This means the calling thread for suggestion queries will be a
-     * thread other than the {@link Server#isPrimaryThread() main server thread} (or, the sender's thread context on Folia).
-     *
-     * <p>Requires the {@link CloudBukkitCapabilities#ASYNCHRONOUS_COMPLETION} capability to be present.</p>
-     *
-     * <p>It's not recommended to use this in combination with {@link #registerBrigadier()}, as Brigadier allows for
-     * non-blocking suggestions and the async completion API reduces the fidelity of suggestions compared to using Brigadier
-     * directly (see {@link PaperCommandManager#PaperCommandManager(Plugin, ExecutionCoordinator, SenderMapper)}).</p>
-     *
-     * @throws IllegalStateException when the server does not support asynchronous completions
-     * @see #hasCapability(CloudCapability)
-     */
-    public void registerAsynchronousCompletions() throws IllegalStateException {
-        this.requireState(RegistrationState.BEFORE_REGISTRATION);
-        if (!this.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
-            throw new IllegalStateException("Failed to register asynchronous command completion listener.");
+        private CoordinatedBuilder(
+            final SenderMapper<CommandSourceStack, C> senderMapper,
+            final ExecutionCoordinator<C> executionCoordinator
+        ) {
+            this.senderMapper = senderMapper;
+            this.executionCoordinator = executionCoordinator;
         }
 
-        final SuggestionListenerFactory<C> suggestionListenerFactory = SuggestionListenerFactory.create(this);
-        final SuggestionListener<C> suggestionListener = suggestionListenerFactory.createListener();
+        /**
+         * Creates a {@link PaperCommandManager} from {@link Plugin#onEnable()}.
+         *
+         * @param plugin plugin instance
+         * @return manager
+         * @see Bootstrapped
+         * @see #buildBootstrapped(BootstrapContext)
+         */
+        @SuppressWarnings("unchecked")
+        public @NonNull PaperCommandManager<C> buildOnEnable(final @NonNull Plugin plugin) {
+            final PaperCommandManager<C> mgr =
+                new PaperCommandManager<>(plugin.getPluginMeta(), this.executionCoordinator, this.senderMapper);
+            ((ModernPaperBrigadier<CommandSourceStack, C>) mgr.commandRegistrationHandler()).registerPlugin(plugin);
+            return mgr;
+        }
 
-        Bukkit.getServer().getPluginManager().registerEvents(
-                suggestionListener,
-                this.owningPlugin()
-        );
+        /**
+         * Creates a {@link PaperCommandManager.Bootstrapped} during bootstrapping.
+         *
+         * @param context bootstrap context
+         * @return manager
+         * @see Bootstrapped#onEnable()
+         */
+        @SuppressWarnings("unchecked")
+        public PaperCommandManager.@NonNull Bootstrapped<C> buildBootstrapped(final @NonNull BootstrapContext context) {
+            final PaperCommandManager.Bootstrapped<C> mgr =
+                new PaperCommandManager.Bootstrapped<>(context.getPluginMeta(), this.executionCoordinator, this.senderMapper);
+            ((ModernPaperBrigadier<CommandSourceStack, C>) mgr.commandRegistrationHandler()).registerBootstrap(context);
+            return mgr;
+        }
     }
 }

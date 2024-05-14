@@ -14,6 +14,10 @@ dependencies {
     }
 }
 
+configurations.javadocLinksSources {
+    exclude("io.papermc.paper")
+}
+
 spotless {
     java {
         targetExclude(file("src/main/java/cloud/commandframework/bukkit/internal/MinecraftArgumentTypes.java"))

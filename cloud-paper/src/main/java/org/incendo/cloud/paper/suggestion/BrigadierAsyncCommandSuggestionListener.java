@@ -30,7 +30,7 @@ import org.bukkit.event.EventHandler;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.brigadier.suggestion.TooltipSuggestion;
-import org.incendo.cloud.paper.PaperCommandManager;
+import org.incendo.cloud.paper.LegacyPaperCommandManager;
 import org.incendo.cloud.paper.suggestion.tooltips.CompletionMapper;
 import org.incendo.cloud.paper.suggestion.tooltips.CompletionMapperFactory;
 import org.incendo.cloud.suggestion.SuggestionFactory;
@@ -42,7 +42,7 @@ class BrigadierAsyncCommandSuggestionListener<C> extends AsyncCommandSuggestionL
     private final CompletionMapperFactory completionMapperFactory = CompletionMapperFactory.detectingRelocation();
     private final SuggestionFactory<C, ? extends TooltipSuggestion> suggestionFactory;
 
-    BrigadierAsyncCommandSuggestionListener(final @NonNull PaperCommandManager<C> paperCommandManager) {
+    BrigadierAsyncCommandSuggestionListener(final @NonNull LegacyPaperCommandManager<C> paperCommandManager) {
         super(paperCommandManager);
         this.suggestionFactory = paperCommandManager.suggestionFactory().mapped(TooltipSuggestion::tooltipSuggestion);
     }

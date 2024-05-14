@@ -29,16 +29,17 @@ import java.util.stream.Collectors;
 import org.bukkit.event.EventHandler;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.bukkit.BukkitPluginRegistrationHandler;
-import org.incendo.cloud.paper.PaperCommandManager;
+import org.incendo.cloud.bukkit.internal.BukkitHelper;
+import org.incendo.cloud.paper.LegacyPaperCommandManager;
 import org.incendo.cloud.suggestion.Suggestion;
 import org.incendo.cloud.suggestion.Suggestions;
 import org.incendo.cloud.util.StringUtils;
 
 class AsyncCommandSuggestionListener<C> implements SuggestionListener<C> {
 
-    private final PaperCommandManager<C> paperCommandManager;
+    private final LegacyPaperCommandManager<C> paperCommandManager;
 
-    AsyncCommandSuggestionListener(final @NonNull PaperCommandManager<C> paperCommandManager) {
+    AsyncCommandSuggestionListener(final @NonNull LegacyPaperCommandManager<C> paperCommandManager) {
         this.paperCommandManager = paperCommandManager;
     }
 
@@ -61,10 +62,16 @@ class AsyncCommandSuggestionListener<C> implements SuggestionListener<C> {
             return;
         }
 
+        String input = event.getBuffer();
+        /* Remove leading '/' */
+        if (input.charAt(0) == '/') {
+            input = input.substring(1);
+        }
+
         this.setSuggestions(
                 event,
                 this.paperCommandManager.senderMapper().map(event.getSender()),
-                this.paperCommandManager.stripNamespace(event.getBuffer())
+                BukkitHelper.stripNamespace(this.paperCommandManager, input)
         );
 
         event.setHandled(true);

@@ -25,11 +25,18 @@ package org.incendo.cloud.brigadier;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.context.ParsedCommandNode;
+import com.mojang.brigadier.context.StringRange;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
+import org.incendo.cloud.type.tuple.Pair;
 
 /**
  * Brigadier {@link Command} implementation that delegates to cloud.
@@ -79,14 +86,60 @@ public final class CloudBrigadierCommand<C, S> implements Command<S> {
     @Override
     public int run(final @NonNull CommandContext<S> ctx) {
         final S source = ctx.getSource();
-        final String input = ctx.getInput().substring(ctx.getLastChild().getNodes().get(0).getRange().getStart());
+        final String input = this.inputMapper.apply(
+            ctx.getInput().substring(parsedNodes(ctx.getLastChild()).get(0).second().getStart())
+        );
         final C sender = this.brigadierManager.senderMapper().map(source);
 
         this.commandManager.commandExecutor().executeCommand(
             sender,
-            this.inputMapper.apply(input),
+            input,
             cloudContext -> cloudContext.store(WrappedBrigadierParser.COMMAND_CONTEXT_BRIGADIER_NATIVE_SENDER, source)
         );
         return com.mojang.brigadier.Command.SINGLE_SUCCESS;
+    }
+
+    /**
+     * Return type changed at some point, but information is essentially the same. This code works for both versions of the
+     * method.
+     *
+     * @param commandContext command context
+     * @param <S>            source type
+     * @return parsed nodes
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static <S> List<Pair<com.mojang.brigadier.tree.CommandNode<S>, StringRange>> parsedNodes(
+        final com.mojang.brigadier.context.CommandContext<S> commandContext
+    ) {
+        try {
+            final Method getNodesMethod = commandContext.getClass().getDeclaredMethod("getNodes");
+            final Object nodes = getNodesMethod.invoke(commandContext);
+            if (nodes instanceof List) {
+                return ParsedCommandNodeHandler.toPairList((List) nodes);
+            } else if (nodes instanceof Map) {
+                return ((Map<com.mojang.brigadier.tree.CommandNode<S>, StringRange>) nodes).entrySet().stream()
+                    .map(entry -> Pair.of(entry.getKey(), entry.getValue()))
+                    .collect(Collectors.toList());
+            } else {
+                throw new IllegalStateException();
+            }
+        } catch (final ReflectiveOperationException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+
+    // Inner class to prevent attempting to load ParsedCommandNode when it doesn't exist
+    @SuppressWarnings("unchecked")
+    private static final class ParsedCommandNodeHandler {
+
+        private ParsedCommandNodeHandler() {
+        }
+
+        private static <S> List<Pair<com.mojang.brigadier.tree.CommandNode<S>, StringRange>> toPairList(final List<?> nodes) {
+            return ((List<ParsedCommandNode<S>>) nodes).stream()
+                .map(n -> Pair.of(n.getNode(), n.getRange()))
+                .collect(Collectors.toList());
+        }
     }
 }

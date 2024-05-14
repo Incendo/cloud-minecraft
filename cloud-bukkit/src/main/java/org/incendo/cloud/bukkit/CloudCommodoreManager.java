@@ -62,12 +62,12 @@ class CloudCommodoreManager<C> extends BukkitPluginRegistrationHandler<C> {
                             final CommandSender bukkitSender = getBukkitSender(sender);
                             return this.commandManager.senderMapper().map(bukkitSender);
                         },
-                        new BukkitBackwardsBrigadierSenderMapper<>(this.commandManager)
+                        new BukkitBackwardsBrigadierSenderMapper<>(this.commandManager.senderMapper())
                 )
         );
 
         final BukkitBrigadierMapper<C> mapper =
-            new BukkitBrigadierMapper<>(this.commandManager, this.brigadierManager);
+            new BukkitBrigadierMapper<>(this.commandManager.owningPlugin().getLogger(), this.brigadierManager);
         mapper.registerBuiltInMappings();
     }
 

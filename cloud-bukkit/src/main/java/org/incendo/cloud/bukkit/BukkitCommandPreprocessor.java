@@ -23,13 +23,11 @@
 //
 package org.incendo.cloud.bukkit;
 
-import java.util.concurrent.Executor;
-import org.bukkit.Server;
-import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
 import org.incendo.cloud.bukkit.internal.BukkitBackwardsBrigadierSenderMapper;
+import org.incendo.cloud.bukkit.internal.BukkitHelper;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.execution.preprocessor.CommandPreprocessingContext;
 import org.incendo.cloud.execution.preprocessor.CommandPreprocessor;
@@ -54,7 +52,7 @@ final class BukkitCommandPreprocessor<C> implements CommandPreprocessor<C> {
         this.commandManager = commandManager;
 
         if (this.commandManager.hasCapability(CloudBukkitCapabilities.BRIGADIER)) {
-            this.mapper = new BukkitBackwardsBrigadierSenderMapper<>(this.commandManager);
+            this.mapper = new BukkitBackwardsBrigadierSenderMapper<>(this.commandManager.senderMapper());
         } else {
             this.mapper = null;
         }
@@ -80,19 +78,7 @@ final class BukkitCommandPreprocessor<C> implements CommandPreprocessor<C> {
         // Store if PaperCommandManager's preprocessor didn't already
         context.commandContext().computeIfAbsent(
                 BukkitCommandContextKeys.SENDER_SCHEDULER_EXECUTOR,
-                $ -> this.mainThreadExecutor()
+                $ -> BukkitHelper.mainThreadExecutor(this.commandManager)
         );
-    }
-
-    private Executor mainThreadExecutor() {
-        final Plugin plugin = this.commandManager.owningPlugin();
-        final Server server = plugin.getServer();
-        return task -> {
-            if (server.isPrimaryThread()) {
-                task.run();
-                return;
-            }
-            server.getScheduler().runTask(plugin, task);
-        };
     }
 }

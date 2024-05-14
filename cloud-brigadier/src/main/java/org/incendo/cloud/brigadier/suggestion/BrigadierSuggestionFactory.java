@@ -23,15 +23,10 @@
 //
 package org.incendo.cloud.brigadier.suggestion;
 
-import com.mojang.brigadier.context.ParsedCommandNode;
-import com.mojang.brigadier.context.StringRange;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import com.mojang.brigadier.tree.CommandNode;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -41,10 +36,12 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.brigadier.CloudBrigadierManager;
+import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
 import org.incendo.cloud.component.CommandComponent;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.suggestion.SuggestionFactory;
-import org.incendo.cloud.type.tuple.Pair;
+
+import static org.incendo.cloud.brigadier.CloudBrigadierCommand.parsedNodes;
 
 /**
  * Produces Brigadier suggestions by invoking the Cloud suggestion provider.
@@ -82,14 +79,12 @@ public final class BrigadierSuggestionFactory<C, S> {
      *
      * @param senderContext the brigadier context
      * @param parentNode    the parent command node
-     * @param component     the command component to generate suggestions for
      * @param builder       the suggestion builder to generate suggestions with
      * @return future that completes with the suggestions
      */
     public @NonNull CompletableFuture<@NonNull Suggestions> buildSuggestions(
             final com.mojang.brigadier.context.@NonNull CommandContext<S> senderContext,
             final org.incendo.cloud.internal.@Nullable CommandNode<C> parentNode,
-            final @NonNull CommandComponent<C> component,
             final @NonNull SuggestionsBuilder builder
     ) {
         final C cloudSender = this.cloudBrigadierManager.senderMapper().map(senderContext.getSource());
@@ -98,7 +93,9 @@ public final class BrigadierSuggestionFactory<C, S> {
             cloudSender,
             this.commandManager
         );
-        String command = builder.getInput().substring(getNodes(senderContext.getLastChild()).get(0).second().getStart());
+        commandContext.store(WrappedBrigadierParser.COMMAND_CONTEXT_BRIGADIER_NATIVE_SENDER, senderContext.getSource());
+        String command = builder.getInput()
+            .substring(parsedNodes(senderContext.getLastChild()).get(0).second().getStart());
 
         /* Remove namespace */
         final String leading = command.split(" ")[0];
@@ -134,49 +131,5 @@ public final class BrigadierSuggestionFactory<C, S> {
 
             return suggestionsBuilder.build();
         });
-    }
-
-    /**
-     * Return type changed at some point, but information is essentially the same. This code works for both versions of the
-     * method.
-     *
-     * @param commandContext command context
-     * @param <S>            source type
-     * @return parsed nodes
-     */
-    @SuppressWarnings("unchecked")
-    private static <S> List<Pair<CommandNode<S>, StringRange>> getNodes(
-            final com.mojang.brigadier.context.CommandContext<S> commandContext
-    ) {
-        try {
-            final Method getNodesMethod = commandContext.getClass().getDeclaredMethod("getNodes");
-            final Object nodes = getNodesMethod.invoke(commandContext);
-            if (nodes instanceof List) {
-                return ParsedCommandNodeHandler.toPairList((List) nodes);
-            } else if (nodes instanceof Map) {
-                return ((Map<CommandNode<S>, StringRange>) nodes).entrySet().stream()
-                        .map(entry -> Pair.of(entry.getKey(), entry.getValue()))
-                        .collect(Collectors.toList());
-            } else {
-                throw new IllegalStateException();
-            }
-        } catch (final ReflectiveOperationException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-
-    // Inner class to prevent attempting to load ParsedCommandNode when it doesn't exist
-    @SuppressWarnings("unchecked")
-    private static final class ParsedCommandNodeHandler {
-
-        private ParsedCommandNodeHandler() {
-        }
-
-        private static <S> List<Pair<CommandNode<S>, StringRange>> toPairList(final List<?> nodes) {
-            return ((List<ParsedCommandNode<S>>) nodes).stream()
-                    .map(n -> Pair.of(n.getNode(), n.getRange()))
-                    .collect(Collectors.toList());
-        }
     }
 }

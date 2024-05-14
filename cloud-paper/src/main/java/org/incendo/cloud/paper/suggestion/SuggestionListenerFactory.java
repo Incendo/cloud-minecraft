@@ -27,7 +27,7 @@ import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.bukkit.internal.CraftBukkitReflection;
-import org.incendo.cloud.paper.PaperCommandManager;
+import org.incendo.cloud.paper.LegacyPaperCommandManager;
 
 @API(status = API.Status.INTERNAL, since = "2.0.0")
 public interface SuggestionListenerFactory<C> {
@@ -39,7 +39,7 @@ public interface SuggestionListenerFactory<C> {
      * @param commandManager the command manager
      * @return the suggestion listener factory
      */
-    static <C> @NonNull SuggestionListenerFactory<C> create(final @NonNull PaperCommandManager<C> commandManager) {
+    static <C> @NonNull SuggestionListenerFactory<C> create(final @NonNull LegacyPaperCommandManager<C> commandManager) {
         return new SuggestionListenerFactoryImpl<>(commandManager);
     }
 
@@ -53,9 +53,9 @@ public interface SuggestionListenerFactory<C> {
 
     final class SuggestionListenerFactoryImpl<C> implements SuggestionListenerFactory<C> {
 
-        private final PaperCommandManager<C> commandManager;
+        private final LegacyPaperCommandManager<C> commandManager;
 
-        private SuggestionListenerFactoryImpl(final @NonNull PaperCommandManager<C> commandManager) {
+        private SuggestionListenerFactoryImpl(final @NonNull LegacyPaperCommandManager<C> commandManager) {
             this.commandManager = commandManager;
         }
 

@@ -1,6 +1,6 @@
 [versions]
 # build logic
-cloud-build-logic = "0.0.14"
+cloud-build-logic = "0.0.15"
 checkstyle = "10.12.5"
 stylecheck = "0.2.1"
 ktlint = "0.50.0"
@@ -18,7 +18,7 @@ bungeecord = "1.20-R0.2"
 cloudburst = "1.0.0-SNAPSHOT"
 adventureApi = "4.15.0"
 adventurePlatform = "4.3.2"
-paperApi = "1.20.4-R0.1-SNAPSHOT"
+paperApi = "1.20.6-R0.1-SNAPSHOT"
 velocityApi = "3.3.0-SNAPSHOT"
 spongeApi7 = "7.3.0"
 
@@ -55,7 +55,6 @@ adventureTextSerializerPlain = { group = "net.kyori", name = "adventure-text-ser
 adventureTextSerializerLegacy = { group = "net.kyori", name = "adventure-text-serializer-legacy", version.ref = "adventureApi" }
 adventureTextSerializerGson = { group = "net.kyori", name = "adventure-text-serializer-gson", version.ref = "adventureApi" }
 paperApi = { group = "io.papermc.paper", name = "paper-api", version.ref = "paperApi" }
-paperMojangApi = { group = "io.papermc.paper", name = "paper-mojangapi", version.ref = "paperApi" }
 spongeApi7 = { group = "org.spongepowered", name = "spongeapi", version.ref = "spongeApi7" }
 velocityApi = { group = "com.velocitypowered", name = "velocity-api", version.ref = "velocityApi" }
 
@@ -73,7 +72,7 @@ cloud-buildLogic-rootProject-spotless = { id = "org.incendo.cloud-build-logic.sp
 run-paper = { id = "xyz.jpenilla.run-paper", version.ref = "run-task" }
 run-velocity = { id = "xyz.jpenilla.run-velocity", version.ref = "run-task" }
 run-waterfall = { id = "xyz.jpenilla.run-waterfall", version.ref = "run-task" }
-shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }
+shadow = { id = "io.github.goooler.shadow", version = "8.1.7" }
 
 [bundles]
 immutables = ["immutables", "immutablesAnnotate"]

@@ -6,26 +6,26 @@ plugins {
     alias(libs.plugins.run.paper)
 }
 
+indra {
+    javaVersions {
+        target(21)
+    }
+}
+
 dependencies {
     /* Cloud */
     implementation(project(":cloud-paper"))
     implementation(libs.cloud.annotations)
     implementation(project(":cloud-minecraft-extras"))
     implementation(projects.cloudPaperSignedArguments)
-    /* Extras */
-    implementation(libs.adventurePlatformBukkit)
-    implementation(libs.minimessage)
     /* Bukkit */
-    compileOnly(libs.bukkit)
+    compileOnly(libs.paperApi)
     /* Annotation processing */
     annotationProcessor(libs.cloud.annotations)
 }
 
 tasks {
     shadowJar {
-        // adventure-platform
-        relocate("net.kyori", "org.incendo.cloud.example.kyori")
-
         // cloud
         // relocate("org.incendo.cloud", "my.package.cloud") // We don't relocate cloud itself in this example, but you still should
 
@@ -47,10 +47,7 @@ tasks {
     }
 
     val runVersions = mapOf(
-        8 to setOf("1.8.8"),
-        11 to setOf("1.9.4", "1.10.2", "1.11.2"),
-        17 to setOf("1.12.2", "1.13.2", "1.14.4", "1.15.2", "1.16.5", "1.17.1", "1.18.2", "1.19.4", "1.20.4"),
-        21 to setOf("1.20.6")
+        21 to setOf("1.20.6"),
     )
 
     runServer {

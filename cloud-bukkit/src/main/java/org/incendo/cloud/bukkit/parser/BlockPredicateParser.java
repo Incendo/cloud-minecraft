@@ -23,17 +23,20 @@
 //
 package org.incendo.cloud.bukkit.parser;
 
+import com.google.common.base.Suppliers;
 import com.mojang.brigadier.arguments.ArgumentType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import org.apiguardian.api.API;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.brigadier.parser.WrappedBrigadierParser;
 import org.incendo.cloud.bukkit.BukkitCommandManager;
 import org.incendo.cloud.bukkit.data.BlockPredicate;
@@ -92,8 +95,8 @@ public final class BlockPredicateParser<C> implements ArgumentParser.FutureArgum
             CraftBukkitReflection.findMCClass("commands.CommandListenerWrapper"),
             CraftBukkitReflection.findMCClass("commands.CommandSourceStack")
     );
-    private static final Class<?> ARGUMENT_BLOCK_PREDICATE_CLASS =
-            MinecraftArgumentTypes.getClassByKey(NamespacedKey.minecraft("block_predicate"));
+    private static final Supplier<Class<?>> ARGUMENT_BLOCK_PREDICATE_CLASS =
+        Suppliers.memoize(() -> MinecraftArgumentTypes.getClassByKey(NamespacedKey.minecraft("block_predicate")));
     private static final Class<?> ARGUMENT_BLOCK_PREDICATE_RESULT_CLASS = CraftBukkitReflection.firstNonNullOrThrow(
             () -> "Couldn't find BlockPredicateArgument$Result class",
             CraftBukkitReflection.findNMSClass("ArgumentBlockPredicate$b"),
@@ -172,23 +175,24 @@ public final class BlockPredicateParser<C> implements ArgumentParser.FutureArgum
      * @since 1.5.0
      */
     public BlockPredicateParser() {
-        try {
-            this.parser = this.createParser();
-        } catch (final ReflectiveOperationException ex) {
-            throw new RuntimeException("Failed to initialize BlockPredicate parser.", ex);
-        }
+        this.parser = this.createParser();
     }
 
     @SuppressWarnings("unchecked")
-    private ArgumentParser<C, BlockPredicate> createParser() throws ReflectiveOperationException {
-        final Constructor<?> ctr = ARGUMENT_BLOCK_PREDICATE_CLASS.getDeclaredConstructors()[0];
-        final ArgumentType<Object> inst;
-        if (ctr.getParameterCount() == 0) {
-            inst = (ArgumentType<Object>) ctr.newInstance();
-        } else {
-            // 1.19+
-            inst = (ArgumentType<Object>) ctr.newInstance(CommandBuildContextSupplier.commandBuildContext());
-        }
+    private ArgumentParser<C, BlockPredicate> createParser() {
+        final Supplier<ArgumentType<Object>> inst = () -> {
+            final Constructor<?> ctr = ARGUMENT_BLOCK_PREDICATE_CLASS.get().getDeclaredConstructors()[0];
+            try {
+                if (ctr.getParameterCount() == 0) {
+                    return (ArgumentType<Object>) ctr.newInstance();
+                } else {
+                    // 1.19+
+                    return (ArgumentType<Object>) ctr.newInstance(CommandBuildContextSupplier.commandBuildContext());
+                }
+            } catch (final ReflectiveOperationException e) {
+                throw new RuntimeException("Failed to initialize BlockPredicate parser.", e);
+            }
+        };
         return new WrappedBrigadierParser<C, Object>(inst).flatMapSuccess((ctx, result) -> {
             if (result instanceof Predicate) {
                 // 1.19+
@@ -226,13 +230,13 @@ public final class BlockPredicateParser<C> implements ArgumentParser.FutureArgum
     }
 
     /**
-     * Called reflectively by {@link BukkitCommandManager}.
+     * Called reflectively by {@link org.incendo.cloud.bukkit.BukkitParsers}.
      *
      * @param commandManager command manager
      * @param <C>            sender type
      */
     @SuppressWarnings("unused")
-    private static <C> void registerParserSupplier(final @NonNull BukkitCommandManager<C> commandManager) {
+    private static <C> void registerParserSupplier(final @NonNull CommandManager<C> commandManager) {
         commandManager.parserRegistry().registerParser(BlockPredicateParser.blockPredicateParser());
     }
 
