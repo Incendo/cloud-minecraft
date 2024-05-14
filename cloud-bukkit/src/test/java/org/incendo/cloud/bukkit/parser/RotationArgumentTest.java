@@ -23,21 +23,32 @@
 //
 package org.incendo.cloud.bukkit.parser;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.bukkit.parser.rotation.Rotation;
 import org.incendo.cloud.bukkit.parser.rotation.RotationParser;
 import org.incendo.cloud.bukkit.util.ServerTest;
 import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.internal.CommandRegistrationHandler;
 import org.incendo.cloud.parser.ArgumentParseResult;
+import org.incendo.cloud.parser.flag.CommandFlag;
+import org.incendo.cloud.suggestion.Suggestion;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class RotationArgumentTest extends ServerTest {
@@ -93,6 +104,77 @@ public class RotationArgumentTest extends ServerTest {
         // Assert
         assertThat(result.failure()).isPresent();
         assertThat(result.parsedValue()).isEmpty();
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void suggestions(final String input, final List<String> expectedSuggestions) {
+        final CommandManager<CommandSender> manager = new CommandManager<CommandSender>(
+                ExecutionCoordinator.simpleCoordinator(), CommandRegistrationHandler.nullCommandRegistrationHandler()
+        ) {
+            @Override
+            public boolean hasPermission(@NonNull CommandSender sender, @NonNull String permission) {
+                return true;
+            }
+        };
+
+        manager.command(
+                manager.commandBuilder("rotation")
+                        .required("rotation", RotationParser.rotationParser())
+        );
+
+        final Function<String, String> suggestion = s -> "rotation " + s;
+        assertEquals(
+                expectedSuggestions,
+                manager.suggestionFactory().suggestImmediately(this.commandContext().sender(), suggestion.apply(input))
+                        .list().stream().map(Suggestion::suggestion).collect(Collectors.toList())
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("suggestions")
+    void suggestionsFlag(final String input, final List<String> expectedSuggestions) {
+        final CommandManager<CommandSender> manager = new CommandManager<CommandSender>(
+                ExecutionCoordinator.simpleCoordinator(), CommandRegistrationHandler.nullCommandRegistrationHandler()
+        ) {
+            @Override
+            public boolean hasPermission(@NonNull CommandSender sender, @NonNull String permission) {
+                return true;
+            }
+        };
+
+        manager.command(
+                manager.commandBuilder("flag")
+                        .flag(CommandFlag.builder("rot").withComponent(RotationParser.rotationParser()).build())
+        );
+
+        final Function<String, String> flagSuggestion = s -> "flag --rot " + s;
+        assertEquals(
+                expectedSuggestions,
+                manager.suggestionFactory().suggestImmediately(this.commandContext().sender(), flagSuggestion.apply(input))
+                        .list().stream().map(Suggestion::suggestion).collect(Collectors.toList())
+        );
+    }
+
+    static Stream<Arguments> suggestions() {
+        return Stream.of(
+                arguments("", Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")),
+                arguments("1", Arrays.asList("1", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19")),
+                arguments("1 ", Arrays.asList("1 0", "1 1", "1 2", "1 3", "1 4", "1 5", "1 6", "1 7", "1 8", "1 9")),
+                arguments("1 1", Arrays.asList("1 1", "1 10", "1 11", "1 12", "1 13", "1 14", "1 15", "1 16", "1 17", "1 18", "1 19")),
+                arguments("1 0", Collections.singletonList("1 0")),
+                arguments("1 1 ", Collections.emptyList()),
+                arguments("0", Collections.singletonList("0")),
+                arguments("0 ", Arrays.asList("0 0", "0 1", "0 2", "0 3", "0 4", "0 5", "0 6", "0 7", "0 8", "0 9")),
+                arguments("0 1", Arrays.asList("0 1", "0 10", "0 11", "0 12", "0 13", "0 14", "0 15", "0 16", "0 17", "0 18", "0 19")),
+                arguments("0 0", Collections.singletonList("0 0")),
+                arguments("0 0 ", Collections.emptyList()),
+                arguments("~", Arrays.asList("~0", "~1", "~2", "~3", "~4", "~5", "~6", "~7", "~8", "~9")),
+                arguments("~ ~", Arrays.asList("~ ~0", "~ ~1", "~ ~2", "~ ~3", "~ ~4", "~ ~5", "~ ~6", "~ ~7", "~ ~8", "~ ~9")),
+                arguments("~0", Collections.singletonList("~0")),
+                arguments("~1", Arrays.asList("~1", "~10", "~11", "~12", "~13", "~14", "~15", "~16", "~17", "~18", "~19")),
+                arguments("~1 ", Arrays.asList("~1 0", "~1 1", "~1 2", "~1 3", "~1 4", "~1 5", "~1 6", "~1 7", "~1 8", "~1 9"))
+        );
     }
 
 }

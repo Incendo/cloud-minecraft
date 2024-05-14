@@ -126,15 +126,33 @@ public final class RotationParser<C> implements ArgumentParser<C, Rotation>, Blo
             final @NonNull CommandContext<C> commandContext,
             final @NonNull CommandInput input
     ) {
-        final int toSkip = Math.min(2, input.remainingTokens()) - 1;
-        final StringBuilder prefix = new StringBuilder();
-        for (int i = 0; i < toSkip; i++) {
-            prefix.append(input.readStringSkipWhitespace()).append(" ");
+        final CommandInput inputCopy = input.copy();
+
+        int idx = input.cursor();
+        for (int i = 0; i < 2; i++) {
+            input.skipWhitespace();
+            idx = input.cursor();
+
+            if (!input.hasRemainingInput()) {
+                break;
+            }
+
+            final ArgumentParseResult<Angle> angle = this.angleParser.parse(
+                    commandContext,
+                    input
+            );
+
+            if (angle.failure().isPresent() || !input.hasRemainingInput()) {
+                break;
+            }
         }
+        input.cursor(idx);
 
         if (input.hasRemainingInput() && input.peek() == '~') {
-            prefix.append(input.read());
+            input.moveCursor(1);
         }
+
+        final String prefix = inputCopy.difference(input, true);
 
         return IntegerParser.getSuggestions(
                 SUGGESTION_RANGE,

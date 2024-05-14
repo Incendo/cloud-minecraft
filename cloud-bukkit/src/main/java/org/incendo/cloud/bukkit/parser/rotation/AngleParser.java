@@ -91,12 +91,6 @@ public final class AngleParser<C> implements ArgumentParser<C, Angle>, BlockingS
         try {
             final boolean empty = commandInput.peekString().isEmpty() || commandInput.peek() == ' ';
             angle = empty ? 0 : commandInput.readFloat();
-
-            // You can have a prefix without a number, in which case we wouldn't consume the
-            // subsequent whitespace. We do it manually.
-            if (commandInput.hasRemainingInput() && commandInput.peek() == ' ') {
-                commandInput.read();
-            }
         } catch (final Exception e) {
             return ArgumentParseResult.failure(new FloatParser.FloatParseException(
                     input,
