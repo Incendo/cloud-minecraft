@@ -75,13 +75,6 @@ public final class PluginBootstrap implements io.papermc.paper.plugin.bootstrap.
 
     @Override
     public JavaPlugin createPlugin(final PluginProviderContext context) {
-        try {
-            return Class.forName(context.getConfiguration().getMainClass())
-                .asSubclass(JavaPlugin.class)
-                .getDeclaredConstructor(PaperCommandManager.Bootstrapped.class)
-                .newInstance(this.commandManager);
-        } catch (final ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-        }
+        return new PaperPlugin(this.commandManager);
     }
 }
