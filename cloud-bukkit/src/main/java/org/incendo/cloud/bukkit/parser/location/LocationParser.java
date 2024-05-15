@@ -252,7 +252,7 @@ public final class LocationParser<C> implements ArgumentParser<C, Location>, Blo
     }
 
 
-    public static final class LocationParseExceptionLocationParseException extends ParserException {
+    public static final class LocationParseException extends ParserException {
 
 
         public LocationParseException(
