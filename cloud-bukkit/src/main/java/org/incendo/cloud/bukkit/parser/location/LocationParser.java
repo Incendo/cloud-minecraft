@@ -252,10 +252,10 @@ public final class LocationParser<C> implements ArgumentParser<C, Location>, Blo
     }
 
 
-    static class LocationParseException extends ParserException {
+    public static final class LocationParseExceptionLocationParseException extends ParserException {
 
 
-        protected LocationParseException(
+        public LocationParseException(
                 final @NonNull CommandContext<?> context,
                 final @NonNull FailureReason reason,
                 final @NonNull String input
