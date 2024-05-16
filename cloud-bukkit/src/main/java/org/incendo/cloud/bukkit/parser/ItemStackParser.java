@@ -251,7 +251,8 @@ public class ItemStackParser<C> implements ArgumentParser.FutureArgumentParser<C
                             .filter(it -> it.getParameterCount() == 0 && it.getReturnType().equals(boolean.class))
                             .collect(Collectors.toList());
                         if (isEmptyMethod.size() != 1) {
-                            throw new IllegalStateException("Failed to locate DataComponentMap/Patch#isEmpty; size=" + isEmptyMethod.size());
+                            throw new IllegalStateException(
+                                "Failed to locate DataComponentMap/Patch#isEmpty; size=" + isEmptyMethod.size());
                         }
                         this.hasExtraData = !(boolean) isEmptyMethod.get(0).invoke(extraData);
                     }
