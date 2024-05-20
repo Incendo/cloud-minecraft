@@ -31,6 +31,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -166,10 +167,11 @@ public class ItemStackParser<C> implements ArgumentParser.FutureArgumentParser<C
                 CraftBukkitReflection.findField(ITEM_INPUT_CLASS, "b"),
                 CraftBukkitReflection.findField(ITEM_INPUT_CLASS, "item")
         );
-        private static final Field COMPOUND_TAG_FIELD = CraftBukkitReflection.firstNonNullOrThrow(
+        private static final Field EXTRA_DATA_FIELD = CraftBukkitReflection.firstNonNullOrThrow(
                 () -> "Couldn't find tag field on ItemInput",
                 CraftBukkitReflection.findField(ITEM_INPUT_CLASS, "c"),
-                CraftBukkitReflection.findField(ITEM_INPUT_CLASS, "tag")
+                CraftBukkitReflection.findField(ITEM_INPUT_CLASS, "tag"),
+                CraftBukkitReflection.findField(ITEM_INPUT_CLASS, "components")
         );
         private static final Class<?> HOLDER_CLASS = CraftBukkitReflection.findMCClass("core.Holder");
         private static final @Nullable Method VALUE_METHOD = HOLDER_CLASS == null
@@ -179,6 +181,12 @@ public class ItemStackParser<C> implements ArgumentParser.FutureArgumentParser<C
                         CraftBukkitReflection.findMethod(HOLDER_CLASS, "value"),
                         CraftBukkitReflection.findMethod(HOLDER_CLASS, "a")
                 );
+        private static final Class<?> NBT_TAG_CLASS = CraftBukkitReflection.firstNonNullOrThrow(
+            () -> "Cloud not find net.minecraft.nbt.Tag",
+            CraftBukkitReflection.findClass("net.minecraft.nbt.Tag"),
+            CraftBukkitReflection.findClass("net.minecraft.nbt.NBTBase"),
+            CraftBukkitReflection.findNMSClass("NBTBase")
+        );
 
         private final ArgumentParser<C, ProtoItemStack> parser;
 
@@ -225,7 +233,7 @@ public class ItemStackParser<C> implements ArgumentParser.FutureArgumentParser<C
 
             private final Object itemInput;
             private final Material material;
-            private final @Nullable String snbt;
+            private final boolean hasExtraData;
 
             ModernProtoItemStack(final @NonNull Object itemInput) {
                 this.itemInput = itemInput;
@@ -235,11 +243,18 @@ public class ItemStackParser<C> implements ArgumentParser.FutureArgumentParser<C
                         item = VALUE_METHOD.invoke(item);
                     }
                     this.material = (Material) GET_MATERIAL_METHOD.get().invoke(null, item);
-                    final Object compoundTag = COMPOUND_TAG_FIELD.get(itemInput);
-                    if (compoundTag != null) {
-                        this.snbt = compoundTag.toString();
+                    final Object extraData = EXTRA_DATA_FIELD.get(itemInput);
+                    if (NBT_TAG_CLASS.isInstance(extraData) || extraData == null) {
+                        this.hasExtraData = extraData != null;
                     } else {
-                        this.snbt = null;
+                        final List<Method> isEmptyMethod = Arrays.stream(extraData.getClass().getMethods())
+                            .filter(it -> it.getParameterCount() == 0 && it.getReturnType().equals(boolean.class))
+                            .collect(Collectors.toList());
+                        if (isEmptyMethod.size() != 1) {
+                            throw new IllegalStateException(
+                                "Failed to locate DataComponentMap/Patch#isEmpty; size=" + isEmptyMethod.size());
+                        }
+                        this.hasExtraData = !(boolean) isEmptyMethod.get(0).invoke(extraData);
                     }
                 } catch (final ReflectiveOperationException ex) {
                     throw new RuntimeException(ex);
@@ -253,7 +268,7 @@ public class ItemStackParser<C> implements ArgumentParser.FutureArgumentParser<C
 
             @Override
             public boolean hasExtraData() {
-                return this.snbt != null;
+                return this.hasExtraData;
             }
 
             @Override
