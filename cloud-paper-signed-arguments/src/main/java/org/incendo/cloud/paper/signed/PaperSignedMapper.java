@@ -87,10 +87,10 @@ public final class PaperSignedMapper implements SignedStringMapper {
         final CommandContext<?> ctx,
         final String str
     ) {
-        final Object stack = ctx.get(WrappedBrigadierParser.COMMAND_CONTEXT_BRIGADIER_NATIVE_SENDER);
-        final Object signingContext = this.proxies().commandSourceStackProxy.getSigningContext(stack);
         final Map<String, ?> signedArgs;
         try {
+            final Object stack = ctx.get(WrappedBrigadierParser.COMMAND_CONTEXT_BRIGADIER_NATIVE_SENDER);
+            final Object signingContext = this.proxies().commandSourceStackProxy.getSigningContext(stack);
             signedArgs = this.proxies().signedArgumentsProxy.arguments(signingContext);
         } catch (final Throwable thr) {
             return ArgumentParseResult.successFuture(SignedString.unsigned(str));
