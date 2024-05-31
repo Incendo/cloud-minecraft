@@ -45,6 +45,7 @@ import org.incendo.cloud.bukkit.BukkitDefaultCaptionsProvider;
 import org.incendo.cloud.bukkit.BukkitParsers;
 import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
 import org.incendo.cloud.bukkit.PluginHolder;
+import org.incendo.cloud.bukkit.internal.BukkitHelper;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.internal.CommandRegistrationHandler;
 
@@ -186,6 +187,7 @@ public class PaperCommandManager<C> extends CommandManager<C> implements SenderM
          * <p>This method must be called in {@link Plugin#onEnable()} for some features to work.</p>
          */
         public void onEnable() {
+            BukkitHelper.ensurePluginEnabledOrEnabling(this.owningPlugin());
             /*
             ((ModernPaperBrigadier<CommandSourceStack, C>) this.commandRegistrationHandler())
                 .registerPlugin(this.owningPlugin());
@@ -246,6 +248,7 @@ public class PaperCommandManager<C> extends CommandManager<C> implements SenderM
             final PaperCommandManager<C> mgr =
                 new PaperCommandManager<>(plugin.getPluginMeta(), this.executionCoordinator, this.senderMapper);
             ((ModernPaperBrigadier<CommandSourceStack, C>) mgr.commandRegistrationHandler()).registerPlugin(plugin);
+            BukkitHelper.ensurePluginEnabledOrEnabling(plugin);
             return mgr;
         }
 

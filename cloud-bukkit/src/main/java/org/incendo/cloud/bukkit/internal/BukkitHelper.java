@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import org.apiguardian.api.API;
+import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -130,5 +131,13 @@ public final class BukkitHelper {
             }
             server.getScheduler().runTask(plugin, task);
         };
+    }
+
+    public static void ensurePluginEnabledOrEnabling(final @NonNull Plugin plugin) {
+        final Plugin fromManager = Bukkit.getServer().getPluginManager().getPlugin(plugin.getName());
+        if (!plugin.equals(fromManager) || !plugin.isEnabled()) {
+            throw new IllegalStateException("The plugin '" + plugin + "' is not (yet?) valid per the PluginManager."
+                + " Try calling this method from onEnable rather than in the plugin constructor or onLoad.");
+        }
     }
 }
