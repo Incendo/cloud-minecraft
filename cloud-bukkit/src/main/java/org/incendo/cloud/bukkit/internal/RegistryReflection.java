@@ -51,10 +51,8 @@ public final class RegistryReflection {
             "net.minecraft.resources.MinecraftKey",
             "net.minecraft.resources.ResourceLocation"
     );
-    private static final Constructor<?> RESOURCE_LOCATION_CTR = CraftBukkitReflection.needConstructor(
-            RESOURCE_LOCATION_CLASS,
-            String.class
-    );
+    private static final @Nullable Constructor<?> RESOURCE_LOCATION_CTR;
+    private static final @Nullable Method RESOURCE_LOCATION_GET;
 
     private RegistryReflection() {
     }
@@ -65,7 +63,23 @@ public final class RegistryReflection {
             REGISTRY_REGISTRY = null;
             REGISTRY_GET = null;
             REGISTRY_KEY = null;
+            RESOURCE_LOCATION_CTR = null;
+            RESOURCE_LOCATION_GET = null;
         } else {
+            if (RESOURCE_LOCATION_CLASS.getDeclaredConstructors().length > 1) {
+                RESOURCE_LOCATION_CTR = CraftBukkitReflection.needConstructor(
+                    RESOURCE_LOCATION_CLASS,
+                    String.class
+                );
+                RESOURCE_LOCATION_GET = null;
+            } else {
+                RESOURCE_LOCATION_CTR = null;
+                RESOURCE_LOCATION_GET = CraftBukkitReflection.needMethod(
+                    RESOURCE_LOCATION_CLASS,
+                    "parse",
+                    String.class
+                );
+            }
             registryClass = CraftBukkitReflection.firstNonNullOrThrow(
                     () -> "Registry",
                     CraftBukkitReflection.findMCClass("core.IRegistry"),
@@ -122,7 +136,12 @@ public final class RegistryReflection {
 
     public static Object createResourceLocation(final String str) {
         try {
-            return RESOURCE_LOCATION_CTR.newInstance(str);
+            if (RESOURCE_LOCATION_GET == null) {
+                Objects.requireNonNull(RESOURCE_LOCATION_CTR);
+                return RESOURCE_LOCATION_CTR.newInstance(str);
+            } else {
+                return RESOURCE_LOCATION_GET.invoke(str);
+            }
         } catch (final ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
