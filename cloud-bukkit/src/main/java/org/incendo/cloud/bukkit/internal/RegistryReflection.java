@@ -24,7 +24,7 @@
 package org.incendo.cloud.bukkit.internal;
 
 import io.leangen.geantyref.GenericTypeReflector;
-import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -51,10 +51,7 @@ public final class RegistryReflection {
             "net.minecraft.resources.MinecraftKey",
             "net.minecraft.resources.ResourceLocation"
     );
-    private static final Constructor<?> RESOURCE_LOCATION_CTR = CraftBukkitReflection.needConstructor(
-            RESOURCE_LOCATION_CLASS,
-            String.class
-    );
+    private static final Executable NEW_RESOURCE_LOCATION;
 
     private RegistryReflection() {
     }
@@ -65,6 +62,7 @@ public final class RegistryReflection {
             REGISTRY_REGISTRY = null;
             REGISTRY_GET = null;
             REGISTRY_KEY = null;
+            NEW_RESOURCE_LOCATION = null;
         } else {
             registryClass = CraftBukkitReflection.firstNonNullOrThrow(
                     () -> "Registry",
@@ -90,6 +88,13 @@ public final class RegistryReflection {
                     .filter(m -> m.getParameterCount() == 0 && m.getReturnType().equals(resourceKeyClass))
                     .findFirst()
                     .orElse(null);
+
+            NEW_RESOURCE_LOCATION = CraftBukkitReflection.firstNonNullOrThrow(
+                () -> "Could not find ResourceLocation#parse(String) or ResourceLocation#<init>(String)",
+                CraftBukkitReflection.findConstructor(RESOURCE_LOCATION_CLASS, String.class), // <= 1.20.6
+                CraftBukkitReflection.findMethod(RESOURCE_LOCATION_CLASS, "parse", String.class), // 1.21+
+                CraftBukkitReflection.findMethod(RESOURCE_LOCATION_CLASS, "a", String.class)
+            );
         }
     }
 
@@ -122,7 +127,7 @@ public final class RegistryReflection {
 
     public static Object createResourceLocation(final String str) {
         try {
-            return RESOURCE_LOCATION_CTR.newInstance(str);
+            return CraftBukkitReflection.invokeConstructorOrStaticMethod(NEW_RESOURCE_LOCATION, str);
         } catch (final ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }

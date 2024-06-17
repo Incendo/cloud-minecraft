@@ -24,8 +24,10 @@
 package org.incendo.cloud.bukkit.internal;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -203,6 +205,14 @@ public final class CraftBukkitReflection {
         }
     }
 
+    public static @Nullable Constructor<?> findConstructor(final @NonNull Class<?> holder, final @NonNull Class<?>... parameters) {
+        try {
+            return holder.getDeclaredConstructor(parameters);
+        } catch (final NoSuchMethodException ex) {
+            return null;
+        }
+    }
+
     public static boolean classExists(final @NonNull String className) {
         return findClass(className) != null;
     }
@@ -233,6 +243,20 @@ public final class CraftBukkitReflection {
 
     public static Stream<Method> streamMethods(final @NonNull Class<?> clazz) {
         return Arrays.stream(clazz.getDeclaredMethods());
+    }
+
+    public static Object invokeConstructorOrStaticMethod(
+        final Executable executable,
+        final Object... args
+    ) throws ReflectiveOperationException {
+        if (executable instanceof Constructor<?>) {
+            return ((Constructor<?>) executable).newInstance(args);
+        } else {
+            if (!Modifier.isStatic(executable.getModifiers())) {
+                throw new IllegalArgumentException("Method " + executable + " is not static.");
+            }
+            return ((Method) executable).invoke(null, args);
+        }
     }
 
     private CraftBukkitReflection() {
