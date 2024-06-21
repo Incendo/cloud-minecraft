@@ -49,6 +49,8 @@ import org.incendo.cloud.bukkit.internal.BukkitHelper;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.internal.CommandRegistrationHandler;
 
+import static org.incendo.cloud.paper.parser.KeyedWorldParser.keyedWorldParser;
+
 /**
  * A {@link CommandManager} implementation for modern Paper API, using {@link CommandSourceStack} as the base sender type.
  *
@@ -124,6 +126,10 @@ public class PaperCommandManager<C> extends CommandManager<C> implements SenderM
                 return commandSourceStack.getSender();
             }
         ));
+
+        // Use KeyedWorldParser instead of WorldParser by default
+        this.parserRegistry()
+            .registerParser(keyedWorldParser());
     }
 
     @Override
