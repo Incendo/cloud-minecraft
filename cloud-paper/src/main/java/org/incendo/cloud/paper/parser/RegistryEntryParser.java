@@ -60,8 +60,8 @@ public final class RegistryEntryParser<C, E extends Keyed>
      *
      * @param registryKey registry key
      * @param elementType registry element type
-     * @param <C> command sender type
-     * @param <E> registry element type
+     * @param <C>         command sender type
+     * @param <E>         registry element type
      * @return the created parser
      * @since 2.0.0
      */
@@ -90,6 +90,7 @@ public final class RegistryEntryParser<C, E extends Keyed>
         this.registryKey = registryKey;
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public @NonNull ArgumentParseResult<RegistryEntry<@NonNull E>> parse(
         final @NonNull CommandContext<@NonNull C> commandContext,
@@ -100,7 +101,7 @@ public final class RegistryEntryParser<C, E extends Keyed>
 
             final E value = registry.get(key);
             if (value == null) {
-                return ArgumentParseResult.failure(new ParseException(key.asString(), commandContext));
+                return ArgumentParseResult.failure(new ParseException(key.asString(), (RegistryKey) this.registryKey, commandContext));
             }
 
             return ArgumentParseResult.success(RegistryEntryImpl.of(value, key));
@@ -117,24 +118,29 @@ public final class RegistryEntryParser<C, E extends Keyed>
      */
     public static final class ParseException extends ParserException {
         private final String input;
+        private final RegistryKey<Object> registryKey;
 
         /**
          * Creates a new {@link ParseException}.
          *
          * @param input   input string
+         * @param registryKey registry key
          * @param context command context
          */
         public ParseException(
             final @NonNull String input,
+            final @NonNull RegistryKey<Object> registryKey,
             final @NonNull CommandContext<?> context
         ) {
             super(
                 RegistryEntryParser.class,
                 context,
-                BukkitCaptionKeys.ARGUMENT_PARSE_FAILURE_WORLD,
-                CaptionVariable.of("input", input)
+                BukkitCaptionKeys.ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_MISSING,
+                CaptionVariable.of("input", input),
+                CaptionVariable.of("registry", registryKey.key().asString())
             );
             this.input = input;
+            this.registryKey = registryKey;
         }
 
         /**
@@ -144,6 +150,15 @@ public final class RegistryEntryParser<C, E extends Keyed>
          */
         public @NonNull String input() {
             return this.input;
+        }
+
+        /**
+         * Returns the registry key.
+         *
+         * @return registry key
+         */
+        public @NonNull RegistryKey<Object> registryKey() {
+            return this.registryKey;
         }
     }
 
