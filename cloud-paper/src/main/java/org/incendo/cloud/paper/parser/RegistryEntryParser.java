@@ -50,6 +50,12 @@ import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.suggestion.Suggestion;
 import org.incendo.cloud.suggestion.SuggestionProvider;
 
+/**
+ * Parser for {@link Registry} {@link RegistryEntry entries}.
+ *
+ * @param <C> command sender type
+ * @param <E> registry element type
+ */
 @API(status = API.Status.EXPERIMENTAL)
 public final class RegistryEntryParser<C, E extends Keyed>
     implements ArgumentParser<C, RegistryEntryParser.RegistryEntry<E>>, SuggestionProvider<C>,
@@ -113,55 +119,6 @@ public final class RegistryEntryParser<C, E extends Keyed>
         return this.keyParser.parser();
     }
 
-    /**
-     * Exception when there is no registry entry for the provided key.
-     */
-    public static final class ParseException extends ParserException {
-        private final String input;
-        private final RegistryKey<Object> registryKey;
-
-        /**
-         * Creates a new {@link ParseException}.
-         *
-         * @param input   input string
-         * @param registryKey registry key
-         * @param context command context
-         */
-        public ParseException(
-            final @NonNull String input,
-            final @NonNull RegistryKey<Object> registryKey,
-            final @NonNull CommandContext<?> context
-        ) {
-            super(
-                RegistryEntryParser.class,
-                context,
-                BukkitCaptionKeys.ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_MISSING,
-                CaptionVariable.of("input", input),
-                CaptionVariable.of("registry", registryKey.key().asString())
-            );
-            this.input = input;
-            this.registryKey = registryKey;
-        }
-
-        /**
-         * Get the input provided by the sender
-         *
-         * @return Input
-         */
-        public @NonNull String input() {
-            return this.input;
-        }
-
-        /**
-         * Returns the registry key.
-         *
-         * @return registry key
-         */
-        public @NonNull RegistryKey<Object> registryKey() {
-            return this.registryKey;
-        }
-    }
-
     @Override
     public @NonNull CompletableFuture<? extends @NonNull Iterable<? extends @NonNull Suggestion>> suggestionsFuture(
         final @NonNull CommandContext<C> commandContext,
@@ -201,5 +158,54 @@ public final class RegistryEntryParser<C, E extends Keyed>
          * @return the key
          */
         NamespacedKey key();
+    }
+
+    /**
+     * Exception when there is no registry entry for the provided key.
+     */
+    public static final class ParseException extends ParserException {
+        private final String input;
+        private final RegistryKey<Object> registryKey;
+
+        /**
+         * Creates a new {@link ParseException}.
+         *
+         * @param input       input string
+         * @param registryKey registry key
+         * @param context     command context
+         */
+        public ParseException(
+            final @NonNull String input,
+            final @NonNull RegistryKey<Object> registryKey,
+            final @NonNull CommandContext<?> context
+        ) {
+            super(
+                RegistryEntryParser.class,
+                context,
+                BukkitCaptionKeys.ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_MISSING,
+                CaptionVariable.of("input", input),
+                CaptionVariable.of("registry", registryKey.key().asString())
+            );
+            this.input = input;
+            this.registryKey = registryKey;
+        }
+
+        /**
+         * Get the input provided by the sender
+         *
+         * @return Input
+         */
+        public @NonNull String input() {
+            return this.input;
+        }
+
+        /**
+         * Returns the registry key.
+         *
+         * @return registry key
+         */
+        public @NonNull RegistryKey<Object> registryKey() {
+            return this.registryKey;
+        }
     }
 }
