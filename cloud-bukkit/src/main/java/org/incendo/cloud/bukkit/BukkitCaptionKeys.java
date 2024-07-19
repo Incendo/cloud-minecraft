@@ -92,6 +92,13 @@ public final class BukkitCaptionKeys {
      */
     public static final Caption ARGUMENT_PARSE_FAILURE_NAMESPACED_KEY_NEED_NAMESPACE =
             of("argument.parse.failure.namespacedkey.need_namespace");
+    /**
+     * Variables: {@code <input>}, {@code <registry>}
+     *
+     * @since 2.0.0
+     */
+    public static final Caption ARGUMENT_PARSE_FAILURE_REGISTRY_ENTRY_MISSING =
+        of("argument.parse.failure.registry_entry.missing");
 
     private BukkitCaptionKeys() {
     }
