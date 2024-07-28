@@ -95,8 +95,11 @@ public final class PaperSignedMapper implements SignedStringMapper {
         } catch (final Throwable thr) {
             return ArgumentParseResult.successFuture(SignedString.unsigned(str));
         }
+        if (signedArgs.isEmpty()) {
+            return ArgumentParseResult.successFuture(SignedString.unsigned(str));
+        }
         if (signedArgs.size() != 1) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("Found more signed arguments than expected (" + signedArgs.size() + ")");
         }
         return ArgumentParseResult.successFuture(
             new SignedStringImpl(

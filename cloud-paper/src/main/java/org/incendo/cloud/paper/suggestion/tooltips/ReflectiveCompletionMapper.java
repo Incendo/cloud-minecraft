@@ -66,7 +66,7 @@ final class ReflectiveCompletionMapper implements CompletionMapper {
                 this.deserializeOrNull = CraftBukkitReflection.needMethod(
                     MessageComponentSerializer.class,
                     "deserializeOrNull",
-                    Message.class
+                    Object.class
                 );
                 this.completionWithTooltipMethod = CraftBukkitReflection.needMethod(
                     AsyncTabCompleteEvent.Completion.class,
@@ -83,6 +83,7 @@ final class ReflectiveCompletionMapper implements CompletionMapper {
         public AsyncTabCompleteEvent.@NonNull Completion map(final @NonNull TooltipSuggestion suggestion) {
             try {
                 return (AsyncTabCompleteEvent.Completion) this.completionWithTooltipMethod.invoke(
+                    null,
                     suggestion.suggestion(),
                     this.deserializeOrNull.invoke(this.serializer, suggestion.tooltip())
                 );
