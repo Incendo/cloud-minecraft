@@ -26,7 +26,7 @@ spongeApi7 = "7.3.0"
 jupiterEngine = "5.10.2"
 mockitoCore = "4.11.0"
 mockitoJupiter = "4.11.0"
-truth = "1.4.2"
+truth = "1.4.4"
 
 [libraries]
 # build logic
