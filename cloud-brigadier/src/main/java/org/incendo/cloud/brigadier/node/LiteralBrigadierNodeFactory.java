@@ -34,6 +34,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.leangen.geantyref.GenericTypeReflector;
 import io.leangen.geantyref.TypeToken;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -102,7 +103,9 @@ public final class LiteralBrigadierNodeFactory<C, S> implements BrigadierNodeFac
 
         final LiteralCommandNode<S> constructedRoot = literalArgumentBuilder.build();
         for (final CommandNode<C> child : cloudCommand.children()) {
-            constructedRoot.addChild(this.constructCommandNode(child, permissionChecker, executor).build());
+            this.constructCommandNode(child, permissionChecker, executor).stream()
+                    .map(ArgumentBuilder::build)
+                    .forEach(constructedRoot::addChild);
         }
         return constructedRoot;
     }
@@ -138,40 +141,46 @@ public final class LiteralBrigadierNodeFactory<C, S> implements BrigadierNodeFac
                 (sender, permission) -> this.commandManager.testPermission(sender, permission).allowed());
     }
 
-    private @NonNull ArgumentBuilder<S, ?> constructCommandNode(
+    private @NonNull List<@NonNull ArgumentBuilder<S, ?>> constructCommandNode(
             final @NonNull CommandNode<C> root,
             final @NonNull BrigadierPermissionChecker<C> permissionChecker,
             final com.mojang.brigadier.@NonNull Command<S> executor
     ) {
         if (root.component().parser() instanceof AggregateParser) {
             final AggregateParser<C, ?> aggregateParser = (AggregateParser<C, ?>) root.component().parser();
-            return this.constructAggregateNode(
+            return Arrays.asList(this.constructAggregateNode(
                     aggregateParser,
                     root,
                     permissionChecker,
                     executor
-            );
+            ));
         }
 
-        final ArgumentBuilder<S, ?> argumentBuilder;
+        final List<ArgumentBuilder<S, ?>> argumentBuilders;
         if (root.component().type() == CommandComponent.ComponentType.LITERAL) {
-            argumentBuilder = this.createLiteralArgumentBuilder(root.component(), root, permissionChecker);
+            argumentBuilders = new ArrayList<>();
+            argumentBuilders.add(this.createLiteralArgumentBuilder(root.component().name(), root, permissionChecker));
+            for (final String alias : root.component().alternativeAliases()) {
+                argumentBuilders.add(this.createLiteralArgumentBuilder(alias, root, permissionChecker));
+            }
         } else {
-            argumentBuilder = this.createVariableArgumentBuilder(root.component(), root, permissionChecker);
+            argumentBuilders = Arrays.asList(this.createVariableArgumentBuilder(root.component(), root, permissionChecker));
         }
-        this.updateExecutes(argumentBuilder, root, executor);
+        argumentBuilders.forEach(argumentBuilder -> this.updateExecutes(argumentBuilder, root, executor));
         for (final CommandNode<C> node : root.children()) {
-            argumentBuilder.then(this.constructCommandNode(node, permissionChecker, executor));
+            for (final ArgumentBuilder<S, ?> argumentBuilder : argumentBuilders) {
+                this.constructCommandNode(node, permissionChecker, executor).forEach(argumentBuilder::then);
+            }
         }
-        return argumentBuilder;
+        return argumentBuilders;
     }
 
     private @NonNull ArgumentBuilder<S, ?> createLiteralArgumentBuilder(
-            final @NonNull CommandComponent<C> component,
+            final @NonNull String name,
             final @NonNull CommandNode<C> root,
             final @NonNull BrigadierPermissionChecker<C> permissionChecker
     ) {
-        return LiteralArgumentBuilder.<S>literal(component.name())
+        return LiteralArgumentBuilder.<S>literal(name)
                 .requires(this.requirement(root, permissionChecker));
     }
 
@@ -221,7 +230,7 @@ public final class LiteralBrigadierNodeFactory<C, S> implements BrigadierNodeFac
         // We now want to link up all subsequent components to the tail.
         final ArgumentBuilder<S, ?> tail = argumentBuilders.get(argumentBuilders.size() - 1);
         for (final CommandNode<C> node : root.children()) {
-            tail.then(this.constructCommandNode(node, permissionChecker, executor));
+            this.constructCommandNode(node, permissionChecker, executor).forEach(tail::then);
         }
 
         this.updateExecutes(tail, root, executor);
