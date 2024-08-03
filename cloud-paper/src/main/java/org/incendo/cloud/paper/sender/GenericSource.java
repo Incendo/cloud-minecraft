@@ -24,23 +24,36 @@
 package org.incendo.cloud.paper.sender;
 
 import io.papermc.paper.command.brigadier.CommandSourceStack;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 @SuppressWarnings("UnstableApiUsage")
-public interface Sender {
+public class GenericSource implements Source {
+
+    private final CommandSourceStack commandSourceStack;
+
+    GenericSource(final @NonNull CommandSourceStack commandSourceStack) {
+        this.commandSourceStack = commandSourceStack;
+    }
+
+    @Override
+    public final @NonNull CommandSourceStack stack() {
+        return this.commandSourceStack;
+    }
 
     /**
-     * Gets the command source stack.
-     *
-     * @return the command source stack
+     * @see Source#source()
      */
-    @NonNull CommandSourceStack commandSourceStack();
+    @Override
+    public @NonNull CommandSender source() {
+        return this.commandSourceStack.getSender();
+    }
 
-    /**
-     * Gets the underlying command sender from the command source stack.
-     *
-     * @return the sender.
-     */
-    @NonNull CommandSender sender();
+    @Override
+    public final @NonNull Audience audience() {
+        Entity executor = this.commandSourceStack.getExecutor();
+        return executor == null ? this.commandSourceStack.getSender() : executor;
+    }
 }

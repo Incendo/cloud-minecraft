@@ -33,10 +33,10 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.framework.qual.DefaultQualifier;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.paper.PaperCommandManager;
-import org.incendo.cloud.paper.sender.ConsoleSender;
-import org.incendo.cloud.paper.sender.ModernProvidedSenderMapper;
-import org.incendo.cloud.paper.sender.PlayerSender;
-import org.incendo.cloud.paper.sender.Sender;
+import org.incendo.cloud.paper.sender.ConsoleSource;
+import org.incendo.cloud.paper.sender.PaperSimpleSenderMapper;
+import org.incendo.cloud.paper.sender.PlayerSource;
+import org.incendo.cloud.paper.sender.Source;
 import org.incendo.cloud.setting.ManagerSetting;
 
 import static org.incendo.cloud.parser.standard.StringParser.stringParser;
@@ -44,12 +44,12 @@ import static org.incendo.cloud.parser.standard.StringParser.stringParser;
 @SuppressWarnings("UnstableApiUsage")
 @DefaultQualifier(NonNull.class)
 public final class PluginBootstrap implements io.papermc.paper.plugin.bootstrap.PluginBootstrap {
-    private PaperCommandManager.@MonotonicNonNull Bootstrapped<Sender> commandManager;
+    private PaperCommandManager.@MonotonicNonNull Bootstrapped<Source> commandManager;
 
     @Override
     public void bootstrap(final BootstrapContext context) {
-        final PaperCommandManager.Bootstrapped<Sender> mgr =
-            PaperCommandManager.builder(ModernProvidedSenderMapper.providedSenderMapper())
+        final PaperCommandManager.Bootstrapped<Source> mgr =
+            PaperCommandManager.builder(PaperSimpleSenderMapper.simpleSenderMapper())
                 .executionCoordinator(ExecutionCoordinator.simpleCoordinator())
                 .buildBootstrapped(context);
 
@@ -63,7 +63,7 @@ public final class PluginBootstrap implements io.papermc.paper.plugin.bootstrap.
                     final String name = ctx.get("name");
                     mgr.command(
                         mgr.commandBuilder(name).handler(ctx1 -> {
-                            ctx1.sender().sender().sendMessage("HI");
+                            ctx1.sender().source().sendMessage("HI");
                         })
                     );
                 })
@@ -78,17 +78,17 @@ public final class PluginBootstrap implements io.papermc.paper.plugin.bootstrap.
         );
         mgr.command(
             mgr.commandBuilder("player_command")
-                .senderType(PlayerSender.class)
+                .senderType(PlayerSource.class)
                 .handler(ctx -> {
-                    final Player player = ctx.sender().sender();
+                    final Player player = ctx.sender().source();
                     player.sendMessage("hello player!");
                 })
         );
         mgr.command(
             mgr.commandBuilder("console_command")
-                .senderType(ConsoleSender.class)
+                .senderType(ConsoleSource.class)
                 .handler(ctx -> {
-                    final ConsoleCommandSender console = ctx.sender().sender();
+                    final ConsoleCommandSender console = ctx.sender().source();
                     console.sendMessage("hello console!");
                 })
         );

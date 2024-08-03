@@ -24,19 +24,31 @@
 package org.incendo.cloud.paper.sender;
 
 import io.papermc.paper.command.brigadier.CommandSourceStack;
-import org.bukkit.command.ConsoleCommandSender;
+import net.kyori.adventure.audience.Audience;
+import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 @SuppressWarnings("UnstableApiUsage")
-public final class ConsoleSender extends GenericSender {
+public interface Source {
 
-    ConsoleSender(final CommandSourceStack commandSourceStack) {
-        super(commandSourceStack);
-    }
+    /**
+     * Gets the command source stack.
+     *
+     * @return the command source stack
+     */
+    @NonNull CommandSourceStack stack();
 
-    @Override
-    public @NonNull ConsoleCommandSender sender() {
-        return (ConsoleCommandSender) super.sender();
-    }
+    /**
+     * Gets the underlying command sender from the command source stack.
+     *
+     * @return the sender.
+     */
+    @NonNull CommandSender source();
 
+    /**
+     * Gets the audience of the source.
+     *
+     * @return the audience
+     */
+    @NonNull Audience audience();
 }

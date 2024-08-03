@@ -28,14 +28,14 @@ import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 @SuppressWarnings("UnstableApiUsage")
-public final class PlayerSender extends GenericSender {
+public final class PlayerSource extends GenericSource {
 
-    PlayerSender(final CommandSourceStack commandSourceStack) {
+    PlayerSource(final CommandSourceStack commandSourceStack) {
         super(commandSourceStack);
     }
 
     @Override
-    public @NonNull Player sender() {
-        return (Player) super.sender();
+    public @NonNull Player source() {
+        return (Player) super.source();
     }
 }

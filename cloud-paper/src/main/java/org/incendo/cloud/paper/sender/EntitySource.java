@@ -24,44 +24,18 @@
 package org.incendo.cloud.paper.sender;
 
 import io.papermc.paper.command.brigadier.CommandSourceStack;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.cloud.SenderMapper;
 
 @SuppressWarnings("UnstableApiUsage")
-public final class ModernProvidedSenderMapper implements SenderMapper<CommandSourceStack, Sender> {
+public final class EntitySource extends GenericSource {
 
-    /**
-     * Create a new instance of {@link ModernProvidedSenderMapper}.
-     *
-     * @return a new instance of {@link ModernProvidedSenderMapper}
-     */
-    public static @NonNull ModernProvidedSenderMapper providedSenderMapper() {
-        return new ModernProvidedSenderMapper();
-    }
-
-    ModernProvidedSenderMapper() {
+    EntitySource(final CommandSourceStack commandSourceStack) {
+        super(commandSourceStack);
     }
 
     @Override
-    public @NonNull Sender map(final @NonNull CommandSourceStack base) {
-        CommandSender commandSender = base.getSender();
-
-        if (commandSender instanceof ConsoleCommandSender) {
-            return new ConsoleSender(base);
-        }
-
-        if (commandSender instanceof Player) {
-            return new PlayerSender(base);
-        }
-
-        return new GenericSender(base);
-    }
-
-    @Override
-    public @NonNull CommandSourceStack reverse(final @NonNull Sender mapped) {
-        return mapped.commandSourceStack();
+    public @NonNull Entity source() {
+        return (Entity) super.source();
     }
 }
