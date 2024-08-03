@@ -21,21 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package org.incendo.cloud.paper.sender;
+package org.incendo.cloud.paper.util.sender;
 
 import io.papermc.paper.command.brigadier.CommandSourceStack;
-import org.bukkit.entity.Entity;
+import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 @SuppressWarnings("UnstableApiUsage")
-public final class EntitySource extends GenericSource {
+class GenericSource implements Source {
 
-    EntitySource(final CommandSourceStack commandSourceStack) {
-        super(commandSourceStack);
+    private final CommandSourceStack commandSourceStack;
+
+    GenericSource(final @NonNull CommandSourceStack commandSourceStack) {
+        this.commandSourceStack = commandSourceStack;
     }
 
     @Override
-    public @NonNull Entity source() {
-        return (Entity) super.source();
+    public final @NonNull CommandSourceStack stack() {
+        return this.commandSourceStack;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return the source
+     */
+    @Override
+    public @NonNull CommandSender source() {
+        return this.commandSourceStack.getSender();
     }
 }

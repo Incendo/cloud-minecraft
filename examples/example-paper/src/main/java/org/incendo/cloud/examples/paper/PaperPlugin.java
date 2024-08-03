@@ -27,7 +27,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.framework.qual.DefaultQualifier;
 import org.incendo.cloud.paper.PaperCommandManager;
-import org.incendo.cloud.paper.sender.Source;
+import org.incendo.cloud.paper.util.sender.Source;
 
 @DefaultQualifier(NonNull.class)
 public final class PaperPlugin extends JavaPlugin {

@@ -21,21 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package org.incendo.cloud.paper.sender;
+package org.incendo.cloud.paper.util.sender;
 
 import io.papermc.paper.command.brigadier.CommandSourceStack;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+/**
+ * A simple wrapper around {@link CommandSourceStack}.
+ *
+ * @see PaperSimpleSenderMapper
+ */
 @SuppressWarnings("UnstableApiUsage")
-public final class PlayerSource extends GenericSource {
+public interface Source {
 
-    PlayerSource(final CommandSourceStack commandSourceStack) {
-        super(commandSourceStack);
-    }
+    /**
+     * Gets the {@link CommandSourceStack}.
+     *
+     * @return the command source stack
+     */
+    @NonNull CommandSourceStack stack();
 
-    @Override
-    public @NonNull Player source() {
-        return (Player) super.source();
-    }
+    /**
+     * Gets the underlying {@link CommandSourceStack#getSender() sender} from the {@link #stack() source stack}.
+     *
+     * <p>Specific implementations may override this method with a more specific return type.</p>
+     *
+     * @return the source
+     */
+    @NonNull CommandSender source();
 }

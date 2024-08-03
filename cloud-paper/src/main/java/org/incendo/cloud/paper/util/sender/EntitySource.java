@@ -21,34 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package org.incendo.cloud.paper.sender;
+package org.incendo.cloud.paper.util.sender;
 
 import io.papermc.paper.command.brigadier.CommandSourceStack;
-import net.kyori.adventure.audience.Audience;
-import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+/**
+ * Specialized variant of {@link Source}, for when the {@link CommandSourceStack#getSender() sender} is
+ * an {@link Entity}.
+ */
 @SuppressWarnings("UnstableApiUsage")
-public interface Source {
+public class EntitySource extends GenericSource {
+
+    EntitySource(final CommandSourceStack commandSourceStack) {
+        super(commandSourceStack);
+    }
 
     /**
-     * Gets the command source stack.
+     * {@inheritDoc}
      *
-     * @return the command source stack
+     * @return the source
      */
-    @NonNull CommandSourceStack stack();
-
-    /**
-     * Gets the underlying command sender from the command source stack.
-     *
-     * @return the sender.
-     */
-    @NonNull CommandSender source();
-
-    /**
-     * Gets the audience of the source.
-     *
-     * @return the audience
-     */
-    @NonNull Audience audience();
+    @Override
+    public @NonNull Entity source() {
+        return (Entity) super.source();
+    }
 }

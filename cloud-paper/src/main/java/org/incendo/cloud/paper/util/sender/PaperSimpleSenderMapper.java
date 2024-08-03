@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package org.incendo.cloud.paper.sender;
+package org.incendo.cloud.paper.util.sender;
 
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.command.CommandSender;
@@ -29,8 +29,20 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.Command;
 import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.paper.PaperCommandManager;
 
+/**
+ * A simple {@link SenderMapper} implementation designed for use with {@link PaperCommandManager}.
+ * Allows for easily utilizing cloud's {@link Command.Builder#senderType(Class)} utilities despite the
+ * single {@link CommandSourceStack} implementation provided by Paper/Minecraft.
+ *
+ * <p>The {@link #map(CommandSourceStack)} implementation performs type dispatch based on the {@link CommandSourceStack#getSender() sender},
+ * for example it will create a {@link PlayerSource} when {@link CommandSourceStack#getSender()} is a {@link Player}, and similar for
+ * {@link ConsoleSource} and {@link EntitySource}. Any other specific sender types do not currently have special handling
+ * and will fall back to a generic {@link Source} implementation.</p>
+ */
 @SuppressWarnings("UnstableApiUsage")
 public final class PaperSimpleSenderMapper implements SenderMapper<CommandSourceStack, Source> {
 

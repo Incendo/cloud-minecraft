@@ -21,39 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package org.incendo.cloud.paper.sender;
+package org.incendo.cloud.paper.util.sender;
 
 import io.papermc.paper.command.brigadier.CommandSourceStack;
-import net.kyori.adventure.audience.Audience;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+/**
+ * Specialized variant of {@link Source}, for when the {@link CommandSourceStack#getSender() sender} is a
+ * {@link Player}.
+ */
 @SuppressWarnings("UnstableApiUsage")
-public class GenericSource implements Source {
+public final class PlayerSource extends EntitySource {
 
-    private final CommandSourceStack commandSourceStack;
-
-    GenericSource(final @NonNull CommandSourceStack commandSourceStack) {
-        this.commandSourceStack = commandSourceStack;
+    PlayerSource(final CommandSourceStack commandSourceStack) {
+        super(commandSourceStack);
     }
 
     @Override
-    public final @NonNull CommandSourceStack stack() {
-        return this.commandSourceStack;
-    }
-
-    /**
-     * @see Source#source()
-     */
-    @Override
-    public @NonNull CommandSender source() {
-        return this.commandSourceStack.getSender();
-    }
-
-    @Override
-    public final @NonNull Audience audience() {
-        Entity executor = this.commandSourceStack.getExecutor();
-        return executor == null ? this.commandSourceStack.getSender() : executor;
+    public @NonNull Player source() {
+        return (Player) super.source();
     }
 }

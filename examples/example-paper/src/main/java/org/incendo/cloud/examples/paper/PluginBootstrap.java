@@ -33,10 +33,10 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.framework.qual.DefaultQualifier;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.paper.PaperCommandManager;
-import org.incendo.cloud.paper.sender.ConsoleSource;
-import org.incendo.cloud.paper.sender.PaperSimpleSenderMapper;
-import org.incendo.cloud.paper.sender.PlayerSource;
-import org.incendo.cloud.paper.sender.Source;
+import org.incendo.cloud.paper.util.sender.ConsoleSource;
+import org.incendo.cloud.paper.util.sender.PaperSimpleSenderMapper;
+import org.incendo.cloud.paper.util.sender.PlayerSource;
+import org.incendo.cloud.paper.util.sender.Source;
 import org.incendo.cloud.setting.ManagerSetting;
 
 import static org.incendo.cloud.parser.standard.StringParser.stringParser;

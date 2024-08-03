@@ -21,12 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package org.incendo.cloud.paper.sender;
+package org.incendo.cloud.paper.util.sender;
 
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.command.ConsoleCommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+/**
+ * Specialized variant of {@link Source}, for when the {@link CommandSourceStack#getSender() sender} is a
+ * {@link ConsoleCommandSender}.
+ */
 @SuppressWarnings("UnstableApiUsage")
 public final class ConsoleSource extends GenericSource {
 
