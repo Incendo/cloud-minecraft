@@ -21,24 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package org.incendo.cloud.examples.paper;
+package org.incendo.cloud.paper.util.sender;
 
-import org.bukkit.plugin.java.JavaPlugin;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import org.bukkit.command.ConsoleCommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.framework.qual.DefaultQualifier;
-import org.incendo.cloud.paper.PaperCommandManager;
-import org.incendo.cloud.paper.util.sender.Source;
 
-@DefaultQualifier(NonNull.class)
-public final class PaperPlugin extends JavaPlugin {
-    private final PaperCommandManager.Bootstrapped<Source> commandManager;
+/**
+ * Specialized variant of {@link Source}, for when the {@link CommandSourceStack#getSender() sender} is a
+ * {@link ConsoleCommandSender}.
+ */
+@SuppressWarnings("UnstableApiUsage")
+public final class ConsoleSource extends GenericSource {
 
-    public PaperPlugin(final PaperCommandManager.Bootstrapped<Source> commandManager) {
-        this.commandManager = commandManager;
+    ConsoleSource(final CommandSourceStack commandSourceStack) {
+        super(commandSourceStack);
     }
 
     @Override
-    public void onEnable() {
-        this.commandManager.onEnable();
+    public @NonNull ConsoleCommandSender source() {
+        return (ConsoleCommandSender) super.source();
     }
+
 }
