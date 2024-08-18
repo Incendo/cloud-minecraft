@@ -45,6 +45,7 @@ import org.incendo.cloud.examples.bukkit.builder.feature.RegexExample;
 import org.incendo.cloud.examples.bukkit.builder.feature.StringArrayExample;
 import org.incendo.cloud.examples.bukkit.builder.feature.minecraft.BlockPredicateExample;
 import org.incendo.cloud.examples.bukkit.builder.feature.minecraft.ComponentExample;
+import org.incendo.cloud.examples.bukkit.builder.feature.minecraft.EnchantmentExample;
 import org.incendo.cloud.examples.bukkit.builder.feature.minecraft.ItemStackExample;
 import org.incendo.cloud.examples.bukkit.builder.feature.minecraft.ItemStackPredicateExample;
 import org.incendo.cloud.examples.bukkit.builder.feature.minecraft.NamespacedKeyExample;
@@ -70,6 +71,7 @@ public final class BuilderExample {
             new RegexExample(),
             new StringArrayExample(),
             // Minecraft-specific features
+            new EnchantmentExample(),
             new ItemStackExample(),
             new SelectorExample(),
             new TextColorExample(),

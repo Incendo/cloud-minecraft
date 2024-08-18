@@ -51,7 +51,12 @@ public final class RegistryReflection {
             "net.minecraft.resources.MinecraftKey",
             "net.minecraft.resources.ResourceLocation"
     );
+    private static final Class<?> RESOURCE_KEY_CLASS = CraftBukkitReflection.needNMSClassOrElse(
+        "ResourceKey",
+        "net.minecraft.resources.ResourceKey"
+    );
     private static final Executable NEW_RESOURCE_LOCATION;
+    private static final Executable CREATE_REGISTRY_RESOURCE_KEY;
 
     private RegistryReflection() {
     }
@@ -63,6 +68,7 @@ public final class RegistryReflection {
             REGISTRY_GET = null;
             REGISTRY_KEY = null;
             NEW_RESOURCE_LOCATION = null;
+            CREATE_REGISTRY_RESOURCE_KEY = null;
         } else {
             registryClass = CraftBukkitReflection.firstNonNullOrThrow(
                     () -> "Registry",
@@ -95,13 +101,20 @@ public final class RegistryReflection {
                 CraftBukkitReflection.findMethod(RESOURCE_LOCATION_CLASS, "parse", String.class), // 1.21+
                 CraftBukkitReflection.findMethod(RESOURCE_LOCATION_CLASS, "a", String.class)
             );
+
+            CREATE_REGISTRY_RESOURCE_KEY = CraftBukkitReflection.firstNonNullOrThrow(
+                () -> "Could not find ResourceKey#createRegistryKey(ResourceLocation)",
+                CraftBukkitReflection.findMethod(RESOURCE_KEY_CLASS, "createRegistryKey", RESOURCE_LOCATION_CLASS),
+                CraftBukkitReflection.findMethod(RESOURCE_KEY_CLASS, "a", RESOURCE_LOCATION_CLASS)
+            );
         }
     }
 
-    public static Object registryKey(final Object registry) {
-        Objects.requireNonNull(REGISTRY_KEY, "REGISTRY_KEY");
+    public static Object registryKey(final String registryName) {
+        Objects.requireNonNull(CREATE_REGISTRY_RESOURCE_KEY, "CREATE_REGISTRY_RESOURCE_KEY");
         try {
-            return REGISTRY_KEY.invoke(registry);
+            final Object resourceLocation = createResourceLocation(registryName);
+            return CraftBukkitReflection.invokeConstructorOrStaticMethod(CREATE_REGISTRY_RESOURCE_KEY, resourceLocation);
         } catch (final ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
@@ -116,7 +129,7 @@ public final class RegistryReflection {
         }
     }
 
-    public static Object registryByName(final String name) {
+    public static Object builtInRegistryByName(final String name) {
         Objects.requireNonNull(REGISTRY_REGISTRY, "REGISTRY_REGISTRY");
         try {
             return get(REGISTRY_REGISTRY.get(null), name);
