@@ -7,7 +7,7 @@ ktlint = "0.50.0"
 errorprone = "2.28.0"
 run-task = "2.3.0"
 
-cloudCore = "2.0.0-rc.2"
+cloudCore = "2.0.0"
 
 immutables = "2.10.1"
 
