@@ -106,9 +106,9 @@ public class CloudburstCommandManager<C> extends CommandManager<C> implements Se
     private void registerDefaultExceptionHandlers() {
         this.registerDefaultExceptionHandlers(
             triplet -> {
-                final CommandSender sender = this.senderMapper().reverse(triplet.first().sender());
+                final CommandSender commandSender = this.senderMapper().reverse(triplet.first().sender());
                 final String message = triplet.first().formatCaption(triplet.second(), triplet.third());
-                sender.sendMessage(TextFormat.RED + message);
+                commandSender.sendMessage(TextFormat.RED + message);
             },
             pair -> this.owningPlugin().getLogger().error(pair.first(), pair.second())
         );
