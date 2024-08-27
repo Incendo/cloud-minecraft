@@ -30,6 +30,7 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.proxy.ProxyServer;
+import java.util.logging.Level;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.apiguardian.api.API;
@@ -170,11 +171,8 @@ public class VelocityCommandManager<C> extends CommandManager<C>
 
     private void registerDefaultExceptionHandlers() {
         this.registerDefaultExceptionHandlers(
-            triplet -> {
-                final CommandSource source = triplet.first().inject(CommandSource.class).orElseThrow(NullPointerException::new);
-                final String message = triplet.first().formatCaption(triplet.second(), triplet.third());
-                source.sendMessage(Component.text(message, NamedTextColor.RED));
-            },
+            triplet -> this.senderMapper().reverse(triplet.first().sender())
+                .sendMessage(Component.text(triplet.first().formatCaption(triplet.second(), triplet.third()), NamedTextColor.RED)),
             pair -> pair.second().printStackTrace()
         );
     }
