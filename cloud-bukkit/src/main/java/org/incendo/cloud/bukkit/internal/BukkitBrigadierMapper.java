@@ -142,7 +142,7 @@ public final class BukkitBrigadierMapper<C> {
         final @NonNull String registryName
     ) {
         this.mapNMS(parserType, "resource_key", type -> (ArgumentType<?>) type.getDeclaredConstructors()[0]
-            .newInstance(RegistryReflection.registryKey(RegistryReflection.registryByName(registryName))));
+            .newInstance(RegistryReflection.registryKey(registryName)));
     }
 
     /**

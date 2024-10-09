@@ -437,7 +437,9 @@ public final class MinecraftExceptionHandler<C> {
         if (throwable instanceof ParserException) {
             return ((ParserException) throwable).formatCaption(formatter);
         }
-        final Component msg = ComponentMessageThrowable.getOrConvertMessage(throwable);
+        final Component msg = ComponentMessageThrowable.getOrConvertMessage(
+            ComponentMessageThrowableConverterHolder.instance.maybeConvert(throwable)
+        );
         return msg == null ? NULL : msg;
     }
 
@@ -471,5 +473,46 @@ public final class MinecraftExceptionHandler<C> {
             @NonNull ExceptionContext<C, ?> exceptionContext,
             @NonNull Component message
         );
+    }
+
+    /**
+     * Converts Throwables to ComponentMessageThrowables when possible.
+     */
+    @API(status = API.Status.INTERNAL)
+    @FunctionalInterface
+    public interface ComponentMessageThrowableConverter {
+        /**
+         * Converts a Throwable to a ComponentMessageThrowable if possible.
+         *
+         * @param thr throwable
+         * @return possibly converted throwable
+         */
+        Throwable maybeConvert(Throwable thr);
+    }
+
+    /**
+     * Default implementation and holder for {@link ComponentMessageThrowableConverter}.
+     */
+    @API(status = API.Status.INTERNAL)
+    public static final class ComponentMessageThrowableConverterHolder implements ComponentMessageThrowableConverter {
+        private static ComponentMessageThrowableConverter instance = new ComponentMessageThrowableConverterHolder();
+
+        /**
+         * Replaces the converter. Mainly useful for platforms that need custom logic to transform vanilla CommandSyntaxExceptions
+         * into an Adventure representation.
+         *
+         * @param converter converter
+         */
+        public static void converter(final ComponentMessageThrowableConverter converter) {
+            instance = Objects.requireNonNull(converter, "converter");
+        }
+
+        private ComponentMessageThrowableConverterHolder() {
+        }
+
+        @Override
+        public Throwable maybeConvert(final Throwable thr) {
+            return thr;
+        }
     }
 }

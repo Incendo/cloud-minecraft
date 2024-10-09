@@ -205,7 +205,7 @@ public final class BlockPredicateParser<C> implements ArgumentParser.FutureArgum
                 if (GET_TAG_REGISTRY_METHOD != null) {
                     obj = GET_TAG_REGISTRY_METHOD.invoke(server);
                 } else {
-                    obj = RegistryReflection.registryByName("block");
+                    obj = RegistryReflection.builtInRegistryByName("block");
                 }
                 Objects.requireNonNull(CREATE_PREDICATE_METHOD, "create on BlockPredicateArgument$Result");
                 final Predicate<Object> predicate = (Predicate<Object>) CREATE_PREDICATE_METHOD.invoke(result, obj);

@@ -21,24 +21,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-package org.incendo.cloud.examples.paper;
+package org.incendo.cloud.examples.bukkit.builder.feature.minecraft;
 
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.framework.qual.DefaultQualifier;
-import org.incendo.cloud.paper.PaperCommandManager;
-import org.incendo.cloud.paper.util.sender.Source;
+import org.incendo.cloud.bukkit.BukkitCommandManager;
+import org.incendo.cloud.examples.bukkit.ExamplePlugin;
+import org.incendo.cloud.examples.bukkit.builder.BuilderFeature;
 
-@DefaultQualifier(NonNull.class)
-public final class PaperPlugin extends JavaPlugin {
-    private final PaperCommandManager.Bootstrapped<Source> commandManager;
+import static org.incendo.cloud.bukkit.parser.EnchantmentParser.enchantmentParser;
 
-    public PaperPlugin(final PaperCommandManager.Bootstrapped<Source> commandManager) {
-        this.commandManager = commandManager;
-    }
+/**
+ * Example showcasing the enchantment parser.
+ */
+public final class EnchantmentExample implements BuilderFeature {
 
     @Override
-    public void onEnable() {
-        this.commandManager.onEnable();
+    public void registerFeature(
+        final @NonNull ExamplePlugin examplePlugin,
+        final @NonNull BukkitCommandManager<CommandSender> manager
+    ) {
+        manager.command(
+            manager.commandBuilder("builder")
+                .literal("enchantment")
+                .required("enchant", enchantmentParser())
+                .handler(ctx -> {
+                    final Enchantment enchantment = ctx.get("enchant");
+                    ctx.sender().sendMessage("The enchant you typed is '" + enchantment.getKey() + "'.");
+                })
+        );
     }
 }

@@ -82,7 +82,7 @@ public final class MinecraftArgumentTypes {
         private final Map<?, ?> byClassMap;
 
         private ArgumentTypeGetterImpl() {
-            this.argumentRegistry = Suppliers.memoize(() -> RegistryReflection.registryByName("command_argument_type"));
+            this.argumentRegistry = Suppliers.memoize(() -> RegistryReflection.builtInRegistryByName("command_argument_type"));
             try {
                 final Field declaredField = CraftBukkitReflection.needMCClass("commands.synchronization.ArgumentTypeInfos")
                         .getDeclaredFields()[0];
