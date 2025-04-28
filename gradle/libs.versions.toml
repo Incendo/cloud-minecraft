@@ -1,6 +1,6 @@
 [versions]
 # build logic
-cloud-build-logic = "0.0.15"
+cloud-build-logic = "0.0.16"
 checkstyle = "10.12.5"
 stylecheck = "0.2.1"
 ktlint = "0.50.0"
@@ -23,7 +23,7 @@ velocityApi = "3.3.0-SNAPSHOT"
 spongeApi7 = "7.3.0"
 
 # testing
-jupiterEngine = "5.11.0"
+jupiterEngine = "5.11.3"
 mockitoCore = "4.11.0"
 mockitoJupiter = "4.11.0"
 truth = "1.4.2"
