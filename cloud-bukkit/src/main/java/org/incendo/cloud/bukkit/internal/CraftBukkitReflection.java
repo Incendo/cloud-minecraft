@@ -74,7 +74,15 @@ public final class CraftBukkitReflection {
                     final Class<?> sharedConstants = needClass("net.minecraft.SharedConstants");
                     final Method getCurrentVersion = sharedConstants.getDeclaredMethod("getCurrentVersion");
                     final Object currentVersion = getCurrentVersion.invoke(null);
-                    final Method getName = currentVersion.getClass().getDeclaredMethod("getName");
+                    Method getName = null;
+                    try {
+                        getName = currentVersion.getClass().getDeclaredMethod("getName");
+                    } catch (final NoSuchMethodException ignored) {
+                    }
+                    if (getName == null) {
+                        // ~1.21.6+
+                        getName = currentVersion.getClass().getDeclaredMethod("name");
+                    }
                     final String versionName = (String) getName.invoke(currentVersion);
                     try {
                         fallbackVersion = Integer.parseInt(versionName.split("\\.")[1]);
