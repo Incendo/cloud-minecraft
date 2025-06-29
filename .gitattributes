@@ -1,9 +1,8 @@
-#
-# https://help.github.com/articles/dealing-with-line-endings/
-#
-# Linux start script should use lf
-/gradlew        text eol=lf
+# Documentation: https://www.git-scm.com/docs/gitattributes
 
-# These are Windows script files and should use crlf
-*.bat           text eol=crlf
+# Set default behavior to automatically normalize line endings.
+* text=auto eol=lf
 
+# Enforce CRLF line endings in Windows batch scripts to avoid issues.
+*.cmd text eol=crlf
+*.bat text eol=crlf
