@@ -5,6 +5,12 @@ plugins {
     id("org.incendo.cloud-build-logic.publishing")
 }
 
+if (!name.endsWith("-bom")) {
+    dependencies {
+        JavaPlugin.API_CONFIGURATION_NAME(platform(project(":cloud-minecraft-bom")))
+    }
+}
+
 indra {
     github("Incendo", "cloud-minecraft") {
         ci(true)
