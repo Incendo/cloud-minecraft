@@ -44,7 +44,7 @@ final class CloudBukkitListener<C> implements Listener {
         /* If the server is brigadier-capable, any registration after players
            have joined (and been sent a command tree) is unsafe.
            Bukkit's PlayerJoinEvent is called just after the command tree is sent,
-           so we have to perform this state change at PlayerLoginEvent to lock before that happens. */
+           so we have to perform this state change at PlayerSpawnLocationEvent to lock before that happens. */
         this.bukkitCommandManager.lockIfBrigadierCapable();
     }
 
