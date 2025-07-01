@@ -26,7 +26,7 @@ package org.incendo.cloud.bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerSpawnLocationEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -40,7 +40,7 @@ final class CloudBukkitListener<C> implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    void onPlayerLogin(final @NonNull PlayerLoginEvent event) {
+    void onPlayerLogin(final @NonNull PlayerSpawnLocationEvent event) {
         /* If the server is brigadier-capable, any registration after players
            have joined (and been sent a command tree) is unsafe.
            Bukkit's PlayerJoinEvent is called just after the command tree is sent,
