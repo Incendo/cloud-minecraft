@@ -40,7 +40,7 @@ final class CloudBukkitListener<C> implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    void onPlayerLogin(final @NonNull PlayerSpawnLocationEvent event) {
+    void onPlayerSpawnLocation(final @NonNull PlayerSpawnLocationEvent event) {
         /* If the server is brigadier-capable, any registration after players
            have joined (and been sent a command tree) is unsafe.
            Bukkit's PlayerJoinEvent is called just after the command tree is sent,
