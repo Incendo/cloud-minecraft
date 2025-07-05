@@ -42,7 +42,7 @@ immutables = { group = "org.immutables", name = "value", version.ref = "immutabl
 immutablesAnnotate = { group = "org.immutables", name = "annotate", version.ref = "immutables" }
 
 brigadier = { group = "com.mojang", name = "brigadier", version.ref = "brigadier" }
-bukkit = { group = "org.bukkit", name = "bukkit", version.ref = "bukkit" }
+bukkit = { group = "org.spigotmc", name = "spigot-api", version.ref = "bukkit" }
 reflectionRemapper = "xyz.jpenilla:reflection-remapper:0.1.3"
 commodore = { group = "me.lucko", name = "commodore", version.ref = "commodore" }
 bungeecord = { group = "net.md-5", name = "bungeecord-api", version.ref = "bungeecord" }
