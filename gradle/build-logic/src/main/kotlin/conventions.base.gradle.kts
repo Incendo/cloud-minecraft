@@ -33,7 +33,13 @@ dependencies {
     errorprone(libs.errorproneCore)
     compileOnly(libs.bundles.immutables)
     annotationProcessor(libs.bundles.immutables)
-    testImplementation(libs.bundles.baseTestingDependencies)
+
+    testImplementation(libs.jupiterEngine)
+    testImplementation(libs.jupiterParams)
+    testImplementation(libs.mockitoCore)
+    testImplementation(libs.mockitoJupiter)
+    testImplementation(libs.truth)
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 /* Disable checkstyle on tests */

@@ -76,10 +76,3 @@ shadow = { id = "com.gradleup.shadow", version = "8.3.8" }
 
 [bundles]
 immutables = ["immutables", "immutablesAnnotate"]
-baseTestingDependencies = [
-    "jupiterEngine",
-    "jupiterParams",
-    "mockitoCore",
-    "mockitoJupiter",
-    "truth"
-]
