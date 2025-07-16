@@ -171,7 +171,7 @@ public class VelocityCommandManager<C> extends CommandManager<C>
     private void registerDefaultExceptionHandlers() {
         this.registerDefaultExceptionHandlers(
             triplet -> {
-                final CommandSource source = triplet.first().inject(CommandSource.class).orElseThrow(NullPointerException::new);
+                final CommandSource source = this.senderMapper().reverse(triplet.first().sender());
                 final String message = triplet.first().formatCaption(triplet.second(), triplet.third());
                 source.sendMessage(Component.text(message, NamedTextColor.RED));
             },
