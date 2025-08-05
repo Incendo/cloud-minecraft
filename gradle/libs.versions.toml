@@ -72,7 +72,7 @@ cloud-buildLogic-rootProject-spotless = { id = "org.incendo.cloud-build-logic.sp
 run-paper = { id = "xyz.jpenilla.run-paper", version.ref = "run-task" }
 run-velocity = { id = "xyz.jpenilla.run-velocity", version.ref = "run-task" }
 run-waterfall = { id = "xyz.jpenilla.run-waterfall", version.ref = "run-task" }
-shadow = { id = "com.gradleup.shadow", version = "8.3.8" }
+shadow = { id = "com.gradleup.shadow", version = "8.3.9" }
 
 [bundles]
 immutables = ["immutables", "immutablesAnnotate"]
