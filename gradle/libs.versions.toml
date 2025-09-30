@@ -23,7 +23,7 @@ velocityApi = "3.3.0-SNAPSHOT"
 spongeApi7 = "7.3.0"
 
 # testing
-jupiterEngine = "5.13.4"
+jupiterEngine = "5.14.0"
 mockitoCore = "4.11.0"
 mockitoJupiter = "4.11.0"
 truth = "1.4.2"
