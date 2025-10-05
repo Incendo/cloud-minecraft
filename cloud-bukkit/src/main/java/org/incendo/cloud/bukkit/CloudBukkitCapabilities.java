@@ -40,14 +40,15 @@ public enum CloudBukkitCapabilities implements CloudCapability {
      * even if a capability for Brigadier command registration is not present (as long as this capability is present).
      */
     BRIGADIER(CraftBukkitReflection.classExists("com.mojang.brigadier.tree.CommandNode")
-            && CraftBukkitReflection.findOBCClass("command.BukkitCommandWrapper") != null),
+            && (CraftBukkitReflection.findOBCClass("command.BukkitCommandWrapper") != null
+                || CraftBukkitReflection.classExists("io.papermc.paper.command.brigadier.CommandSourceStack"))),
 
     /**
      * Whether support for native Brigadier command registration is available
      * through the Paper API ({@code PaperCommandManager#registerBrigadier} from {@code cloud-paper}).
      */
-    NATIVE_BRIGADIER(CraftBukkitReflection.classExists(
-            "com.destroystokyo.paper.event.brigadier.CommandRegisteredEvent")),
+    NATIVE_BRIGADIER(CraftBukkitReflection.classExists("com.destroystokyo.paper.event.brigadier.CommandRegisteredEvent")
+            || CraftBukkitReflection.classExists("io.papermc.paper.command.brigadier.CommandSourceStack")),
 
     /**
      * Whether support for Brigadier command registration is available through Commodore
