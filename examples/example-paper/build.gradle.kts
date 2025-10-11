@@ -47,7 +47,7 @@ tasks {
     }
 
     val runVersions = mapOf(
-        21 to setOf("1.20.6", "1.21"),
+        21 to setOf("1.20.6", "1.21.1", "1.21.5", "1.21.10"),
     )
 
     runServer {
