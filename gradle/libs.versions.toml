@@ -5,11 +5,11 @@ checkstyle = "10.12.5"
 stylecheck = "0.2.1"
 ktlint = "0.50.0"
 errorprone = "2.31.0"
-run-task = "2.3.1"
+run-task = "3.0.2"
 
 cloudCore = "2.0.0"
 
-immutables = "2.11.1"
+immutables = "2.12.0"
 
 brigadier = "1.0.18"
 bukkit = "1.13.2-R0.1-SNAPSHOT"
@@ -23,7 +23,7 @@ velocityApi = "3.3.0-SNAPSHOT"
 spongeApi7 = "7.3.0"
 
 # testing
-jupiterEngine = "5.13.4"
+jupiterEngine = "5.14.0"
 mockitoCore = "4.11.0"
 mockitoJupiter = "4.11.0"
 truth = "1.4.2"
@@ -72,7 +72,7 @@ cloud-buildLogic-rootProject-spotless = { id = "org.incendo.cloud-build-logic.sp
 run-paper = { id = "xyz.jpenilla.run-paper", version.ref = "run-task" }
 run-velocity = { id = "xyz.jpenilla.run-velocity", version.ref = "run-task" }
 run-waterfall = { id = "xyz.jpenilla.run-waterfall", version.ref = "run-task" }
-shadow = { id = "com.gradleup.shadow", version = "8.3.8" }
+shadow = { id = "com.gradleup.shadow", version = "9.3.0" }
 
 [bundles]
 immutables = ["immutables", "immutablesAnnotate"]

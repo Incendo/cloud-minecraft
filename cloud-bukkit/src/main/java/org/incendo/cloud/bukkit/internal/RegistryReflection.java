@@ -46,10 +46,11 @@ public final class RegistryReflection {
     public static final @Nullable Method REGISTRY_GET;
     public static final @Nullable Method REGISTRY_KEY;
 
-    private static final Class<?> RESOURCE_LOCATION_CLASS = CraftBukkitReflection.needNMSClassOrElse(
+    private static final Class<?> IDENTIFIER_CLASS = CraftBukkitReflection.needNMSClassOrElse(
             "MinecraftKey",
             "net.minecraft.resources.MinecraftKey",
-            "net.minecraft.resources.ResourceLocation"
+            "net.minecraft.resources.ResourceLocation",
+            "net.minecraft.resources.Identifier"
     );
     private static final Class<?> RESOURCE_KEY_CLASS = CraftBukkitReflection.needNMSClassOrElse(
         "ResourceKey",
@@ -77,17 +78,12 @@ public final class RegistryReflection {
             );
             REGISTRY_REGISTRY = registryRegistryField(registryClass);
             REGISTRY_REGISTRY.setAccessible(true);
-            final Class<?> resourceLocationClass = CraftBukkitReflection.firstNonNullOrThrow(
-                    () -> "ResourceLocation class",
-                    CraftBukkitReflection.findMCClass("resources.ResourceLocation"),
-                    CraftBukkitReflection.findMCClass("resources.MinecraftKey")
-            );
             REGISTRY_GET = Arrays.stream(registryClass.getDeclaredMethods())
                     .filter(it -> it.getParameterCount() == 1
-                            && it.getParameterTypes()[0].equals(resourceLocationClass)
+                            && it.getParameterTypes()[0].equals(IDENTIFIER_CLASS)
                             && it.getReturnType().equals(Object.class))
                     .findFirst()
-                    .orElseThrow(() -> new IllegalStateException("Could not find Registry#get(ResourceLocation)"));
+                    .orElseThrow(() -> new IllegalStateException("Could not find Registry#get(Identifier)"));
 
             final Class<?> resourceKeyClass = CraftBukkitReflection.needMCClass("resources.ResourceKey");
             REGISTRY_KEY = Arrays.stream(registryClass.getDeclaredMethods())
@@ -96,16 +92,16 @@ public final class RegistryReflection {
                     .orElse(null);
 
             NEW_RESOURCE_LOCATION = CraftBukkitReflection.firstNonNullOrThrow(
-                () -> "Could not find ResourceLocation#parse(String) or ResourceLocation#<init>(String)",
-                CraftBukkitReflection.findConstructor(RESOURCE_LOCATION_CLASS, String.class), // <= 1.20.6
-                CraftBukkitReflection.findMethod(RESOURCE_LOCATION_CLASS, "parse", String.class), // 1.21+
-                CraftBukkitReflection.findMethod(RESOURCE_LOCATION_CLASS, "a", String.class)
+                () -> "Could not find Identifier#parse(String) or Identifier#<init>(String)",
+                CraftBukkitReflection.findConstructor(IDENTIFIER_CLASS, String.class), // <= 1.20.6
+                CraftBukkitReflection.findMethod(IDENTIFIER_CLASS, "parse", String.class), // 1.21+
+                CraftBukkitReflection.findMethod(IDENTIFIER_CLASS, "a", String.class)
             );
 
             CREATE_REGISTRY_RESOURCE_KEY = CraftBukkitReflection.firstNonNullOrThrow(
-                () -> "Could not find ResourceKey#createRegistryKey(ResourceLocation)",
-                CraftBukkitReflection.findMethod(RESOURCE_KEY_CLASS, "createRegistryKey", RESOURCE_LOCATION_CLASS),
-                CraftBukkitReflection.findMethod(RESOURCE_KEY_CLASS, "a", RESOURCE_LOCATION_CLASS)
+                () -> "Could not find ResourceKey#createRegistryKey(Identifier)",
+                CraftBukkitReflection.findMethod(RESOURCE_KEY_CLASS, "createRegistryKey", IDENTIFIER_CLASS),
+                CraftBukkitReflection.findMethod(RESOURCE_KEY_CLASS, "a", IDENTIFIER_CLASS)
             );
         }
     }

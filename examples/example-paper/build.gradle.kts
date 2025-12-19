@@ -37,6 +37,10 @@ tasks {
         relocate("net.fabricmc.mappingio", "org.incendo.cloud.example.mappingio")
 
         mergeServiceFiles()
+        // Needed for mergeServiceFiles to work properly in Shadow 9+
+        filesMatching("META-INF/services/**") {
+            duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        }
 
         manifest {
             attributes("paperweight-mappings-namespace" to "mojang")
@@ -47,7 +51,7 @@ tasks {
     }
 
     val runVersions = mapOf(
-        21 to setOf("1.20.6", "1.21"),
+        21 to setOf("1.20.6", "1.21.1", "1.21.5", "1.21.10", "1.21.11"),
     )
 
     runServer {
