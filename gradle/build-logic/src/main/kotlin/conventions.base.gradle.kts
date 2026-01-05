@@ -44,3 +44,11 @@ dependencies {
 
 /* Disable checkstyle on tests */
 gradle.startParameter.excludedTaskNames.add("checkstyleTest")
+
+tasks {
+    jar {
+        manifest {
+            attributes("Automatic-Module-Name" to "%s.%s".format(project.group, project.name.replace('-', '.')))
+        }
+    }
+}
