@@ -9,7 +9,7 @@ run-task = "3.0.2"
 
 cloudCore = "2.0.0"
 
-immutables = "2.12.0"
+immutables = "2.12.1"
 
 brigadier = "1.0.18"
 bukkit = "1.13.2-R0.1-SNAPSHOT"
