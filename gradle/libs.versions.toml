@@ -1,6 +1,6 @@
 [versions]
 # build logic
-cloud-build-logic = "0.0.17"
+cloud-build-logic = "0.0.18"
 checkstyle = "10.12.5"
 stylecheck = "0.2.1"
 ktlint = "0.50.0"
@@ -72,7 +72,7 @@ cloud-buildLogic-rootProject-spotless = { id = "org.incendo.cloud-build-logic.sp
 run-paper = { id = "xyz.jpenilla.run-paper", version.ref = "run-task" }
 run-velocity = { id = "xyz.jpenilla.run-velocity", version.ref = "run-task" }
 run-waterfall = { id = "xyz.jpenilla.run-waterfall", version.ref = "run-task" }
-shadow = { id = "com.gradleup.shadow", version = "9.3.0" }
+shadow = { id = "com.gradleup.shadow", version = "9.3.1" }
 
 [bundles]
 immutables = ["immutables", "immutablesAnnotate"]
