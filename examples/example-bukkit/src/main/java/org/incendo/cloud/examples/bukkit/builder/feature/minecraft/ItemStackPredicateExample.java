@@ -59,6 +59,6 @@ public final class ItemStackPredicateExample implements BuilderFeature {
         final ProtoItemStack protoItemStack = ctx.get("item");
         final ItemStackPredicate predicate = ctx.get("predicate");
         ctx.sender().sendMessage("result: " + predicate.test(
-                protoItemStack.createItemStack(1, true)));
+                protoItemStack.createItemStack(1)));
     }
 }

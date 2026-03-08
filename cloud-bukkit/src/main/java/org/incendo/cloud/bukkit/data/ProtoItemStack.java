@@ -53,12 +53,10 @@ public interface ProtoItemStack {
     /**
      * Create a new {@link ItemStack} from the state of this {@link ProtoItemStack}.
      *
-     * @param stackSize               stack size
-     * @param respectMaximumStackSize whether to respect the maximum stack size for the material
+     * @param stackSize stack size
      * @return the created {@link ItemStack}
      * @throws IllegalArgumentException if the {@link ItemStack} could not be created, due to max stack size or other reasons
      * @since 1.5.0
      */
-    @NonNull ItemStack createItemStack(int stackSize, boolean respectMaximumStackSize)
-            throws IllegalArgumentException;
+    @NonNull ItemStack createItemStack(int stackSize) throws IllegalArgumentException;
 }

@@ -58,7 +58,7 @@ public final class ItemStackExample implements BuilderFeature {
                                 "amount", integerParser(),
                                 (sender, proto, amount) -> {
                                     try {
-                                        return ArgumentParseResult.successFuture(proto.createItemStack(amount, true));
+                                        return ArgumentParseResult.successFuture(proto.createItemStack(amount));
                                     } catch (final IllegalArgumentException ex) {
                                         return ArgumentParseResult.failureFuture(ex);
                                     }

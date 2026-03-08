@@ -158,7 +158,8 @@ public class ItemStackParser<C> implements ArgumentParser.FutureArgumentParser<C
         private static final Method CREATE_ITEM_STACK_METHOD = CraftBukkitReflection.firstNonNullOrThrow(
                 () -> "Couldn't find createItemStack method on ItemInput",
                 CraftBukkitReflection.findMethod(ITEM_INPUT_CLASS, "a", int.class, boolean.class),
-                CraftBukkitReflection.findMethod(ITEM_INPUT_CLASS, "createItemStack", int.class, boolean.class)
+                CraftBukkitReflection.findMethod(ITEM_INPUT_CLASS, "createItemStack", int.class, boolean.class),
+                CraftBukkitReflection.findMethod(ITEM_INPUT_CLASS, "createItemStack", int.class)
         );
         private static final Method AS_BUKKIT_COPY_METHOD = CraftBukkitReflection
                 .needMethod(CRAFT_ITEM_STACK_CLASS, "asBukkitCopy", NMS_ITEM_STACK_CLASS);
@@ -272,11 +273,14 @@ public class ItemStackParser<C> implements ArgumentParser.FutureArgumentParser<C
             }
 
             @Override
-            public @NonNull ItemStack createItemStack(final int stackSize, final boolean respectMaximumStackSize) {
+            public @NonNull ItemStack createItemStack(final int stackSize) {
                 try {
+                    final Object nmsItemStack = CREATE_ITEM_STACK_METHOD.getParameterCount() == 1
+                            ? CREATE_ITEM_STACK_METHOD.invoke(this.itemInput, stackSize)
+                            : CREATE_ITEM_STACK_METHOD.invoke(this.itemInput, stackSize, true);
                     return (ItemStack) AS_BUKKIT_COPY_METHOD.invoke(
                             null,
-                            CREATE_ITEM_STACK_METHOD.invoke(this.itemInput, stackSize, respectMaximumStackSize)
+                            nmsItemStack
                     );
                 } catch (final InvocationTargetException ex) {
                     final Throwable cause = ex.getCause();
@@ -333,9 +337,8 @@ public class ItemStackParser<C> implements ArgumentParser.FutureArgumentParser<C
             }
 
             @Override
-            public @NonNull ItemStack createItemStack(final int stackSize, final boolean respectMaximumStackSize)
-                    throws IllegalArgumentException {
-                if (respectMaximumStackSize && stackSize > this.material.getMaxStackSize()) {
+            public @NonNull ItemStack createItemStack(final int stackSize) throws IllegalArgumentException {
+                if (stackSize > this.material.getMaxStackSize()) {
                     throw new IllegalArgumentException(String.format(
                             "The maximum stack size for %s is %d",
                             this.material,
