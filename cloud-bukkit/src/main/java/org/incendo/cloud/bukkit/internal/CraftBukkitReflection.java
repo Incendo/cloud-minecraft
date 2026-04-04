@@ -61,19 +61,11 @@ public final class CraftBukkitReflection {
         final String pkg = serverClass.getPackage().getName();
         final String nmsVersion = pkg.substring(pkg.lastIndexOf(".") + 1);
         if (!nmsVersion.contains("_")) {
-            int fallbackVersion = -1;
+            String versionString = null;
             if (Bukkit.getServer() != null) {
                 try {
                     final Method getMinecraftVersion = serverClass.getDeclaredMethod("getMinecraftVersion");
-                    String versionString = getMinecraftVersion.invoke(Bukkit.getServer()).toString();
-                    String[] versionParts = versionString.split("\\.");
-                    if (versionParts[0].equalsIgnoreCase("1")) {
-                        // for versions 1.21.11 and below
-                        fallbackVersion = Integer.parseInt(versionParts[1]);
-                    } else {
-                        // for 26.1+
-                        fallbackVersion = Integer.parseInt(versionParts[0]);
-                    }
+                    versionString = getMinecraftVersion.invoke(Bukkit.getServer()).toString();
                 } catch (final Exception ignored) {
                 }
             } else {
@@ -91,22 +83,27 @@ public final class CraftBukkitReflection {
                         // ~1.21.6+
                         getName = currentVersion.getClass().getDeclaredMethod("name");
                     }
-                    final String versionName = (String) getName.invoke(currentVersion);
-                    try {
-                        String[] versionParts = versionName.split("\\.");
-                        if (versionParts[0].equalsIgnoreCase("1")) {
-                            // for versions 1.21.11 and below
-                            fallbackVersion = Integer.parseInt(versionParts[1]);
-                        } else {
-                            // for 26.1+
-                            fallbackVersion = Integer.parseInt(versionParts[0]);
-                        }
-                    } catch (final Exception ignored) {
-                    }
+                    versionString = (String) getName.invoke(currentVersion);
                 } catch (final ReflectiveOperationException e) {
                     throw new RuntimeException(e);
                 }
             }
+
+            int fallbackVersion = -1;
+            if (versionString != null) {
+                try {
+                    String[] versionParts = versionString.split("\\.");
+                    if (versionParts[0].equalsIgnoreCase("1")) {
+                        // for versions 1.21.11 and below
+                        fallbackVersion = Integer.parseInt(versionParts[1]);
+                    } else {
+                        // for 26.1+
+                        fallbackVersion = Integer.parseInt(versionParts[0]);
+                    }
+                } catch (Exception ignored) {
+                }
+            }
+
             MAJOR_REVISION = fallbackVersion;
         } else {
             MAJOR_REVISION = Integer.parseInt(nmsVersion.split("_")[1]);
