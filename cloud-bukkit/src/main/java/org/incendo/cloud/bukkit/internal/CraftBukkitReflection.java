@@ -65,7 +65,15 @@ public final class CraftBukkitReflection {
             if (Bukkit.getServer() != null) {
                 try {
                     final Method getMinecraftVersion = serverClass.getDeclaredMethod("getMinecraftVersion");
-                    fallbackVersion = Integer.parseInt(getMinecraftVersion.invoke(Bukkit.getServer()).toString().split("\\.")[1]);
+                    String versionString = getMinecraftVersion.invoke(Bukkit.getServer()).toString();
+                    String[] versionParts = versionString.split("\\.");
+                    if (versionParts[0].equalsIgnoreCase("1")) {
+                        // for versions 1.21.11 and below
+                        fallbackVersion = Integer.parseInt(versionParts[1]);
+                    } else {
+                        // for 26.1+
+                        fallbackVersion = Integer.parseInt(versionParts[0]);
+                    }
                 } catch (final Exception ignored) {
                 }
             } else {
@@ -85,7 +93,14 @@ public final class CraftBukkitReflection {
                     }
                     final String versionName = (String) getName.invoke(currentVersion);
                     try {
-                        fallbackVersion = Integer.parseInt(versionName.split("\\.")[1]);
+                        String[] versionParts = versionName.split("\\.");
+                        if (versionParts[0].equalsIgnoreCase("1")) {
+                            // for versions 1.21.11 and below
+                            fallbackVersion = Integer.parseInt(versionParts[1]);
+                        } else {
+                            // for 26.1+
+                            fallbackVersion = Integer.parseInt(versionParts[0]);
+                        }
                     } catch (final Exception ignored) {
                     }
                 } catch (final ReflectiveOperationException e) {
