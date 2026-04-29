@@ -62,6 +62,7 @@ include("cloud-paper")
 include("cloud-paper-signed-arguments")
 include("cloud-sponge7")
 include("cloud-velocity")
+include("cloud-minestom")
 
 include("examples/example-bukkit")
 findProject(":examples/example-bukkit")?.name = "example-bukkit"

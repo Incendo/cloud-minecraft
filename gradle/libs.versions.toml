@@ -21,6 +21,7 @@ adventurePlatform = "4.4.1"
 paperApi = "1.20.6-R0.1-SNAPSHOT"
 velocityApi = "3.3.0-SNAPSHOT"
 spongeApi7 = "7.3.0"
+minestom = "2026.04.13-1.21.11"
 
 # testing
 jupiterEngine = "5.14.3"
@@ -57,6 +58,7 @@ adventureTextSerializerGson = { group = "net.kyori", name = "adventure-text-seri
 paperApi = { group = "io.papermc.paper", name = "paper-api", version.ref = "paperApi" }
 spongeApi7 = { group = "org.spongepowered", name = "spongeapi", version.ref = "spongeApi7" }
 velocityApi = { group = "com.velocitypowered", name = "velocity-api", version.ref = "velocityApi" }
+minestom = { group = "net.minestom", name = "minestom", version.ref = "minestom" }
 
 # testing
 jupiterEngine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "jupiterEngine" }
