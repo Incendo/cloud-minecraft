@@ -32,13 +32,25 @@ javadocLinks {
 }
 
 publishing {
+    val user: String? = (project.findProperty("spectrisUsername") ?: System.getenv("spectrisUsername")) as? String
+    val pass: String? = (project.findProperty("spectrisPassword") ?: System.getenv("spectrisPassword")) as? String
+
     repositories {
         maven {
             name = "spectris-snapshots"
             url = uri("https://repo.spectr.is/snapshots/")
             credentials {
-                username = (project.findProperty("spectrisUsername") ?: System.getenv("spectrisUsername")) as? String
-                password = (project.findProperty("spectrisPassword") ?: System.getenv("spectrisPassword")) as? String
+                username = user
+                password = pass
+            }
+        }
+
+        maven {
+            name = "spectris-releases"
+            url = uri("https://repo.spectr.is/releases/")
+            credentials {
+                username = user
+                password = pass
             }
         }
     }

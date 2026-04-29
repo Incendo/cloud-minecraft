@@ -75,3 +75,6 @@ findProject(":examples/example-bungee")?.name = "example-bungee"
 
 include("examples/example-velocity")
 findProject(":examples/example-velocity")?.name = "example-velocity"
+
+include("examples/example-minestom")
+findProject(":examples/example-minestom")?.name = "example-minestom"
