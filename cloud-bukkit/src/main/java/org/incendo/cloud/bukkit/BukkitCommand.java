@@ -23,7 +23,6 @@
 //
 package org.incendo.cloud.bukkit;
 
-import io.leangen.geantyref.GenericTypeReflector;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +40,7 @@ import org.incendo.cloud.Command;
 import org.incendo.cloud.bukkit.internal.BukkitHelper;
 import org.incendo.cloud.component.CommandComponent;
 import org.incendo.cloud.internal.CommandNode;
+import org.incendo.cloud.internal.SuperTypeCache;
 import org.incendo.cloud.permission.Permission;
 import org.incendo.cloud.suggestion.Suggestion;
 import org.incendo.cloud.suggestion.Suggestions;
@@ -147,7 +147,7 @@ final class BukkitCommand<C> extends org.bukkit.command.Command implements Plugi
             node.nodeMeta().getOrDefault(CommandNode.META_KEY_ACCESS, Collections.emptyMap());
         final C cloudSender = this.manager.senderMapper().map(target);
         for (final Map.Entry<Type, Permission> entry : accessMap.entrySet()) {
-            if (GenericTypeReflector.isSuperType(entry.getKey(), cloudSender.getClass())) {
+            if (SuperTypeCache.isSuperType(entry.getKey(), cloudSender.getClass())) {
                 if (this.manager.testPermission(cloudSender, entry.getValue()).allowed()) {
                     return true;
                 }

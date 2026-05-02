@@ -18,8 +18,18 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         mavenCentral()
-        maven("https://central.sonatype.com/repository/maven-snapshots/") {
+        maven("https://repo.spectr.is/releases/") {
+            mavenContent { releasesOnly() }
+        }
+        maven("https://repo.spectr.is/snapshots/") {
             mavenContent { snapshotsOnly() }
+        }
+
+        maven("https://central.sonatype.com/repository/maven-snapshots/") {
+            mavenContent {
+                snapshotsOnly()
+                excludeGroup("org.incendo")
+            }
         }
         /* The Minecraft repository, used for cloud-brigadier */
         maven("https://libraries.minecraft.net/") {

@@ -23,7 +23,6 @@
 //
 package org.incendo.cloud.brigadier.permission;
 
-import io.leangen.geantyref.GenericTypeReflector;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.Map;
@@ -32,6 +31,7 @@ import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.internal.CommandNode;
+import org.incendo.cloud.internal.SuperTypeCache;
 import org.incendo.cloud.permission.Permission;
 
 @API(status = API.Status.INTERNAL, since = "2.0.0")
@@ -65,7 +65,7 @@ public final class BrigadierPermissionPredicate<C, S> implements Predicate<S> {
         final Map<Type, Permission> accessMap =
             this.node.nodeMeta().getOrDefault(CommandNode.META_KEY_ACCESS, Collections.emptyMap());
         for (final Map.Entry<Type, Permission> entry : accessMap.entrySet()) {
-            if (GenericTypeReflector.isSuperType(entry.getKey(), cloudSender.getClass())) {
+            if (SuperTypeCache.isSuperType(entry.getKey(), cloudSender.getClass())) {
                 if (this.permissionChecker.hasPermission(cloudSender, entry.getValue())) {
                     return true;
                 }
