@@ -44,9 +44,39 @@ public final class MinestomDefaultCaptionsProvider<C> extends DelegatingCaptionP
      */
     public static final String ARGUMENT_PARSE_FAILURE_ENTITY_TYPE = "'<input>' is not a valid entity type";
 
+    /**
+     * Default caption for {@link MinestomCaptionKeys#ARGUMENT_PARSE_FAILURE_INSTANCE}
+     */
+    public static final String ARGUMENT_PARSE_FAILURE_INSTANCE = "No instance found for input '<input>'";
+
+    /**
+     * Default caption for {@link MinestomCaptionKeys#ARGUMENT_PARSE_FAILURE_GAME_MODE}
+     */
+    public static final String ARGUMENT_PARSE_FAILURE_GAME_MODE = "'<input>' is not a valid game mode";
+
+    /**
+     * Default caption for {@link MinestomCaptionKeys#ARGUMENT_PARSE_FAILURE_DIMENSION_TYPE}
+     */
+    public static final String ARGUMENT_PARSE_FAILURE_DIMENSION_TYPE = "'<input>' is not a valid dimension type";
+
+    /**
+     * Default caption for {@link MinestomCaptionKeys#ARGUMENT_PARSE_FAILURE_VEC}
+     */
+    public static final String ARGUMENT_PARSE_FAILURE_VEC = "'<input>' is not a valid vec (expected: x y z)";
+
+    /**
+     * Default caption for {@link MinestomCaptionKeys#ARGUMENT_PARSE_FAILURE_POS}
+     */
+    public static final String ARGUMENT_PARSE_FAILURE_POS = "'<input>' is not a valid pos (expected: x y z, optionally with yaw and pitch)";
+
     private static final CaptionProvider<?> PROVIDER = CaptionProvider.constantProvider()
         .putCaption(MinestomCaptionKeys.ARGUMENT_PARSE_FAILURE_PLAYER, ARGUMENT_PARSE_FAILURE_PLAYER)
         .putCaption(MinestomCaptionKeys.ARGUMENT_PARSE_FAILURE_ENTITY_TYPE, ARGUMENT_PARSE_FAILURE_ENTITY_TYPE)
+        .putCaption(MinestomCaptionKeys.ARGUMENT_PARSE_FAILURE_INSTANCE, ARGUMENT_PARSE_FAILURE_INSTANCE)
+        .putCaption(MinestomCaptionKeys.ARGUMENT_PARSE_FAILURE_GAME_MODE, ARGUMENT_PARSE_FAILURE_GAME_MODE)
+        .putCaption(MinestomCaptionKeys.ARGUMENT_PARSE_FAILURE_DIMENSION_TYPE, ARGUMENT_PARSE_FAILURE_DIMENSION_TYPE)
+        .putCaption(MinestomCaptionKeys.ARGUMENT_PARSE_FAILURE_VEC, ARGUMENT_PARSE_FAILURE_VEC)
+        .putCaption(MinestomCaptionKeys.ARGUMENT_PARSE_FAILURE_POS, ARGUMENT_PARSE_FAILURE_POS)
         .build();
 
     @SuppressWarnings("unchecked")

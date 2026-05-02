@@ -47,6 +47,31 @@ public final class MinestomCaptionKeys {
      */
     public static final Caption ARGUMENT_PARSE_FAILURE_ENTITY_TYPE = of("argument.parse.failure.entity_type");
 
+    /**
+     * Variables: {@code <input>}
+     */
+    public static final Caption ARGUMENT_PARSE_FAILURE_INSTANCE = of("argument.parse.failure.instance");
+
+    /**
+     * Variables: {@code <input>}
+     */
+    public static final Caption ARGUMENT_PARSE_FAILURE_GAME_MODE = of("argument.parse.failure.game_mode");
+
+    /**
+     * Variables: {@code <input>}
+     */
+    public static final Caption ARGUMENT_PARSE_FAILURE_DIMENSION_TYPE = of("argument.parse.failure.dimension_type");
+
+    /**
+     * Variables: {@code <input>}
+     */
+    public static final Caption ARGUMENT_PARSE_FAILURE_VEC = of("argument.parse.failure.vec");
+
+    /**
+     * Variables: {@code <input>}
+     */
+    public static final Caption ARGUMENT_PARSE_FAILURE_POS = of("argument.parse.failure.pos");
+
     private MinestomCaptionKeys() {
     }
 

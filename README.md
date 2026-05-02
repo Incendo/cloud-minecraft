@@ -49,10 +49,17 @@ See [examples/example-minestom](https://github.com/spectr-is/cloud-minecraft/blo
 ### Minestom Parsers
 As of right now there's only two built-in parsers that I bothered to add.
 
-| Parser             | Type         | Description                               |
-|--------------------|--------------|-------------------------------------------|
-| `PlayerParser`     | `Player`     | Resolves an online player by username     |
-| `EntityTypeParser` | `EntityType` | Resolves an entity type by namespaced key |
+## Included parsers
+
+| Parser                | Type            | Description                                                                                         |
+|-----------------------|-----------------|-----------------------------------------------------------------------------------------------------|
+| `PlayerParser`        | `Player`        | Resolves an online player by username                                                               |
+| `EntityTypeParser`    | `EntityType`    | Resolves an entity type by namespaced key                                                           |
+| `InstanceParser`      | `Instance`      | Resolves a loaded instance by UUID                                                                  |
+| `GameModeParser`      | `GameMode`      | Resolves a game mode by name                                                                        |
+| `DimensionTypeParser` | `DimensionType` | Resolves a dimension type by namespaced key                                                         |
+| `VecParser`           | `Vec`           | Resolves a `Vec` from `x y z` (supports relative coordinates (`~ ~ ~`)                              |
+| `PosParser`           | `Pos`           | Resolves a `Pos` from `x y z`, (+ optional pitch/yaw - also supports relative coords (`~ ~ ~ ~ ~`)) |
 
 ## links
 
