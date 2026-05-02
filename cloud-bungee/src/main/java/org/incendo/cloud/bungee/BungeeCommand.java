@@ -23,7 +23,6 @@
 //
 package org.incendo.cloud.bungee;
 
-import io.leangen.geantyref.GenericTypeReflector;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.Map;
@@ -36,6 +35,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.component.CommandComponent;
 import org.incendo.cloud.internal.CommandNode;
+import org.incendo.cloud.internal.SuperTypeCache;
 import org.incendo.cloud.permission.Permission;
 import org.incendo.cloud.suggestion.Suggestion;
 import org.incendo.cloud.suggestion.Suggestions;
@@ -82,7 +82,7 @@ public final class BungeeCommand<C> extends Command implements TabExecutor {
             node.nodeMeta().getOrDefault(CommandNode.META_KEY_ACCESS, Collections.emptyMap());
         final C cloudSender = this.manager.senderMapper().map(sender);
         for (final Map.Entry<Type, Permission> entry : accessMap.entrySet()) {
-            if (GenericTypeReflector.isSuperType(entry.getKey(), cloudSender.getClass())) {
+            if (SuperTypeCache.isSuperType(entry.getKey(), cloudSender.getClass())) {
                 if (this.manager.testPermission(cloudSender, entry.getValue()).allowed()) {
                     return true;
                 }
