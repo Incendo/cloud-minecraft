@@ -10,8 +10,49 @@
 </div>
 
 ## This Fork
-This is a quick fork of Incendo's cloud-minecraft repository that adds [Minestom](https://minestom.net/) support.\
+This is a quick fork of Incendo's cloud-minecraft repository that adds [Minestom](https://minestom.net/) support, as well as a few performance optimisations for platforms that do supertype checks.\
 Everything is published at https://repo.spectr.is/.
+
+### Setup
+Add our repository and dependencies to your `build.gradle(.kts)`:
+
+```kotlin
+repositories {
+    maven("https://repo.spectr.is/snapshots") {
+        name = "spectris-snapshots"
+        mavenContent { snapshotsOnly() }
+    }
+}
+
+dependencies {
+    // 2.1.0-SNAPSHOT is the latest snapshot as of right now
+    implementation("org.incendo:cloud-minestom:2.1.0-SNAPSHOT")
+    
+    // or, for the supertype caching optimisations:
+    implementation("org.incendo:cloud-paper:2.1.0-SNAPSHOT") // or cloud-bungee or cloud-bukkit
+}
+```
+
+### Usage (Minestom)
+
+```java
+final MinestomCommandManager<CommandSender> manager = new MinestomCommandManager<>(
+    ExecutionCoordinator.simpleCoordinator(),
+    SenderMapper.identity()
+);
+
+// Register whatever commands via the manager, or use the annotation parser (as instructed w/ https://cloud.incendo.org/core/)
+```
+
+See [examples/example-minestom](https://github.com/spectr-is/cloud-minecraft/blob/master/examples/example-minestom/src/main/java/org/incendo/cloud/examples/minestom/ExampleServer.java)
+
+### Minestom Parsers
+As of right now there's only two built-in parsers that I bothered to add.
+
+| Parser             | Type         | Description                               |
+|--------------------|--------------|-------------------------------------------|
+| `PlayerParser`     | `Player`     | Resolves an online player by username     |
+| `EntityTypeParser` | `EntityType` | Resolves an entity type by namespaced key |
 
 ## links
 
