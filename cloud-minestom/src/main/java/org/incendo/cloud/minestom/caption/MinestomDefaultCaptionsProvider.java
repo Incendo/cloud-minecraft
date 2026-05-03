@@ -69,6 +69,11 @@ public final class MinestomDefaultCaptionsProvider<C> extends DelegatingCaptionP
      */
     public static final String ARGUMENT_PARSE_FAILURE_POS = "'<input>' is not a valid pos (expected: x y z, optionally with yaw and pitch)";
 
+    /**
+     * Default caption for {@link MinestomCaptionKeys#ARGUMENT_PARSE_FAILURE_ITEM_STACK}
+     */
+    public static final String ARGUMENT_PARSE_FAILURE_ITEM_STACK = "'<input>' is not a valid item";
+
     private static final CaptionProvider<?> PROVIDER = CaptionProvider.constantProvider()
         .putCaption(MinestomCaptionKeys.ARGUMENT_PARSE_FAILURE_PLAYER, ARGUMENT_PARSE_FAILURE_PLAYER)
         .putCaption(MinestomCaptionKeys.ARGUMENT_PARSE_FAILURE_ENTITY_TYPE, ARGUMENT_PARSE_FAILURE_ENTITY_TYPE)
@@ -77,6 +82,7 @@ public final class MinestomDefaultCaptionsProvider<C> extends DelegatingCaptionP
         .putCaption(MinestomCaptionKeys.ARGUMENT_PARSE_FAILURE_DIMENSION_TYPE, ARGUMENT_PARSE_FAILURE_DIMENSION_TYPE)
         .putCaption(MinestomCaptionKeys.ARGUMENT_PARSE_FAILURE_VEC, ARGUMENT_PARSE_FAILURE_VEC)
         .putCaption(MinestomCaptionKeys.ARGUMENT_PARSE_FAILURE_POS, ARGUMENT_PARSE_FAILURE_POS)
+        .putCaption(MinestomCaptionKeys.ARGUMENT_PARSE_FAILURE_ITEM_STACK, ARGUMENT_PARSE_FAILURE_ITEM_STACK)
         .build();
 
     @SuppressWarnings("unchecked")

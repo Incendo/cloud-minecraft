@@ -40,6 +40,7 @@ import org.incendo.cloud.minestom.parser.DimensionTypeParser;
 import org.incendo.cloud.minestom.parser.EntityTypeParser;
 import org.incendo.cloud.minestom.parser.GameModeParser;
 import org.incendo.cloud.minestom.parser.InstanceParser;
+import org.incendo.cloud.minestom.parser.ItemStackParser;
 import org.incendo.cloud.minestom.parser.PlayerParser;
 import org.incendo.cloud.minestom.parser.location.PosParser;
 import org.incendo.cloud.minestom.parser.location.VecParser;
@@ -82,7 +83,8 @@ public final class MinestomCommandManager<C> extends CommandManager<C> implement
             .registerParser(GameModeParser.gameModeParser())
             .registerParser(DimensionTypeParser.dimensionTypeParser())
             .registerParser(PosParser.posParser())
-            .registerParser(VecParser.vecParser());
+            .registerParser(VecParser.vecParser())
+            .registerParser(ItemStackParser.itemStackParser());
 
         this.captionRegistry().registerProvider(new MinestomDefaultCaptionsProvider<>());
 

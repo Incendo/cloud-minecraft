@@ -72,6 +72,11 @@ public final class MinestomCaptionKeys {
      */
     public static final Caption ARGUMENT_PARSE_FAILURE_POS = of("argument.parse.failure.pos");
 
+    /**
+     * Variables: {@code <input>}
+     */
+    public static final Caption ARGUMENT_PARSE_FAILURE_ITEM_STACK = of("argument.parse.failure.item_stack");
+
     private MinestomCaptionKeys() {
     }
 
