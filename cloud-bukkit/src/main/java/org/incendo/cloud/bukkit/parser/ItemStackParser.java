@@ -161,8 +161,11 @@ public class ItemStackParser<C> implements ArgumentParser.FutureArgumentParser<C
                 CraftBukkitReflection.findMethod(ITEM_INPUT_CLASS, "createItemStack", int.class, boolean.class),
                 CraftBukkitReflection.findMethod(ITEM_INPUT_CLASS, "createItemStack", int.class)
         );
-        private static final Method AS_BUKKIT_COPY_METHOD = CraftBukkitReflection
-                .needMethod(CRAFT_ITEM_STACK_CLASS, "asBukkitCopy", NMS_ITEM_STACK_CLASS);
+        private static final Method AS_BUKKIT_COPY_METHOD = CraftBukkitReflection.firstNonNullOrThrow(
+            () -> "Couldn't find asBukkitCopy or asCraftMirror method on CraftItemStack",
+            CraftBukkitReflection.findMethod(CRAFT_ITEM_STACK_CLASS, "asBukkitCopy", NMS_ITEM_STACK_CLASS),
+            CraftBukkitReflection.findMethod(CRAFT_ITEM_STACK_CLASS, "asCraftMirror", NMS_ITEM_STACK_CLASS)
+        );
         private static final Field ITEM_FIELD = CraftBukkitReflection.firstNonNullOrThrow(
                 () -> "Couldn't find item field on ItemInput",
                 CraftBukkitReflection.findField(ITEM_INPUT_CLASS, "b"),
