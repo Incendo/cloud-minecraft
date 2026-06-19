@@ -26,6 +26,7 @@ package org.incendo.cloud.minecraft.extras.caption;
 import java.util.Locale;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.kyori.adventure.translation.GlobalTranslator;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -69,10 +70,9 @@ public interface RichVariable extends CaptionVariable, ComponentLike {
         return this.component();
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     default @NonNull String value() {
-        return net.kyori.adventure.text.serializer.plain.PlainComponentSerializer.plain()
+        return PlainTextComponentSerializer.plainText()
             .serialize(GlobalTranslator.render(this.component(), Locale.getDefault()));
     }
 }

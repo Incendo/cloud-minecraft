@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.Objects;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.kyori.adventure.translation.GlobalTranslator;
 import org.apiguardian.api.API;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -123,7 +124,7 @@ public final class RichDescription implements Description {
     @Override
     @Deprecated
     public @NonNull String textDescription() {
-        return net.kyori.adventure.text.serializer.plain.PlainComponentSerializer.plain()
+        return PlainTextComponentSerializer.plainText()
                 .serialize(GlobalTranslator.render(this.contents, Locale.getDefault()));
     }
 
