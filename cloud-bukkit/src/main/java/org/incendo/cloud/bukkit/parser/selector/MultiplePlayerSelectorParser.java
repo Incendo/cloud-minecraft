@@ -141,7 +141,7 @@ public final class MultiplePlayerSelectorParser<C> extends SelectorUtils.PlayerS
     ) {
         final String input = commandInput.peekString();
         final Collection<Player> players = Lists.newArrayList();
-        if (input.equalsIgnoreCase("@a")) {
+        if (input.equalsIgnoreCase("@a") || input.equalsIgnoreCase("@e")) {
             players.addAll(Bukkit.getOnlinePlayers());
         } else {
             final @Nullable Player player = Bukkit.getPlayer(input);
