@@ -27,6 +27,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+
+import com.google.common.collect.Lists;
 import org.apiguardian.api.API;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -138,9 +140,17 @@ public final class MultiplePlayerSelectorParser<C> extends SelectorUtils.PlayerS
             final @NonNull CommandInput commandInput
     ) {
         final String input = commandInput.peekString();
-        final @Nullable Player player = Bukkit.getPlayer(input);
+        final Collection<Player> players = Lists.newArrayList();
+        if (input.equalsIgnoreCase("@a")) {
+            players.addAll(Bukkit.getOnlinePlayers());
+        } else {
+            final @Nullable Player player = Bukkit.getPlayer(input);
+            if (player != null) {
+                players.add(player);
+            }
+        }
 
-        if (player == null) {
+        if (players.isEmpty()) {
             return CompletableFuture.completedFuture(
                     ArgumentParseResult.failure(new PlayerParser.PlayerParseException(input, commandContext)));
         }
@@ -154,7 +164,7 @@ public final class MultiplePlayerSelectorParser<C> extends SelectorUtils.PlayerS
 
             @Override
             public @NonNull Collection<Player> values() {
-                return Collections.singletonList(player);
+                return players;
             }
         });
     }
