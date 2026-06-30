@@ -115,7 +115,13 @@ final class SelectorUtils {
                     boolean.class
             );
             if (modernParse != null) {
-                return invokeParse(modernParse, type, reader, true, true);
+                return invokeParse(
+                    modernParse,
+                    type,
+                    reader,
+                    true, // CraftBukkit allowSelectors param
+                    true // CraftBukkit overridePermissions param
+                );
             }
             final @Nullable Method legacyParse = CraftBukkitReflection.findMethod(
                     type.getClass(),
@@ -124,7 +130,12 @@ final class SelectorUtils {
                     boolean.class
             );
             if (legacyParse != null) {
-                return invokeParse(legacyParse, type, reader, true);
+                return invokeParse(
+                    legacyParse,
+                    type,
+                    reader,
+                    true // CraftBukkit overridePermissions param
+                );
             }
             return type.parse(reader);
         }
