@@ -45,6 +45,14 @@ dependencyResolutionManagement {
             name = "sponge"
             mavenContent { includeGroup("org.spongepowered") }
         }
+        /* The WaterdogPE repository, used for cloud-waterdog */
+        maven("https://repo.waterdog.dev/main") {
+            name = "waterdog"
+            mavenContent {
+                snapshotsOnly()
+                includeGroup("dev.waterdog.waterdogpe")
+            }
+        }
     }
 }
 
@@ -62,6 +70,7 @@ include("cloud-paper")
 include("cloud-paper-signed-arguments")
 include("cloud-sponge7")
 include("cloud-velocity")
+include("cloud-waterdog")
 
 include("examples/example-bukkit")
 findProject(":examples/example-bukkit")?.name = "example-bukkit"
