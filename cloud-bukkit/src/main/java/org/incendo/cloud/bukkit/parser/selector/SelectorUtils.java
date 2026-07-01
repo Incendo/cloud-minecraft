@@ -107,21 +107,46 @@ final class SelectorUtils {
                 final ArgumentType<Object> type,
                 final StringReader reader
         ) throws CommandSyntaxException {
-            final @Nullable Method specialParse = CraftBukkitReflection.findMethod(
+            final @Nullable Method modernParse = CraftBukkitReflection.findMethod(
+                    type.getClass(),
+                    "parse",
+                    StringReader.class,
+                    boolean.class,
+                    boolean.class
+            );
+            if (modernParse != null) {
+                return invokeParse(
+                    modernParse,
+                    type,
+                    reader,
+                    true, // CraftBukkit allowSelectors param
+                    true // CraftBukkit overridePermissions param
+                );
+            }
+            final @Nullable Method legacyParse = CraftBukkitReflection.findMethod(
                     type.getClass(),
                     "parse",
                     StringReader.class,
                     boolean.class
             );
-            if (specialParse == null) {
-                return type.parse(reader);
-            }
-            try {
-                return specialParse.invoke(
-                        type,
-                        reader,
-                        true // CraftBukkit overridePermissions param
+            if (legacyParse != null) {
+                return invokeParse(
+                    legacyParse,
+                    type,
+                    reader,
+                    true // CraftBukkit overridePermissions param
                 );
+            }
+            return type.parse(reader);
+        }
+
+        private static Object invokeParse(
+                final Method method,
+                final ArgumentType<Object> type,
+                final Object... arguments
+        ) throws CommandSyntaxException {
+            try {
+                return method.invoke(type, arguments);
             } catch (final InvocationTargetException ex) {
                 final Throwable cause = ex.getCause();
                 if (cause instanceof CommandSyntaxException) {
