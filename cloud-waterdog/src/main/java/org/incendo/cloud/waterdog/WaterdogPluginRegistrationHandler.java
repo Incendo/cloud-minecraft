@@ -55,7 +55,11 @@ final class WaterdogPluginRegistrationHandler<C> implements CommandRegistrationH
                 component,
                 this.waterdogCommandManager
         );
-        this.registeredCommands.put(component, waterdogCommand);
-        return this.waterdogCommandManager.owningPlugin().getProxy().getCommandMap().registerCommand(waterdogCommand);
+        final boolean registered = this.waterdogCommandManager.owningPlugin().getProxy()
+                .getCommandMap().registerCommand(waterdogCommand);
+        if (registered) {
+            this.registeredCommands.put(component, waterdogCommand);
+        }
+        return registered;
     }
 }
