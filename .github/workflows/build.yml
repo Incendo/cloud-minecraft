@@ -1,44 +1,35 @@
 name: Build
 on:
-    push:
-        branches: [ "**" ]
-        tags-ignore: [ "**" ]
-    pull_request:
-    release:
-        types: [ published ]
+  workflow_dispatch:
+  push:
+    branches: [ "**" ]
+    tags: [ "v*" ]
+  pull_request:
+
+permissions:
+  contents: read
+  packages: write
+
 jobs:
-    build:
-        # Only run on PRs if the source branch is on someone else's repo
-        if: ${{ github.event_name != 'pull_request' || github.repository != github.event.pull_request.head.repo.full_name }}
-        runs-on: "ubuntu-latest"
-        steps:
-            - uses: actions/checkout@v6
-            - name: Set up JDK
-              uses: actions/setup-java@v5
-              with:
-                  distribution: 'temurin'
-                  java-version: 21
-            - uses: gradle/actions/setup-gradle@v6
-            - name: Build
-              run: ./gradlew build
-            - name: Determine Status
-              run: |
-                  if [ "$(./gradlew properties | awk '/^version:/ { print $2; }' | grep '\-SNAPSHOT')" ]; then
-                    echo "STATUS=snapshot" >> $GITHUB_ENV
-                  else
-                    echo "STATUS=release" >> $GITHUB_ENV
-                  fi
-            - name: Publish Snapshot
-              if: "${{ env.STATUS != 'release' && github.event_name == 'push' && github.ref == 'refs/heads/master' }}"
-              run: ./gradlew publishAllPublicationsToSonatypeSnapshots
-              env:
-                  ORG_GRADLE_PROJECT_sonatypeUsername: "${{ secrets.SONATYPE_USERNAME }}"
-                  ORG_GRADLE_PROJECT_sonatypePassword: "${{ secrets.SONATYPE_PASSWORD }}"
-            - name: Publish Release
-              if: "${{ env.STATUS == 'release' && github.event_name == 'release' }}"
-              run: ./gradlew publishReleaseCentralPortalBundle
-              env:
-                  ORG_GRADLE_PROJECT_sonatypeUsername: "${{ secrets.SONATYPE_USERNAME }}"
-                  ORG_GRADLE_PROJECT_sonatypePassword: "${{ secrets.SONATYPE_PASSWORD }}"
-                  ORG_GRADLE_PROJECT_signingKey: "${{ secrets.SIGNING_KEY }}"
-                  ORG_GRADLE_PROJECT_signingPassword: "${{ secrets.SIGNING_PASSWORD }}"
+  build:
+    # Only run on PRs if the source branch is on someone else's repo
+    if: ${{ github.event_name != 'pull_request' || github.repository != github.event.pull_request.head.repo.full_name }}
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v6
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+      - name: Build
+        run: ./gradlew build
+      - name: Publish to GitHub Packages
+        if: "${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) }}"
+        run: ./gradlew publishAllPublicationsToGitHubPackagesRepository
+        env:
+          GITHUB_ACTOR: "${{ secrets.WEHEBA_ORG_USERNAME || github.actor }}"
+          GITHUB_TOKEN: "${{ secrets.WEHEBA_ORG_TOKEN || secrets.GITHUB_TOKEN }}"

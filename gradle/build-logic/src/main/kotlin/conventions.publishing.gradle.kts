@@ -30,3 +30,16 @@ indra {
 javadocLinks {
     defaultJavadocProvider = "https://www.javadocs.dev/{group}/{name}/{version}"
 }
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/" + (System.getenv("GITHUB_REPOSITORY") ?: "SenseiJu/cloud-minecraft"))
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+}
