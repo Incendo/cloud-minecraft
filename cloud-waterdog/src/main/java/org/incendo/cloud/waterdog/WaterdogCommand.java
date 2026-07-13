@@ -45,7 +45,7 @@ final class WaterdogCommand<C> extends Command {
                 CommandSettings.builder()
                         .setAliases(command.alternativeAliases().toArray(new String[0]))
                         .setDescription(cloudCommand.commandDescription().description().textDescription())
-                        .setPermission(cloudCommand.commandPermission().toString())
+                        .setPermission(cloudCommand.commandPermission().permissionString())
                         .build()
         );
         this.command = command;
