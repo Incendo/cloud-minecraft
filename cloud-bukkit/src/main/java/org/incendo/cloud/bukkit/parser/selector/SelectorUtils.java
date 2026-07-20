@@ -107,21 +107,50 @@ final class SelectorUtils {
                 final ArgumentType<Object> type,
                 final StringReader reader
         ) throws CommandSyntaxException {
-            final @Nullable Method specialParse = CraftBukkitReflection.findMethod(
+            // Minecraft 1.21.1 added allowSelectors to Vanilla's internal parse overload. CraftBukkit moved
+            // its existing overridePermissions parameter to a new three-argument overload to avoid a collision.
+            final @Nullable Method parseWithSelectorControl = CraftBukkitReflection.findMethod(
+                    type.getClass(),
+                    "parse",
+                    StringReader.class,
+                    boolean.class,
+                    boolean.class
+            );
+            if (parseWithSelectorControl != null) {
+                return invokeCraftBukkitParse(
+                        parseWithSelectorControl,
+                        type,
+                        reader,
+                        true, // allowSelectors
+                        true // overridePermissions
+                );
+            }
+
+            // Before Minecraft 1.21.1, CraftBukkit's only additional parameter was overridePermissions.
+            final @Nullable Method parseWithPermissionOverride = CraftBukkitReflection.findMethod(
                     type.getClass(),
                     "parse",
                     StringReader.class,
                     boolean.class
             );
-            if (specialParse == null) {
-                return type.parse(reader);
-            }
-            try {
-                return specialParse.invoke(
+            if (parseWithPermissionOverride != null) {
+                return invokeCraftBukkitParse(
+                        parseWithPermissionOverride,
                         type,
                         reader,
-                        true // CraftBukkit overridePermissions param
+                        true // overridePermissions
                 );
+            }
+            return type.parse(reader);
+        }
+
+        private static Object invokeCraftBukkitParse(
+                final Method method,
+                final ArgumentType<Object> type,
+                final Object... arguments
+        ) throws CommandSyntaxException {
+            try {
+                return method.invoke(type, arguments);
             } catch (final InvocationTargetException ex) {
                 final Throwable cause = ex.getCause();
                 if (cause instanceof CommandSyntaxException) {
