@@ -38,7 +38,8 @@ cloud-bom = { module = "org.incendo:cloud-bom", version.ref = "cloudCore" }
 cloud-core = { module = "org.incendo:cloud-core", version.ref = "cloudCore" }
 cloud-annotations = { module = "org.incendo:cloud-annotations", version.ref = "cloudCore" }
 
-immutables = { group = "org.immutables", name = "value", version.ref = "immutables" }
+immutablesValue = { group = "org.immutables", name = "value", version.ref = "immutables" }
+immutablesValueAnnotations = { group = "org.immutables", name = "value-annotations", version.ref = "immutables" }
 immutablesAnnotate = { group = "org.immutables", name = "annotate", version.ref = "immutables" }
 
 brigadier = { group = "com.mojang", name = "brigadier", version.ref = "brigadier" }
@@ -75,4 +76,3 @@ run-waterfall = { id = "xyz.jpenilla.run-waterfall", version.ref = "run-task" }
 shadow = { id = "com.gradleup.shadow", version = "9.4.2" }
 
 [bundles]
-immutables = ["immutables", "immutablesAnnotate"]

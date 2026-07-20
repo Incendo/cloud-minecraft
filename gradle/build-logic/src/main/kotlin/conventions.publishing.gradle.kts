@@ -29,4 +29,6 @@ indra {
 
 javadocLinks {
     defaultJavadocProvider = "https://www.javadocs.dev/{group}/{name}/{version}"
+    exclude(libs.immutablesValueAnnotations)
+    exclude(libs.immutablesAnnotate)
 }

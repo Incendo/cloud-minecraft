@@ -31,8 +31,9 @@ if (providers.ciBuild.get() && libs.versions.cloudCore.get().endsWith("-SNAPSHOT
 dependencies {
     checkstyle(libs.stylecheck)
     errorprone(libs.errorproneCore)
-    compileOnly(libs.bundles.immutables)
-    annotationProcessor(libs.bundles.immutables)
+    compileOnlyApi(libs.immutablesValueAnnotations)
+    compileOnlyApi(libs.immutablesAnnotate)
+    annotationProcessor(libs.immutablesValue)
 
     testImplementation(libs.jupiterEngine)
     testImplementation(libs.jupiterParams)
