@@ -99,7 +99,7 @@ public final class LocationParser<C> implements ArgumentParser<C, Location>, Blo
                     )
             );
         }
-
+        final CommandInput originalInput = commandInput.copy();
         final LocationCoordinate[] coordinates = new LocationCoordinate[3];
         for (int i = 0; i < 3; i++) {
             if (commandInput.peekString().isEmpty()) {
@@ -147,7 +147,7 @@ public final class LocationParser<C> implements ArgumentParser<C, Location>, Blo
                     new LocationParseException(
                             commandContext,
                             LocationParseException.FailureReason.MIXED_LOCAL_ABSOLUTE,
-                            ""
+                            originalInput.remainingInput()
                     )
             );
         }
@@ -252,10 +252,19 @@ public final class LocationParser<C> implements ArgumentParser<C, Location>, Blo
     }
 
 
-    static class LocationParseException extends ParserException {
+    public static final class LocationParseException extends ParserException {
 
+        private final String input;
+        private final FailureReason reason;
 
-        protected LocationParseException(
+        /**
+         * Construct a new LocationParseException
+         *
+         * @param context Command context
+         * @param reason  Failure reason
+         * @param input   Input
+         */
+        public LocationParseException(
                 final @NonNull CommandContext<?> context,
                 final @NonNull FailureReason reason,
                 final @NonNull String input
@@ -266,6 +275,26 @@ public final class LocationParser<C> implements ArgumentParser<C, Location>, Blo
                     reason.caption(),
                     CaptionVariable.of("input", input)
             );
+            this.input = input;
+            this.reason = reason;
+        }
+
+        /**
+         * Get the supplied input
+         *
+         * @return String value
+         */
+        public @NonNull String input() {
+            return this.input;
+        }
+
+        /**
+         * Get the failure reason
+         *
+         * @return Failure reason
+         */
+        public @NonNull FailureReason reason() {
+            return this.reason;
         }
 
 
