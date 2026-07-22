@@ -16,6 +16,7 @@ bukkit = "1.13.2-R0.1-SNAPSHOT"
 commodore = "2.2"
 bungeecord = "1.20-R0.2"
 cloudburst = "1.0.0-SNAPSHOT"
+waterdog = "2.0.4-SNAPSHOT"
 adventureApi = "4.15.0"
 adventurePlatform = "4.4.1"
 paperApi = "1.20.6-R0.1-SNAPSHOT"
@@ -48,6 +49,7 @@ reflectionRemapper = "xyz.jpenilla:reflection-remapper:0.1.3"
 commodore = { group = "me.lucko", name = "commodore", version.ref = "commodore" }
 bungeecord = { group = "net.md-5", name = "bungeecord-api", version.ref = "bungeecord" }
 cloudburst = { group = "org.cloudburstmc", name = "cloudburst-server", version.ref = "cloudburst" }
+waterdog = { group = "dev.waterdog.waterdogpe", name = "waterdog", version.ref = "waterdog" }
 adventureApi = { group = "net.kyori", name = "adventure-api", version.ref = "adventureApi" }
 minimessage = { group = "net.kyori", name = "adventure-text-minimessage", version.ref = "adventureApi" }
 adventurePlatformBukkit = { group = "net.kyori", name = "adventure-platform-bukkit", version.ref = "adventurePlatform" }
