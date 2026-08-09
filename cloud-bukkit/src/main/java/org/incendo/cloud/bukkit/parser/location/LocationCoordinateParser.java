@@ -23,7 +23,9 @@
 //
 package org.incendo.cloud.bukkit.parser.location;
 
+import org.bukkit.command.BlockCommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.bukkit.BukkitCommandContextKeys;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
 import org.incendo.cloud.parser.ArgumentParseResult;
@@ -57,7 +59,7 @@ public final class LocationCoordinateParser<C> implements ArgumentParser<C, Loca
             locationCoordinateType = LocationCoordinateType.ABSOLUTE;
         }
 
-        final double coordinate;
+        double coordinate;
         try {
             final boolean empty = commandInput.peekString().isEmpty() || commandInput.peek() == ' ';
             coordinate = empty ? 0 : commandInput.readDouble();
@@ -73,6 +75,12 @@ public final class LocationCoordinateParser<C> implements ArgumentParser<C, Loca
                     ),
                     commandContext
             ));
+        }
+
+        if (commandContext.get(BukkitCommandContextKeys.BUKKIT_COMMAND_SENDER) instanceof BlockCommandSender
+                && (locationCoordinateType == LocationCoordinateType.LOCAL || locationCoordinateType == LocationCoordinateType.RELATIVE)
+        ) {
+            coordinate += 0.5;
         }
 
         return ArgumentParseResult.success(
