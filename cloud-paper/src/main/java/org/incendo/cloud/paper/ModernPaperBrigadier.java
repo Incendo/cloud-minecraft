@@ -23,7 +23,6 @@
 //
 package org.incendo.cloud.paper;
 
-import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
 import io.papermc.paper.command.brigadier.CommandRegistrationFlag;
@@ -41,7 +40,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.logging.Logger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -135,19 +133,20 @@ final class ModernPaperBrigadier<C, B> implements CommandRegistrationHandler<C>,
 
         this.aliases.clear();
         for (final CommandNode<C> rootNode : this.manager.commandTree().rootNodes()) {
-            this.registerCommand(commands, rootNode);
+            this.registerRoot(commands, rootNode);
         }
     }
 
-    private void registerCommand(final Commands commands, final CommandNode<C> rootNode) {
+    private void registerRoot(final Commands commands, final CommandNode<C> rootNode) {
+        final String rootName = rootNode.component().name();
         final Set<String> registered = commands.registerWithFlags(
             this.metaHolder.owningPluginMeta(),
-            this.createRootNode(rootNode, rootNode.component().name()),
+            this.createRootNode(rootNode, rootName),
             this.findBukkitDescription(rootNode),
             new ArrayList<>(rootNode.component().alternativeAliases()),
             new HashSet<>(Collections.singletonList(CommandRegistrationFlag.FLATTEN_ALIASES))
         );
-        this.aliases.put(rootNode.component().name(), registered);
+        this.aliases.put(rootName, registered);
     }
 
     private LiteralCommandNode<CommandSourceStack> createRootNode(final CommandNode<C> rootNode, final String label) {
@@ -204,81 +203,113 @@ final class ModernPaperBrigadier<C, B> implements CommandRegistrationHandler<C>,
             return true;
         }
 
-        if (this.aliases.containsKey(command.rootComponent().name())) {
-            final CommandDispatcher<CommandSourceStack> dispatcher =
-                unsafeGet(commands, Commands::getDispatcher);
-            final Set<String> registered = this.aliases.get(command.rootComponent().name());
-            final LiteralCommandNode<CommandSourceStack> newRoot = this.createRootNode(
-                this.manager.commandTree().getNamedNode(command.rootComponent().name()),
-                command.rootComponent().name()
-            );
-            for (final String label : registered) {
-                final com.mojang.brigadier.tree.CommandNode<CommandSourceStack> node =
-                    dispatcher.getRoot().getChild(label);
-                for (final com.mojang.brigadier.tree.CommandNode<CommandSourceStack> newChild : newRoot.getChildren()) {
-                    node.addChild(newChild);
-                }
+        try {
+            this.syncRoot(commands, command.rootComponent().name());
+        } catch (final RuntimeException e) {
+            try {
+                this.resendCommands();
+            } catch (final RuntimeException resendFailure) {
+                e.addSuppressed(resendFailure);
             }
-        } else {
-            unsafeOperation(commands, cmds -> this.registerCommand(
-                cmds,
-                this.manager.commandTree().getNamedNode(command.rootComponent().name())
-            ));
+            throw e;
         }
 
         this.resendCommands();
-
-        final @Nullable Set<String> registered = this.aliases.get(command.rootComponent().name());
-
-        boolean ret = registered != null && !registered.isEmpty();
-        if (!ret) {
-            this.registeredCommands.remove(command);
-        }
-        return ret;
+        return true;
     }
 
-    private static @MonotonicNonNull Method commandnodeRemoveMethod = null;
-
-    private void unregisterRoot(final Commands commands, final String label) {
-        final @Nullable Set<String> removed = this.aliases.remove(label);
-        if (removed == null || removed.isEmpty()) {
+    /**
+     * Rebuilds the root literal that {@code rootName} resolves to and replaces its registration.
+     *
+     * <p>The nodes handed out by the API dispatcher are mirrors of the server nodes rather than the server nodes
+     * themselves, so adding children to a node fetched from the dispatcher does not change what the server dispatches or
+     * sends to clients. The entire root has to be unregistered and registered again for a change to take effect.</p>
+     *
+     * <p>If the registration fails the root is left unregistered, so every command belonging to it is dropped from
+     * {@link #registeredCommands} to make a later insert able to restore it.</p>
+     *
+     * @param commands the registrar to operate on
+     * @param rootName a name or alias of the root literal
+     */
+    private void syncRoot(final Commands commands, final String rootName) {
+        final @Nullable CommandNode<C> rootNode = this.manager.commandTree().getNamedNode(rootName);
+        if (rootNode == null) {
+            this.forgetRoot(rootName);
             return;
         }
-        this.registeredCommands.removeIf(command -> command.rootComponent().name().equals(label));
 
+        final String resolvedName = rootNode.component().name();
         try {
-            if (commandnodeRemoveMethod == null) {
-                commandnodeRemoveMethod = com.mojang.brigadier.tree.CommandNode.class.getMethod(
+            unsafeOperation(commands, cmds -> {
+                this.removeRootLabels(cmds, resolvedName);
+                this.registerRoot(cmds, rootNode);
+            });
+        } catch (final RuntimeException e) {
+            this.forgetRoot(resolvedName);
+            throw e;
+        }
+    }
+
+    /**
+     * Drops every command belonging to the root literal named {@code rootName} from {@link #registeredCommands}.
+     *
+     * @param rootName the primary name of the root literal
+     */
+    private void forgetRoot(final String rootName) {
+        this.registeredCommands.removeIf(registered -> registered.rootComponent().name().equals(rootName));
+    }
+
+    private static @MonotonicNonNull Method commandNodeRemoveMethod = null;
+
+    private static @NonNull Method commandNodeRemoveMethod() {
+        if (commandNodeRemoveMethod == null) {
+            try {
+                commandNodeRemoveMethod = com.mojang.brigadier.tree.CommandNode.class.getMethod(
                     "removeCommand", String.class
                 );
-                commandnodeRemoveMethod.setAccessible(true);
+                commandNodeRemoveMethod.setAccessible(true);
+            } catch (final ReflectiveOperationException e) {
+                throw new RuntimeException("Failed to find removeCommand method", e);
             }
-        } catch (final ReflectiveOperationException e) {
-            throw new RuntimeException("Failed to find removeCommand method", e);
+        }
+        return commandNodeRemoveMethod;
+    }
+
+    /**
+     * Removes every label that the root literal named {@code rootName} is currently registered under.
+     *
+     * <p>Must be called from within {@link #unsafeOperation(Commands, Consumer)}.</p>
+     *
+     * @param commands the registrar to operate on
+     * @param rootName the primary name of the root literal
+     */
+    private void removeRootLabels(final Commands commands, final String rootName) {
+        final @Nullable Set<String> removed = this.aliases.remove(rootName);
+        if (removed == null) {
+            return;
         }
 
-        unsafeOperation(commands, cmds -> {
-            final CommandDispatcher<CommandSourceStack> dispatcher = cmds.getDispatcher();
-            final RootCommandNode<CommandSourceStack> root = dispatcher.getRoot();
-            for (final String removedLabel : removed) {
-                try {
-                    commandnodeRemoveMethod.invoke(root, removedLabel);
-                } catch (final ReflectiveOperationException e) {
-                    throw new RuntimeException("Failed to delete node " + removedLabel, e);
-                }
+        final RootCommandNode<CommandSourceStack> root = commands.getDispatcher().getRoot();
+        for (final String label : removed) {
+            try {
+                commandNodeRemoveMethod().invoke(root, label);
+            } catch (final ReflectiveOperationException e) {
+                throw new RuntimeException("Failed to delete node " + label, e);
             }
-        });
+        }
     }
 
     @Override
     public void unregisterRootCommand(final @NonNull CommandComponent<C> rootCommand) {
+        final String rootName = rootCommand.name();
+        this.forgetRoot(rootName);
+
         final @Nullable Commands commands = this.commands;
         if (commands == null) {
             return;
         }
 
-        this.unregisterRoot(commands, rootCommand.name());
-
+        unsafeOperation(commands, cmds -> this.removeRootLabels(cmds, rootName));
         this.resendCommands();
     }
 
@@ -291,13 +322,6 @@ final class ModernPaperBrigadier<C, B> implements CommandRegistrationHandler<C>,
     private static @MonotonicNonNull Field commandsInvalidField = null;
 
     private static void unsafeOperation(final Commands commands, final Consumer<Commands> task) {
-        unsafeGet(commands, cmds -> {
-            task.accept(cmds);
-            return null;
-        });
-    }
-
-    private static <T> T unsafeGet(final Commands commands, final Function<Commands, T> task) {
         try {
             if (commandsInvalidField == null) {
                 commandsInvalidField = commands.getClass().getDeclaredField("invalid");
@@ -306,7 +330,7 @@ final class ModernPaperBrigadier<C, B> implements CommandRegistrationHandler<C>,
             final boolean prev = commandsInvalidField.getBoolean(commands);
             try {
                 commandsInvalidField.setBoolean(commands, false);
-                return task.apply(commands);
+                task.accept(commands);
             } finally {
                 commandsInvalidField.setBoolean(commands, prev);
             }
