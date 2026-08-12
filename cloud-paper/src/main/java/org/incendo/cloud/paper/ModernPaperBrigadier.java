@@ -205,19 +205,11 @@ final class ModernPaperBrigadier<C, B> implements CommandRegistrationHandler<C>,
         }
 
         if (this.aliases.containsKey(command.rootComponent().name())) {
-            final CommandDispatcher<CommandSourceStack> dispatcher =
-                unsafeGet(commands, Commands::getDispatcher);
+            final RootCommandNode<CommandSourceStack> root = unsafeGet(commands, cmds -> cmds.getDispatcher().getRoot());
             final Set<String> registered = this.aliases.get(command.rootComponent().name());
-            final LiteralCommandNode<CommandSourceStack> newRoot = this.createRootNode(
-                this.manager.commandTree().getNamedNode(command.rootComponent().name()),
-                command.rootComponent().name()
-            );
+            final CommandNode<C> rootNode = this.manager.commandTree().getNamedNode(command.rootComponent().name());
             for (final String label : registered) {
-                final com.mojang.brigadier.tree.CommandNode<CommandSourceStack> node =
-                    dispatcher.getRoot().getChild(label);
-                for (final com.mojang.brigadier.tree.CommandNode<CommandSourceStack> newChild : newRoot.getChildren()) {
-                    node.addChild(newChild);
-                }
+                root.addChild(this.createRootNode(rootNode, label));
             }
         } else {
             unsafeOperation(commands, cmds -> this.registerCommand(
