@@ -24,5 +24,6 @@
 - cloud-sponge7: integration for [Sponge API](https://spongepowered.org) v7
 - cloud-bungee: integration for Bungeecord API
 - cloud-cloudburst: integration for cloudburst
+- cloud-waterdog: integration for [WaterdogPE](https://waterdog.dev) API
 - cloud-minecraft-extras: optional extras using [adventure](https://github.com/KyoriPowered/adventure) API
 - cloud-minecraft-bom: [bill of materials](https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#Importing_Dependencies) for cloud-minecraft dependencies
